@@ -125,7 +125,8 @@
       "billed_note": "Area is charged in steps of {{ step }} m². Your cart re-checks the price before checkout.",
       "invalid_submit": "Check the highlighted sizes before adding to cart.",
       "quote_link": "Need a different size or shape? Request a free quote",
-      "choose_size": "Choose size"
+      "choose_size": "Choose size",
+      "texture_caption": "Illustrative texture. Natural stone varies, so ask for a free sample to see the real slab."
     },
     "product": {
       "add_to_cart": "Add to cart",
@@ -293,6 +294,9 @@
     }
   },
   "sections": {
+    "home_hero": {
+      "view_stone": "View this stone"
+    },
     "quote_form": {
       "heading": "Request a free quote",
       "name": "Name",

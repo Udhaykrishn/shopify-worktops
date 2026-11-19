@@ -34,6 +34,16 @@
   {%- capture card_is_worktop -%}{%- render 'worktop-is-worktop', product: card_product -%}{%- endcapture -%}
   {%- assign card_is_worktop = card_is_worktop | strip -%}
   {%- liquid
+    # Worktops without photos show a stone texture instead of Dawn's text-only card.
+    assign card_stone = false
+    if card_product.featured_media == nil and card_is_worktop == 'true'
+      assign card_stone = true
+    endif
+    assign card_has_visual = false
+    if card_product.featured_media or card_stone
+      assign card_has_visual = true
+    endif
+
     assign ratio = 1
     if card_product.featured_media and media_aspect_ratio == 'portrait'
       assign ratio = 0.8
@@ -50,17 +60,17 @@
       <div
         class="
           card card--{{ settings.card_style }}
-          {% if card_product.featured_media %} card--media{% else %} card--text{% endif %}
+          {% if card_has_visual %} card--media{% else %} card--text{% endif %}
           {% if settings.card_style == 'card' %} color-{{ settings.card_color_scheme }} gradient{% endif %}
           {% if image_shape and image_shape != 'default' %} card--shape{% endif %}
           {% if extend_height %} card--extend-height{% endif %}
-          {% if card_product.featured_media == nil and settings.card_style == 'card' %} ratio{% endif %}
+          {% if card_has_visual == false and settings.card_style == 'card' %} ratio{% endif %}
           {% if horizontal_class %} card--horizontal{% endif %}
         "
         style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%;"
       >
         <div
-          class="card__inner {% if settings.card_style == 'standard' %}color-{{ settings.card_color_scheme }} gradient{% endif %}{% if card_product.featured_media or settings.card_style == 'standard' %} ratio{% endif %}"
+          class="card__inner {% if settings.card_style == 'standard' %}color-{{ settings.card_color_scheme }} gradient{% endif %}{% if card_has_visual or settings.card_style == 'standard' %} ratio{% endif %}"
           style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%;"
         >
           {%- if card_product.featured_media -%}
@@ -111,12 +121,19 @@
                 {%- endif -%}
               </div>
             </div>
+          {%- elsif card_stone -%}
+            <div class="card__media">
+              <div class="media media--transparent media--hover-effect">
+                {%- assign stone_uid = section_id | append: '-' | append: card_product.id -%}
+                {% render 'worktop-stone-art', product: card_product, uid: stone_uid %}
+              </div>
+            </div>
           {%- endif -%}
           <div class="card__content">
             <div class="card__information">
               <h3
                 class="card__heading"
-                {% if card_product.featured_media == null and settings.card_style == 'standard' %}
+                {% if card_has_visual == false and settings.card_style == 'standard' %}
                   id="title-{{ section_id }}-{{ card_product.id }}"
                 {% endif %}
               >
@@ -152,8 +169,8 @@
         <div class="card__content">
           <div class="card__information">
             <h3
-              class="card__heading{% if card_product.featured_media or settings.card_style == 'standard' %} h5{% endif %}"
-              {% if card_product.featured_media or settings.card_style == 'card' %}
+              class="card__heading{% if card_has_visual or settings.card_style == 'standard' %} h5{% endif %}"
+              {% if card_has_visual or settings.card_style == 'card' %}
                 id="title-{{ section_id }}-{{ card_product.id }}"
               {% endif %}
             >

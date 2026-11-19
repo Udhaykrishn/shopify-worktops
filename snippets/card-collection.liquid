@@ -13,6 +13,16 @@
 {% enddoc %}
 
 {%- liquid
+  # Collections without an image show a stone texture taken from their first product.
+  assign card_stone = false
+  if card_collection != blank and card_collection.featured_image == nil and card_collection.products_count > 0
+    assign card_stone = true
+  endif
+  assign card_has_visual = false
+  if card_collection.featured_image or card_stone
+    assign card_has_visual = true
+  endif
+
   assign ratio = 1
   if card_collection.featured_image and media_aspect_ratio == 'portrait'
     assign ratio = 0.8
@@ -35,15 +45,15 @@
     class="
       card
       card--{{ card_style }}
-      {% if card_collection.featured_image %} card--media{% else %} card--text{% endif %}
+      {% if card_has_visual %} card--media{% else %} card--text{% endif %}
       {% if card_style == 'card' %} color-{{ card_color_scheme }} gradient{% endif %}
       {% if extend_height %} card--extend-height{% endif %}
-      {% if card_collection.featured_image == nil and card_style == 'card' %} ratio{% endif %}
+      {% if card_has_visual == false and card_style == 'card' %} ratio{% endif %}
     "
     style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%;"
   >
     <div
-      class="card__inner {% if card_style == 'standard' %}color-{{ card_color_scheme }} gradient{% endif %}{% if card_collection.featured_image or card_style == 'standard' %} ratio{% endif %}"
+      class="card__inner {% if card_style == 'standard' %}color-{{ card_color_scheme }} gradient{% endif %}{% if card_has_visual or card_style == 'standard' %} ratio{% endif %}"
       style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%;"
     >
       {%- if card_collection.featured_image -%}
@@ -72,6 +82,14 @@
               loading="lazy"
               class="motion-reduce"
             >
+          </div>
+        </div>
+      {%- endif -%}
+      {%- if card_stone -%}
+        <div class="card__media">
+          <div class="media media--transparent media--hover-effect">
+            {%- assign stone_uid = 'collection-' | append: card_collection.id -%}
+            {% render 'worktop-stone-art', product: card_collection.products.first, uid: stone_uid %}
           </div>
         </div>
       {%- endif -%}
@@ -115,7 +133,7 @@
         </div>
       {%- endif -%}
     </div>
-    {%- if card_collection != blank and card_style == 'card' or card_collection.featured_image -%}
+    {%- if card_collection != blank and card_style == 'card' or card_has_visual -%}
       <div class="card__content">
         <div class="card__information">
           <h3 class="card__heading">
@@ -132,14 +150,14 @@
               {%- else -%}
                 {{ 'onboarding.collection_title' | t }}
               {%- endif -%}
-              {%- if card_collection.featured_image or card_collection.description == blank -%}
+              {%- if card_has_visual or card_collection.description == blank -%}
                 <span class="icon-wrap">
                   {{- 'icon-arrow.svg' | inline_asset_content -}}
                 </span>
               {%- endif %}
             </a>
           </h3>
-          {%- if card_collection.featured_image == null and card_collection.description != blank -%}
+          {%- if card_has_visual == false and card_collection.description != blank -%}
             <p class="card__caption">
               {{- card_collection.description | strip_html | truncatewords: 12 -}}
               <span class="icon-wrap">

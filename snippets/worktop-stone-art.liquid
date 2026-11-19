@@ -1,0 +1,149 @@
+{%- doc -%}
+  Renders a decorative stone texture as an inline SVG. It stands in for product and collection photos
+  when none are uploaded, so cards and the product page show the material instead of an empty box.
+  The texture never replaces a real image: callers only render it when there is no media.
+
+  Colour comes from the product's `custom.colour` metaobject (`hex` field) when it is set. Otherwise it is
+  guessed from the stone name (for example "Nero" → black, "Verde" → green). Granite gets a speckled grain,
+  every other material gets veins. The SVG filter seed comes from the product ID, so each product gets
+  its own pattern and the same product always looks the same.
+
+  @param {product} [product] - The product to draw. Pass this or `tone`.
+  @param {string} [tone] - A base colour hex, used when no product is passed.
+  @param {string} [pattern] - `veined` or `speckled`. Defaults to the product type (Granite → speckled).
+  @param {string} uid - A unique ID on the page (for example `section.id | append: product.id`). SVG filter IDs must be unique.
+  @param {string} [class] - Extra classes for the wrapper.
+
+  @example
+  {% render 'worktop-stone-art', product: card_product, uid: section_id | append: card_product.id %}
+{%- enddoc -%}
+{%- liquid
+  assign base = tone
+  assign seed = 7
+  assign stone_pattern = pattern
+
+  if product
+    assign seed = product.id | modulo: 97 | plus: 1
+    assign base = product.metafields.custom.colour.value.hex | default: tone
+
+    if stone_pattern == blank
+      assign product_type = product.type | downcase
+      if product_type contains 'granite'
+        assign stone_pattern = 'speckled'
+      endif
+    endif
+
+    if base == blank
+      assign name = product.title | downcase
+      if name contains 'nero' or name contains 'black'
+        assign base = '#232220'
+      elsif name contains 'iron' or name contains 'steel'
+        assign base = '#5c5f63'
+      elsif name contains 'grigio' or name contains 'grey' or name contains 'gray' or name contains 'concrete'
+        assign base = '#a3a4a5'
+      elsif name contains 'blue' or name contains 'stellar'
+        assign base = '#2c3d55'
+      elsif name contains 'verde' or name contains 'green'
+        assign base = '#2d4a3c'
+      elsif name contains 'rosso' or name contains 'red'
+        assign base = '#7c2e2a'
+      elsif name contains 'taupe' or name contains 'kasha' or name contains 'beige' or name contains 'fantasy'
+        assign base = '#c9bca8'
+      elsif name contains 'crema' or name contains 'cream' or name contains 'taj mahal'
+        assign base = '#e7dcc6'
+      endif
+    endif
+  endif
+
+  # Metaobject colour fields are colour objects; the colour filters need a plain hex string.
+  assign base = base | default: '#efebe4' | append: ''
+  assign stone_pattern = stone_pattern | default: 'veined'
+
+  assign brightness = base | color_brightness
+  if brightness > 140
+    assign vein = base | color_darken: 40
+    assign cloud = base | color_darken: 7
+    assign grain_dark = base | color_darken: 55
+    assign grain_mid = base | color_darken: 22
+    assign grain_light = base | color_lighten: 8
+  else
+    assign vein = base | color_lighten: 50
+    assign cloud = base | color_lighten: 8
+    assign grain_dark = base | color_darken: 12
+    assign grain_mid = base | color_lighten: 18
+    assign grain_light = base | color_lighten: 55
+  endif
+
+  assign filter_id = 'StoneFilter-' | append: uid
+  assign cloud_id = 'StoneCloud-' | append: uid
+  assign sheen_id = 'StoneSheen-' | append: uid
+-%}
+<div class="stone-art stone-art--{{ stone_pattern }}{% if class != blank %} {{ class }}{% endif %}">
+  <svg
+    class="stone-art__svg"
+    viewBox="0 0 400 400"
+    preserveAspectRatio="xMidYMid slice"
+    aria-hidden="true"
+    focusable="false"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <defs>
+      <filter id="{{ cloud_id }}" x="0" y="0" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.005" numOctaves="3" seed="{{ seed | plus: 11 }}"/>
+        <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1.2 -0.45" result="cloud"/>
+        <feFlood flood-color="{{ cloud }}"/>
+        <feComposite in2="cloud" operator="in"/>
+      </filter>
+      {%- if stone_pattern == 'speckled' -%}
+        <filter id="{{ filter_id }}" x="0" y="0" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.24" numOctaves="2" seed="{{ seed }}" result="grain"/>
+          <feColorMatrix in="grain" result="mid-alpha" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 5 0 -2.6"/>
+          <feFlood flood-color="{{ grain_mid }}"/>
+          <feComposite in2="mid-alpha" operator="in" result="mid"/>
+          <feColorMatrix in="grain" result="dark-alpha" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -4 0 0 0 1.75"/>
+          <feFlood flood-color="{{ grain_dark }}"/>
+          <feComposite in2="dark-alpha" operator="in" result="dark"/>
+          <feColorMatrix in="grain" result="light-alpha" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 4 0 0 -2.3"/>
+          <feFlood flood-color="{{ grain_light }}"/>
+          <feComposite in2="light-alpha" operator="in" result="light"/>
+          <feMerge>
+            <feMergeNode in="mid"/>
+            <feMergeNode in="dark"/>
+            <feMergeNode in="light"/>
+          </feMerge>
+        </filter>
+      {%- else -%}
+        <filter id="{{ filter_id }}" x="0" y="0" width="100%" height="100%">
+          <feTurbulence type="turbulence" baseFrequency="0.0045 0.0016" numOctaves="6" seed="{{ seed }}"/>
+          <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0"/>
+          <feComponentTransfer result="vein-alpha">
+            <feFuncA type="table" tableValues="1 0.38 0.08 0 0 0 0 0 0 0 0 0 0 0"/>
+          </feComponentTransfer>
+          <feTurbulence type="turbulence" baseFrequency="0.011 0.0035" numOctaves="5" seed="{{ seed | plus: 5 }}"/>
+          <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0"/>
+          <feComponentTransfer result="thread-alpha">
+            <feFuncA type="table" tableValues="0.55 0.08 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+          </feComponentTransfer>
+          <feComposite in="vein-alpha" in2="thread-alpha" operator="arithmetic" k2="1" k3="1" result="all-alpha"/>
+          <feFlood flood-color="{{ vein }}"/>
+          <feComposite in2="all-alpha" operator="in"/>
+        </filter>
+      {%- endif -%}
+      <linearGradient id="{{ sheen_id }}" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#fff" stop-opacity="0.22"/>
+        <stop offset="0.45" stop-color="#fff" stop-opacity="0"/>
+        <stop offset="1" stop-color="#000" stop-opacity="0.12"/>
+      </linearGradient>
+    </defs>
+    <rect width="400" height="400" fill="{{ base }}"/>
+    <rect width="400" height="400" filter="url(#{{ cloud_id }})"/>
+    {%- if stone_pattern == 'speckled' -%}
+      <rect width="400" height="400" filter="url(#{{ filter_id }})"/>
+    {%- else -%}
+      <g transform="rotate(-28 200 200)">
+        <rect x="-100" y="-100" width="600" height="600" filter="url(#{{ filter_id }})"/>
+      </g>
+    {%- endif -%}
+    <rect width="400" height="400" fill="url(#{{ sheen_id }})"/>
+  </svg>
+</div>

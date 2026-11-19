@@ -73,11 +73,35 @@
   {%- endif -%}
 
   {% assign variant_images = product.images | where: 'attached_to_variant?', true | map: 'src' %}
+  {%- liquid
+    # Worktops without photos keep the two-column layout and show a stone texture in the media column.
+    assign product_stone = false
+    if product.media.size == 0
+      capture product_is_worktop
+        render 'worktop-is-worktop', product: product
+      endcapture
+      if product_is_worktop contains 'true'
+        assign product_stone = true
+      endif
+    endif
+  -%}
   <product-component view-event-payload="{{ product | standard_event_data: 'view', context: 'page' | escape }}">
     <div class="page-width">
-      <div class="product product--{{ section.settings.media_size }} product--{{ section.settings.media_position }} product--{{ section.settings.gallery_layout }} product--mobile-{{ section.settings.mobile_thumbnails }} grid grid--1-col {% if product.media.size > 0 %}grid--2-col-tablet{% else %}product--no-media{% endif %}">
+      <div class="product product--{{ section.settings.media_size }} product--{{ section.settings.media_position }} product--{{ section.settings.gallery_layout }} product--mobile-{{ section.settings.mobile_thumbnails }} grid grid--1-col {% if product.media.size > 0 or product_stone %}grid--2-col-tablet{% else %}product--no-media{% endif %}">
         <div class="grid__item product__media-wrapper">
-          {% render 'product-media-gallery', variant_images: variant_images %}
+          {%- if product_stone -%}
+            {%- assign stone_uid = section.id | append: '-' | append: product.id -%}
+            <figure class="worktop-stone-media{% if section.settings.constrain_to_viewport %} worktop-stone-media--constrained{% endif %}">
+              <div class="worktop-stone-media__slab">
+                {% render 'worktop-stone-art', product: product, uid: stone_uid %}
+              </div>
+              <figcaption class="worktop-stone-media__caption caption">
+                {{ 'products.worktop.texture_caption' | t }}
+              </figcaption>
+            </figure>
+          {%- else -%}
+            {% render 'product-media-gallery', variant_images: variant_images %}
+          {%- endif -%}
         </div>
         <div class="product__info-wrapper grid__item{% if settings.page_width > 1400 and section.settings.media_size == "small" %} product__info-wrapper--extra-padding{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
           <section

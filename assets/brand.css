@@ -1,0 +1,98 @@
+/*
+  Work-Tops brand layer on top of Dawn.
+  Colours, fonts and radii come from theme settings (Dawn's CSS variables); this file only adds
+  what settings can't express: heading rhythm, the stone texture fallback and a few shared helpers.
+*/
+
+/* Typography: the serif display face reads better slightly tighter and lighter. */
+h1,
+h2,
+.h0,
+.h1,
+.h2 {
+  letter-spacing: -0.015em;
+  line-height: 1.12;
+}
+
+.brand-eyebrow {
+  display: inline-block;
+  margin: 0 0 1.2rem;
+  font-family: var(--font-body-family);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(var(--color-foreground), 0.7);
+}
+
+/* Stone texture fallback (snippets/worktop-stone-art.liquid). */
+.stone-art {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.stone-art__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Product cards: a soft frame and a calmer price line. */
+.card-wrapper .card--media .card__inner {
+  overflow: hidden;
+}
+
+.card-information .price {
+  font-size: 1.5rem;
+  letter-spacing: 0;
+}
+
+/* Announcement bar: small caps style message. */
+.announcement-bar__message {
+  font-size: 1.25rem;
+  letter-spacing: 0.08em;
+}
+
+/* Buttons: a touch more weight so CTAs stand out on stone imagery. */
+.button,
+.shopify-challenge__button,
+.customer button {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+
+/* Product page: stone texture in the media column when a worktop has no photos. */
+.worktop-stone-media {
+  margin: 0 0 2.4rem;
+}
+
+.worktop-stone-media__slab {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--media-radius);
+  overflow: hidden;
+  box-shadow: 0 1.6rem 4rem -2.4rem rgba(var(--color-shadow), 0.35);
+}
+
+.worktop-stone-media__caption {
+  margin-top: 1rem;
+  color: rgba(var(--color-foreground), 0.7);
+}
+
+@media screen and (min-width: 750px) {
+  .worktop-stone-media {
+    position: sticky;
+    top: 3rem;
+    margin-bottom: 0;
+  }
+
+  .worktop-stone-media__slab {
+    aspect-ratio: 1 / 1;
+  }
+
+  .worktop-stone-media--constrained .worktop-stone-media__slab {
+    max-height: calc(100vh - 12rem);
+  }
+}
