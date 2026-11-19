@@ -1,0 +1,61 @@
+{
+  "_notes": [
+    "Demo catalogue modelled on the public work-tops.com range (materials, naming style, price levels). Not copied data.",
+    "Pricing: price_per_m2 is the customer-facing price. Shopify variant price = price per 0.01 m2 (price_per_m2 / 100), and cart quantity = ceil(area_m2 / 0.01). See README, Task 1.",
+    "Variant modifiers: 30mm = x1.25, Bullnose = +15/m2, Bevelled = +10/m2, Straight = +0."
+  ],
+  "pricing": {
+    "unit_m2": 0.01,
+    "thickness_multiplier": { "20mm": 1.0, "30mm": 1.25 },
+    "edge_surcharge_per_m2": { "Straight": 0, "Bullnose": 15, "Bevelled": 10 }
+  },
+  "limits_default_mm": { "min_length": 300, "max_length": 3200, "min_width": 300, "max_width": 1600 },
+  "metaobjects": {
+    "colour": [
+      { "handle": "white", "name": "White", "hex": "#F4F2EE" },
+      { "handle": "black", "name": "Black", "hex": "#1E1E1E" },
+      { "handle": "grey", "name": "Grey", "hex": "#8A8D91" },
+      { "handle": "cream", "name": "Cream", "hex": "#EADFC8" },
+      { "handle": "beige", "name": "Beige", "hex": "#CDB99A" },
+      { "handle": "brown", "name": "Brown", "hex": "#6B4A35" },
+      { "handle": "blue", "name": "Blue", "hex": "#2F4A6D" },
+      { "handle": "green", "name": "Green", "hex": "#2F5D46" },
+      { "handle": "red", "name": "Red", "hex": "#8E2F2B" }
+    ],
+    "finish": [
+      { "handle": "polished", "name": "Polished" },
+      { "handle": "honed", "name": "Honed" },
+      { "handle": "leathered", "name": "Leathered" },
+      { "handle": "sparkle", "name": "Sparkle" }
+    ]
+  },
+  "products": [
+    { "title": "Calacatta Classico Quartz", "material": "Quartz", "colour": "white", "finish": "polished", "price_per_m2": 381.5 },
+    { "title": "Calacatta Portofino Quartz", "material": "Quartz", "colour": "white", "finish": "polished", "price_per_m2": 307.25 },
+    { "title": "Bianco Arizona Quartz", "material": "Quartz", "colour": "white", "finish": "honed", "price_per_m2": 287.0 },
+    { "title": "Orkney White Quartz", "material": "Quartz", "colour": "white", "finish": "polished", "price_per_m2": 368.0 },
+    { "title": "Crema Ice Quartz", "material": "Quartz", "colour": "cream", "finish": "polished", "price_per_m2": 179.0 },
+    { "title": "Kasha Quartz", "material": "Quartz", "colour": "beige", "finish": "honed", "price_per_m2": 287.0 },
+    { "title": "Nero Marquina Quartz", "material": "Quartz", "colour": "black", "finish": "polished", "price_per_m2": 349.1 },
+    { "title": "Iron Grey Quartz", "material": "Quartz", "colour": "grey", "finish": "honed", "price_per_m2": 314.0 },
+    { "title": "Grigio Sparkle Light Quartz", "material": "Quartz", "colour": "grey", "finish": "sparkle", "price_per_m2": 255.95 },
+    { "title": "Grigio Sparkle Dark Quartz", "material": "Quartz", "colour": "black", "finish": "sparkle", "price_per_m2": 269.45 },
+    { "title": "Stellar Blue Quartz", "material": "Quartz", "colour": "blue", "finish": "sparkle", "price_per_m2": 298.0 },
+    { "title": "Concrete Taupe Quartz", "material": "Quartz", "colour": "beige", "finish": "honed", "price_per_m2": 241.0 },
+    { "title": "Black Fusion Granite", "material": "Granite", "colour": "black", "finish": "leathered", "price_per_m2": 388.79 },
+    { "title": "Steel Grey Granite", "material": "Granite", "colour": "grey", "finish": "polished", "price_per_m2": 281.32 },
+    { "title": "Blue Pearl Granite", "material": "Granite", "colour": "blue", "finish": "polished", "price_per_m2": 370.36 },
+    { "title": "Viscount White Granite", "material": "Granite", "colour": "white", "finish": "polished", "price_per_m2": 296.32 },
+    { "title": "Fantasy Brown Granite", "material": "Granite", "colour": "brown", "finish": "leathered", "price_per_m2": 311.3 },
+    { "title": "Carrara Campanili Marble", "material": "Marble", "colour": "white", "finish": "honed", "price_per_m2": 354.5 },
+    { "title": "Nero Marquina Marble", "material": "Marble", "colour": "black", "finish": "polished", "price_per_m2": 422.0 },
+    { "title": "Verde Guatemala Marble", "material": "Marble", "colour": "green", "finish": "polished", "price_per_m2": 292.4 },
+    { "title": "Rosso Levanto Marble", "material": "Marble", "colour": "red", "finish": "polished", "price_per_m2": 422.0 },
+    { "title": "Taj Mahal Quartzite", "material": "Quartzite", "colour": "cream", "finish": "leathered", "price_per_m2": 498.0 }
+  ],
+  "collections": [
+    { "title": "Quartz Worktops", "handle": "quartz-worktops", "rule": "product_type = Quartz" },
+    { "title": "Granite Worktops", "handle": "granite-worktops", "rule": "product_type = Granite" },
+    { "title": "Marble Worktops", "handle": "marble-worktops", "rule": "product_type = Marble" }
+  ]
+}
