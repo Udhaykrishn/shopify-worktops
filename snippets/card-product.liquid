@@ -11,6 +11,7 @@
   @param {boolean} [lazy_load] - Whether to lazy-load product images. Defaults to `true`.
   @param {boolean} [skip_styles] - Whether to omit the component styles. Defaults to `false`.
   @param {string} [quick_add] - The quick-add behavior. Allowed values are `none`, `standard`, and `bulk`. Defaults to `none`.
+  @param {boolean} [show_quote_button] - Whether to show a "Request a quote" button that opens the quote modal. Defaults to `false`.
   @param {string} [section_id] - The section ID used to namespace card and quick-add element IDs.
   @param {boolean} [horizontal_class] - Whether to add the `card--horizontal` class. Defaults to `false`.
   @param {boolean} [horizontal_quick_add] - Whether to use horizontal quick-add styles. Defaults to `false`.
@@ -316,6 +317,22 @@
             </div>
           </div>
           {% assign product_form_id = 'quick-add-' | append: section_id | append: card_product.id %}
+          {%- if show_quote_button -%}
+            <div class="card__quote">
+              <a
+                href="{{ card_product.url }}#quote"
+                id="{{ product_form_id }}-quote"
+                class="card__quote-button button button--secondary button--full-width"
+                aria-haspopup="dialog"
+                aria-labelledby="{{ product_form_id }}-quote title-{{ section_id }}-{{ card_product.id }}"
+                data-quote-open
+                data-product-title="{{ card_product.title | escape }}"
+                data-product-url="{{ request.origin }}{{ card_product.url }}"
+              >
+                {{- 'sections.quote_form.open_short' | t -}}
+              </a>
+            </div>
+          {%- endif -%}
           {% if card_is_worktop == 'true' %}
             {%- if quick_add == 'standard' or quick_add == 'bulk' -%}
               <div class="quick-add">

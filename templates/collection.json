@@ -27,10 +27,21 @@
         "padding_top": 36,
         "padding_bottom": 36
       }
+    },
+    "quote_modal": {
+      "type": "quote-modal",
+      "settings": {
+        "heading": "Request a free quote",
+        "intro": "<p>Tell us your sizes, cut-outs and postcode and we'll send a free, no-obligation quote.</p>",
+        "show_phone": true,
+        "show_timeframe": true,
+        "color_scheme": "scheme-2"
+      }
     }
   },
   "order": [
     "banner",
-    "product-grid"
+    "product-grid",
+    "quote_modal"
   ]
 }

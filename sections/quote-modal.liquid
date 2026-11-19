@@ -1,0 +1,100 @@
+{%- comment -%}
+  Quote request form in a modal dialog. Add it once to any template; every element with
+  `data-quote-open` on the page opens it (the product page button block, the configurator link and the
+  "Request a quote" buttons on product cards).
+  On a product page the form is tied to that product and follows the worktop configurator. Elsewhere the
+  product comes from the button that opened it (`data-product-title` / `data-product-url`).
+  The dialog also opens on page load after the form is posted, so the success or error message is seen,
+  and when the URL hash is `#quote` (the no-JavaScript fallback link on product cards).
+{%- endcomment -%}
+{{ 'quote-form.css' | asset_url | stylesheet_tag }}
+{{ 'quote-modal.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'quote-form.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'quote-modal.js' | asset_url }}" defer="defer"></script>
+
+{%- assign heading_id = 'QuoteModalHeading-' | append: section.id -%}
+<quote-modal class="quote-modal" id="quote">
+  <dialog
+    class="quote-modal__dialog color-{{ section.settings.color_scheme }} gradient"
+    aria-labelledby="{{ heading_id }}"
+  >
+    <div class="quote-modal__panel">
+      <div class="quote-modal__header">
+        <h2 class="quote-modal__heading h2" id="{{ heading_id }}">
+          {%- if section.settings.heading != blank -%}
+            {{- section.settings.heading | escape -}}
+          {%- else -%}
+            {{- 'sections.quote_form.heading' | t -}}
+          {%- endif -%}
+        </h2>
+        <button
+          type="button"
+          class="quote-modal__close"
+          aria-label="{{ 'accessibility.close' | t }}"
+          data-quote-modal-close
+        >
+          <span class="svg-wrapper">{{- 'icon-close.svg' | inline_asset_content -}}</span>
+        </button>
+      </div>
+      {%- if section.settings.intro != blank -%}
+        <div class="quote-modal__intro rte">{{ section.settings.intro }}</div>
+      {%- endif -%}
+      {%- render 'quote-form',
+        section_id: section.id,
+        product: product,
+        variant: product.selected_or_first_available_variant,
+        show_phone: section.settings.show_phone,
+        show_timeframe: section.settings.show_timeframe,
+        dynamic_product: true
+      -%}
+    </div>
+  </dialog>
+</quote-modal>
+
+{% schema %}
+{
+  "name": "t:sections.quote-modal.name",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:sections.quote-modal.settings.paragraph.content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "default": "t:sections.quote-modal.settings.heading.default",
+      "label": "t:sections.quote-modal.settings.heading.label"
+    },
+    {
+      "type": "richtext",
+      "id": "intro",
+      "default": "t:sections.quote-modal.settings.intro.default",
+      "label": "t:sections.quote-modal.settings.intro.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_phone",
+      "default": true,
+      "label": "t:sections.quote-modal.settings.show_phone.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_timeframe",
+      "default": true,
+      "label": "t:sections.quote-modal.settings.show_timeframe.label"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-2"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.quote-modal.presets.name"
+    }
+  ]
+}
+{% endschema %}

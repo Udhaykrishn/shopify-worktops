@@ -491,6 +491,26 @@
                       {{ block.settings.text | default: block.settings.page.title | escape }}
                     </button>
                   </modal-opener>
+                {%- when 'quote_button' -%}
+                  {%- liquid
+                    assign quote_label = block.settings.label
+                    if quote_label == blank
+                      assign quote_label = 'sections.quote_form.open' | t
+                    endif
+                  -%}
+                  <div class="product__quote" {{ block.shopify_attributes }}>
+                    <a
+                      href="#quote"
+                      class="product__quote-button button button--secondary button--full-width"
+                      aria-haspopup="dialog"
+                      data-quote-open
+                    >
+                      {{- quote_label | escape -}}
+                    </a>
+                    {%- if block.settings.note != blank -%}
+                      <p class="product__quote-note caption">{{ block.settings.note | escape }}</p>
+                    {%- endif -%}
+                  </div>
                 {%- when 'share' -%}
                   {% liquid
                     assign share_url = product.selected_variant.url | default: product.url | prepend: request.origin
@@ -957,6 +977,28 @@
           "id": "show_quote_link",
           "default": true,
           "label": "t:sections.main-product.blocks.worktop_configurator.settings.show_quote_link.label"
+        }
+      ]
+    },
+    {
+      "type": "quote_button",
+      "name": "t:sections.main-product.blocks.quote_button.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "t:sections.main-product.blocks.quote_button.settings.paragraph.content"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "t:sections.main-product.blocks.quote_button.settings.label.label"
+        },
+        {
+          "type": "text",
+          "id": "note",
+          "default": "t:sections.main-product.blocks.quote_button.settings.note.default",
+          "label": "t:sections.main-product.blocks.quote_button.settings.note.label"
         }
       ]
     },

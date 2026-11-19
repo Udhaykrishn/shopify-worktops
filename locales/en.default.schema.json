@@ -390,6 +390,22 @@
     }
   },
   "sections": {
+    "quote-modal": {
+      "name": "Quote request modal",
+      "settings": {
+        "paragraph": {
+          "content": "The form opens in a pop-up from quote buttons on this page. It doesn't show on the page by itself."
+        },
+        "heading": { "label": "Heading", "default": "Request a free quote" },
+        "intro": {
+          "label": "Introduction",
+          "default": "<p>Need an unusual shape, cut-outs or a bigger run? Tell us about your project and we'll send a free, no-obligation quote.</p>"
+        },
+        "show_phone": { "label": "Show phone field" },
+        "show_timeframe": { "label": "Show timeframe field" }
+      },
+      "presets": { "name": "Quote request modal" }
+    },
     "home_hero": {
       "name": "Hero",
       "settings": {
@@ -1860,6 +1876,9 @@
     "main-collection-product-grid": {
       "name": "Product grid",
       "settings": {
+        "show_quote_button": {
+          "label": "Show request a quote button on product cards"
+        },
         "products_per_page": {
           "label": "Products per page"
         },
@@ -2010,6 +2029,22 @@
     "main-product": {
       "name": "Product information",
       "blocks": {
+        "quote_button": {
+          "name": "Quote request button",
+          "settings": {
+            "paragraph": {
+              "content": "Opens the quote request form in a modal. Add the Quote request modal section to this template."
+            },
+            "label": {
+              "label": "Button label",
+              "info": "Leave blank to use \"Request a free quote\"."
+            },
+            "note": {
+              "label": "Note under the button",
+              "default": "Cut-outs, unusual shapes or a whole kitchen? We'll price it for free."
+            }
+          }
+        },
         "worktop_configurator": {
           "name": "Worktop configurator",
           "settings": {

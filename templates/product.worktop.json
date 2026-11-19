@@ -16,7 +16,7 @@
         "worktop_configurator": {
           "type": "worktop_configurator",
           "settings": {
-            "show_quote_link": true
+            "show_quote_link": false
           }
         },
         "buy_buttons": {
@@ -72,6 +72,13 @@
             "icon": "leaf",
             "content": "<p>Wipe with warm soapy water and a soft cloth. Avoid harsh chemicals and use a trivet under hot pans. Quartz worktops come with a 15-year manufacturer warranty.</p>"
           }
+        },
+        "quote_button": {
+          "type": "quote_button",
+          "settings": {
+            "label": "",
+            "note": "Cut-outs, unusual shapes or a whole kitchen? We'll price it for free."
+          }
         }
       },
       "block_order": [
@@ -80,6 +87,7 @@
         "variant_picker",
         "worktop_configurator",
         "buy_buttons",
+        "quote_button",
         "trust",
         "description",
         "tab_specs",
@@ -102,18 +110,6 @@
         "padding_bottom": 12
       }
     },
-    "quote": {
-      "type": "quote-request",
-      "settings": {
-        "heading": "Request a free quote",
-        "intro": "<p>Need an unusual shape, cut-outs or a bigger run? Tell us about your project and we'll send a free, no-obligation quote.</p>",
-        "show_phone": true,
-        "show_timeframe": true,
-        "color_scheme": "scheme-2",
-        "padding_top": 36,
-        "padding_bottom": 36
-      }
-    },
     "related-products": {
       "type": "related-products",
       "settings": {
@@ -131,11 +127,21 @@
         "padding_top": 36,
         "padding_bottom": 28
       }
+    },
+    "quote_modal": {
+      "type": "quote-modal",
+      "settings": {
+        "heading": "Request a free quote",
+        "intro": "<p>Need an unusual shape, cut-outs or a bigger run? Tell us about your project and we'll send a free, no-obligation quote.</p>",
+        "show_phone": true,
+        "show_timeframe": true,
+        "color_scheme": "scheme-2"
+      }
     }
   },
   "order": [
     "main",
-    "quote",
-    "related-products"
+    "related-products",
+    "quote_modal"
   ]
 }

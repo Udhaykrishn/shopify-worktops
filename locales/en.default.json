@@ -321,7 +321,9 @@
       "error_required": "This field is required.",
       "error_email": "Enter a valid email address, for example name@example.com.",
       "error_postcode": "Enter a valid UK postcode, for example SW1A 1AA.",
-      "honeypot_label": "Leave this field empty"
+      "honeypot_label": "Leave this field empty",
+      "open": "Request a free quote",
+      "open_short": "Request a quote"
     },
     "announcements": {
       "previous_announcement": "Previous announcement",

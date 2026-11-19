@@ -152,7 +152,9 @@
 
   {%- if show_quote_link -%}
     <p class="worktop-config__quote">
-      <a href="#quote-request" class="link underlined-link">{{ 'products.worktop.quote_link' | t }}</a>
+      <a href="#quote" class="link underlined-link" aria-haspopup="dialog" data-quote-open>
+        {{- 'products.worktop.quote_link' | t -}}
+      </a>
     </p>
   {%- endif -%}
 </worktop-configurator>

@@ -22,7 +22,13 @@
 
   // Fields Shopify may not echo back through the `form` object after a server-side error. They are kept
   // for this tab only and only until the next page load.
-  const RESTORE_FIELDS = ['contact[phone]', 'contact[postcode]', 'contact[timeframe]'];
+  const RESTORE_FIELDS = [
+    'contact[phone]',
+    'contact[postcode]',
+    'contact[timeframe]',
+    'contact[product]',
+    'contact[product_url]',
+  ];
   const storageKey = (formId) => `quote-form:${formId}`;
 
   const readStored = (formId) => {
@@ -69,6 +75,12 @@
 
         const stored = readStored(this.form.id);
         if (stored && this.querySelector('[data-quote-errors]')) this.restoreFields(stored);
+
+        const productField = this.querySelector('[data-quote-field="product"]');
+        if (productField && productField.value) {
+          const urlField = this.querySelector('[data-quote-field="product_url"]');
+          this.setProduct({ title: productField.value, url: urlField ? urlField.value : '' });
+        }
 
         const message = this.querySelector('[data-quote-success], [data-quote-errors]');
         if (message) {
@@ -146,6 +158,21 @@
       setField(name, value) {
         const input = this.querySelector(`[data-quote-field="${name}"]`);
         if (input) input.value = value ?? '';
+      }
+
+      /**
+       * Fills the product fields in dynamic-product mode (quote modal on collection pages).
+       * Values come from data attributes on the trigger and are only ever set as text.
+       */
+      setProduct({ title, url }) {
+        this.setField('product', title);
+        this.setField('product_url', url);
+
+        const label = this.querySelector('[data-quote-product-label]');
+        if (label) label.textContent = title ?? '';
+
+        const selection = this.querySelector('[data-quote-selection]');
+        if (selection) selection.hidden = !title;
       }
 
       onWorktopChange({ detail }) {
