@@ -11,7 +11,7 @@
   {% render 'worktop-unit-price', price: card_product.price, show_from: card_product.price_varies %}
 {%- enddoc -%}
 {%- liquid
-  assign unit_mm2 = settings.worktop_area_unit_mm2 | default: 10000 | at_least: 1
+  assign unit_mm2 = settings.worktop_area_unit_mm2 | plus: 0 | round | at_least: 1
   assign price_per_m2 = price | times: 1000000 | divided_by: unit_mm2
   if settings.currency_code_enabled
     assign money_per_m2 = price_per_m2 | money_with_currency

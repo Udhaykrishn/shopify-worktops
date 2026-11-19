@@ -90,6 +90,7 @@
                     assign worktop_parts = worktop_line | strip | split: ' '
                     assign worktop_status = worktop_parts | first
                     assign worktop_expected = worktop_parts | last | plus: 0
+                    assign worktop_line_number = item.index | plus: 1
                   -%}
                   <tr
                     class="cart-item {% if item.parent_relationship.parent != null %}cart-item__nested-line{% endif %}"
@@ -198,7 +199,7 @@
                       {%- if worktop_status != 'none' -%}
                         {% render 'worktop-cart-line',
                           item: item,
-                          line: forloop.index,
+                          line: worktop_line_number,
                           context: 'page',
                           status: worktop_status,
                           expected_quantity: worktop_expected,
@@ -325,7 +326,7 @@
                             {%- else -%}
                               {% render 'worktop-cart-line',
                                 item: item,
-                                line: forloop.index,
+                                line: worktop_line_number,
                                 context: 'page',
                                 status: worktop_status,
                                 expected_quantity: worktop_expected,

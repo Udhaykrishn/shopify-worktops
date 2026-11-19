@@ -101,3 +101,7 @@
     grid-template-columns: 1fr 1fr;
   }
 }
+
+.quote-form__message[hidden] {
+  display: none;
+}

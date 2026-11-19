@@ -128,6 +128,7 @@
                         assign worktop_parts = worktop_line | strip | split: ' '
                         assign worktop_status = worktop_parts | first
                         assign worktop_expected = worktop_parts | last | plus: 0
+                        assign worktop_line_number = item.index | plus: 1
                       -%}
                       <tr
                         id="CartDrawer-Item-{{ item.index | plus: 1 }}"
@@ -253,7 +254,7 @@
                           {%- if worktop_status != 'none' -%}
                             {% render 'worktop-cart-line',
                               item: item,
-                              line: forloop.index,
+                              line: worktop_line_number,
                               context: 'drawer',
                               status: worktop_status,
                               expected_quantity: worktop_expected,
@@ -378,7 +379,7 @@
                                 {%- else -%}
                                   {% render 'worktop-cart-line',
                                     item: item,
-                                    line: forloop.index,
+                                    line: worktop_line_number,
                                     context: 'drawer',
                                     status: worktop_status,
                                     expected_quantity: worktop_expected,

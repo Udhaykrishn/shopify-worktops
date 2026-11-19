@@ -157,8 +157,14 @@
       "name": "Worktops",
       "settings": {
         "worktop_area_unit_mm2": {
-          "label": "Area pricing unit (mm²)",
-          "info": "Area that one unit of quantity buys. Must match how worktop variants are priced. 10000 mm² = 0.01 m²."
+          "label": "Area pricing unit",
+          "info": "The area one unit of quantity buys. Must match how worktop variant prices are set: a variant priced per 0.01 m² needs 0.01 m².",
+          "options__1": {
+            "label": "0.01 m² (10,000 mm²)"
+          },
+          "options__2": {
+            "label": "0.1 m² (100,000 mm²)"
+          }
         }
       }
     },

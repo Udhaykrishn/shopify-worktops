@@ -31,6 +31,8 @@
   {{ 'quantity-popover.css' | asset_url | stylesheet_tag }}
 {%- endunless -%}
 {%- if card_product and card_product != empty -%}
+  {%- capture card_is_worktop -%}{%- render 'worktop-is-worktop', product: card_product -%}{%- endcapture -%}
+  {%- assign card_is_worktop = card_is_worktop | strip -%}
   {%- liquid
     assign ratio = 1
     if card_product.featured_media and media_aspect_ratio == 'portrait'
@@ -208,7 +210,7 @@
                 </p>
               {%- endif -%}
 
-              {%- if card_product.metafields.custom.min_length_mm != blank -%}
+              {%- if card_is_worktop == 'true' -%}
                 {% render 'worktop-unit-price', price: card_product.price, show_from: card_product.price_varies %}
               {%- else -%}
                 {% render 'price', product: card_product, price_class: '', show_compare_at_price: true %}
@@ -297,7 +299,20 @@
             </div>
           </div>
           {% assign product_form_id = 'quick-add-' | append: section_id | append: card_product.id %}
-          {% if quick_add == 'standard' %}
+          {% if card_is_worktop == 'true' %}
+            {%- if quick_add == 'standard' or quick_add == 'bulk' -%}
+              <div class="quick-add">
+                <a
+                  href="{{ card_product.url }}"
+                  id="{{ product_form_id }}-choose-size"
+                  class="quick-add__submit button button--full-width button--secondary{% if horizontal_quick_add %} card--horizontal__quick-add{% endif %}"
+                  aria-labelledby="{{ product_form_id }}-choose-size title-{{ section_id }}-{{ card_product.id }}"
+                >
+                  {{- 'products.worktop.choose_size' | t -}}
+                </a>
+              </div>
+            {%- endif -%}
+          {% elsif quick_add == 'standard' %}
             <div class="quick-add no-js-hidden">
               {%- liquid
                 assign qty_rules = false

@@ -1,0 +1,30 @@
+{%- doc -%}
+  Prints a worktop product's size limits as "<configured> <min_length> <max_length> <min_width> <max_width>".
+  Each metafield value is coerced to a number (`| plus: 0`). The limits are only `configured` (`true`) when
+  all four are above 0 and each minimum is no larger than its maximum. Anything else prints `false`, and
+  callers must fail closed: the configurator blocks add to cart and the cart flags the line as out of range.
+  The maximums are the slab limits.
+
+  @param {product} product - The worktop product.
+
+  @example
+  {%- capture worktop_limits -%}{%- render 'worktop-limits', product: product -%}{%- endcapture -%}
+  {%- assign limit_parts = worktop_limits | strip | split: ' ' -%}
+  {%- assign limits_configured = limit_parts[0] -%}
+{%- enddoc -%}
+{%- liquid
+  assign limits = product.metafields.custom
+  assign min_length = limits.min_length_mm.value | plus: 0
+  assign max_length = limits.max_length_mm.value | plus: 0
+  assign min_width = limits.min_width_mm.value | plus: 0
+  assign max_width = limits.max_width_mm.value | plus: 0
+
+  assign configured = true
+  if min_length <= 0 or max_length <= 0 or min_width <= 0 or max_width <= 0
+    assign configured = false
+  elsif min_length > max_length or min_width > max_width
+    assign configured = false
+  endif
+
+  echo configured | append: ' ' | append: min_length | append: ' ' | append: max_length | append: ' ' | append: min_width | append: ' ' | append: max_width
+-%}

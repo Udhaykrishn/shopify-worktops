@@ -1,7 +1,8 @@
 {%- doc -%}
   Renders the cut-to-size worktop configurator inside Dawn's main-product section.
   Length and width are entered in whole millimetres and checked against the product metafields
-  `custom.min_length_mm`, `custom.max_length_mm`, `custom.min_width_mm` and `custom.max_width_mm`.
+  `custom.min_length_mm`, `custom.max_length_mm`, `custom.min_width_mm` and `custom.max_width_mm`
+  (read through `worktop-limits`). Missing or misconfigured limits show a notice and block add to cart.
 
   The quantity sent to the cart is the number of area units the size needs (theme setting
   `worktop_area_unit_mm2`), so Shopify charges variant price × quantity. The size is stored as line item
@@ -17,18 +18,19 @@
   @example
   {% render 'worktop-configurator', product: product, product_form_id: product_form_id, section_id: section.id, show_quote_link: block.settings.show_quote_link, block: block %}
 {%- enddoc -%}
+{%- capture worktop_limits -%}{%- render 'worktop-limits', product: product -%}{%- endcapture -%}
 {%- liquid
   assign variant = product.selected_or_first_available_variant
-  assign limits = product.metafields.custom
-  assign min_length = limits.min_length_mm.value
-  assign max_length = limits.max_length_mm.value
-  assign min_width = limits.min_width_mm.value
-  assign max_width = limits.max_width_mm.value
-  assign unit_mm2 = settings.worktop_area_unit_mm2 | default: 10000 | at_least: 1
+  assign limit_parts = worktop_limits | strip | split: ' '
+  assign min_length = limit_parts[1] | plus: 0
+  assign max_length = limit_parts[2] | plus: 0
+  assign min_width = limit_parts[3] | plus: 0
+  assign max_width = limit_parts[4] | plus: 0
+  assign unit_mm2 = settings.worktop_area_unit_mm2 | plus: 0 | round | at_least: 1
 
-  assign configured = true
-  if min_length == blank or max_length == blank or min_width == blank or max_width == blank
-    assign configured = false
+  assign configured = false
+  if limit_parts[0] == 'true'
+    assign configured = true
   endif
 
   assign length_id = 'WorktopLength-' | append: section_id

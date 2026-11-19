@@ -73,6 +73,8 @@
             this.config = null;
             return;
           }
+          // Same coercion as Liquid: settings.worktop_area_unit_mm2 | plus: 0 | round | at_least: 1.
+          this.config.unitMm2 = Math.max(1, Math.round(Number(this.config.unitMm2) || 0));
 
           this.inputs = {
             length: this.querySelector('[data-worktop-input="length"]'),

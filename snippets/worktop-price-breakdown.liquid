@@ -10,7 +10,7 @@
   {% render 'worktop-price-breakdown', variant: product.selected_or_first_available_variant, section_id: section.id %}
 {%- enddoc -%}
 {%- liquid
-  assign unit_mm2 = settings.worktop_area_unit_mm2 | default: 10000 | at_least: 1
+  assign unit_mm2 = settings.worktop_area_unit_mm2 | plus: 0 | round | at_least: 1
   assign price_per_m2 = variant.price | times: 1000000 | divided_by: unit_mm2
   assign step_m2 = unit_mm2 | divided_by: 1000000.0
   assign placeholder = 'products.worktop.placeholder' | t

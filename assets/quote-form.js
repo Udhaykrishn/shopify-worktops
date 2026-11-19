@@ -20,6 +20,29 @@
     return null;
   };
 
+  // Fields Shopify may not echo back through the `form` object after a server-side error. They are kept
+  // for this tab only and only until the next page load.
+  const RESTORE_FIELDS = ['contact[phone]', 'contact[postcode]', 'contact[timeframe]'];
+  const storageKey = (formId) => `quote-form:${formId}`;
+
+  const readStored = (formId) => {
+    try {
+      const raw = window.sessionStorage.getItem(storageKey(formId));
+      window.sessionStorage.removeItem(storageKey(formId));
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const writeStored = (formId, values) => {
+    try {
+      window.sessionStorage.setItem(storageKey(formId), JSON.stringify(values));
+    } catch {
+      // Storage can be unavailable (private mode, blocked site data). Refilling is only a convenience.
+    }
+  };
+
   if (customElements.get('quote-form')) return;
 
   customElements.define(
@@ -44,6 +67,9 @@
         this.requiredInputs.forEach((input) => input.addEventListener('blur', this.onBlur));
         document.addEventListener('worktop:change', this.onWorktopChange);
 
+        const stored = readStored(this.form.id);
+        if (stored && this.querySelector('[data-quote-errors]')) this.restoreFields(stored);
+
         const message = this.querySelector('[data-quote-success], [data-quote-errors]');
         if (message) {
           message.scrollIntoView({ block: 'center' });
@@ -60,9 +86,16 @@
       }
 
       onSubmit(event) {
+        const blockedMessage = this.querySelector('[data-quote-blocked]');
+        if (blockedMessage) blockedMessage.hidden = true;
+
         const honeypot = this.form.querySelector('[data-quote-honeypot]');
         if (honeypot && !isBlank(honeypot.value)) {
           event.preventDefault();
+          if (blockedMessage) {
+            blockedMessage.hidden = false;
+            blockedMessage.focus();
+          }
           return;
         }
 
@@ -70,7 +103,32 @@
         if (invalid.length) {
           event.preventDefault();
           invalid[0].focus();
+          return;
         }
+
+        writeStored(this.form.id, this.collectFields());
+      }
+
+      collectFields() {
+        const values = {};
+        RESTORE_FIELDS.forEach((name) => {
+          const field = this.form.elements.namedItem(name);
+          if (field && 'value' in field) values[name] = field.value;
+        });
+        return values;
+      }
+
+      restoreFields(values) {
+        RESTORE_FIELDS.forEach((name) => {
+          const field = this.form.elements.namedItem(name);
+          if (!field || !('value' in field) || typeof values[name] !== 'string') return;
+          if (field.tagName === 'SELECT') {
+            const option = Array.from(field.options).find((item) => item.value === values[name]);
+            if (option) field.value = values[name];
+          } else if (isBlank(field.value)) {
+            field.value = values[name];
+          }
+        });
       }
 
       showError(input) {

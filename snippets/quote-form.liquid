@@ -2,7 +2,9 @@
   Renders the "Request a free quote" form as a Shopify contact form. Submissions go to the store's
   contact email, with the product, variant and size in hidden fields. On product pages,
   `quote-form.js` keeps those hidden fields in step with the worktop configurator.
-  A honeypot field catches simple bots, and Shopify's contact-form spam protection also applies.
+  A honeypot field (`contact[hp_website_leave_blank]`, so staff can filter emails where it is filled) catches
+  simple bots, and Shopify's contact-form spam protection also applies. After a server-side error the
+  fields are refilled from the `form` object.
 
   @param {string} section_id - The section ID, used to build unique element IDs.
   @param {product} [product] - The product the quote is for. Leave blank on non-product pages.
@@ -24,6 +26,10 @@
 
 <quote-form class="quote-form" data-product-id="{{ product.id }}">
   {%- form 'contact', id: form_id, class: 'quote-form__form', novalidate: 'novalidate' -%}
+    <p class="quote-form__message form__message" role="alert" tabindex="-1" data-quote-blocked hidden>
+      {{- 'icon-error.svg' | inline_asset_content -}}
+      {{ 'sections.quote_form.error_generic' | t }}
+    </p>
     {%- if form.posted_successfully? -%}
       <p class="quote-form__message form__message" tabindex="-1" data-quote-success>
         {{- 'icon-success.svg' | inline_asset_content -}}
@@ -156,6 +162,7 @@
             autocomplete="postal-code"
             autocapitalize="characters"
             maxlength="10"
+            value="{{ form.postcode | escape }}"
             placeholder="{{ 'sections.quote_form.postcode' | t }}"
             required
             aria-required="true"
@@ -178,18 +185,23 @@
           <label class="form__label" for="{{ form_id }}-timeframe">{{ 'sections.quote_form.timeframe' | t }}</label>
           <div class="select">
             <select class="select__select" id="{{ form_id }}-timeframe" name="contact[timeframe]">
-              <option value="{{ 'sections.quote_form.timeframe_asap' | t }}">
-                {{- 'sections.quote_form.timeframe_asap' | t -}}
-              </option>
-              <option value="{{ 'sections.quote_form.timeframe_month' | t }}">
-                {{- 'sections.quote_form.timeframe_month' | t -}}
-              </option>
-              <option value="{{ 'sections.quote_form.timeframe_quarter' | t }}">
-                {{- 'sections.quote_form.timeframe_quarter' | t -}}
-              </option>
-              <option value="{{ 'sections.quote_form.timeframe_browsing' | t }}">
-                {{- 'sections.quote_form.timeframe_browsing' | t -}}
-              </option>
+              {%- liquid
+                assign timeframe_asap = 'sections.quote_form.timeframe_asap' | t
+                assign timeframe_month = 'sections.quote_form.timeframe_month' | t
+                assign timeframe_quarter = 'sections.quote_form.timeframe_quarter' | t
+                assign timeframe_browsing = 'sections.quote_form.timeframe_browsing' | t
+                assign timeframe_labels = timeframe_asap | append: '|' | append: timeframe_month | append: '|' | append: timeframe_quarter | append: '|' | append: timeframe_browsing | split: '|'
+              -%}
+              {%- for timeframe_label in timeframe_labels -%}
+                <option
+                  value="{{ timeframe_label | escape }}"
+                  {% if form.timeframe == timeframe_label %}
+                    selected
+                  {% endif %}
+                >
+                  {{- timeframe_label -}}
+                </option>
+              {%- endfor -%}
             </select>
             <span class="svg-wrapper">
               {{- 'icon-caret.svg' | inline_asset_content -}}
@@ -221,7 +233,7 @@
       <input
         type="text"
         id="{{ form_id }}-hp"
-        name="contact[hp_website]"
+        name="contact[hp_website_leave_blank]"
         value=""
         tabindex="-1"
         autocomplete="off"

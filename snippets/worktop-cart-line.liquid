@@ -40,7 +40,6 @@
   else
     assign quantity_id = 'Quantity-' | append: line
   endif
-  assign locked_id = 'WorktopLocked-' | append: context | append: '-' | append: line
 -%}
 
 {%- if part == 'quantity' -%}
@@ -54,18 +53,18 @@
       data-quantity-variant-id="{{ item.variant.id }}"
       data-quantity-line-key="{{ item.key }}"
     >
-    <span class="worktop-line__pieces" aria-describedby="{{ locked_id }}">
+    <span class="worktop-line__pieces">
       {%- if pieces > 0 -%}
         {{- 'sections.cart.worktop.pieces' | t: count: pieces -}}
       {%- else -%}
         {{- 'products.worktop.placeholder' | t -}}
       {%- endif -%}
     </span>
-    <span class="visually-hidden" id="{{ locked_id }}">{{ 'sections.cart.worktop.quantity_locked' | t }}</span>
+    <span class="visually-hidden">{{ 'sections.cart.worktop.quantity_locked' | t }}</span>
   </div>
 {%- else -%}
   {%- liquid
-    assign unit_mm2 = settings.worktop_area_unit_mm2 | default: 10000 | at_least: 1
+    assign unit_mm2 = settings.worktop_area_unit_mm2 | plus: 0 | round | at_least: 1
     assign price_per_m2 = item.final_price | times: 1000000 | divided_by: unit_mm2 | money
   -%}
   <div class="worktop-line">

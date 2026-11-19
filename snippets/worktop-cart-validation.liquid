@@ -6,7 +6,7 @@
   page's checkout button and express checkout buttons in step after Dawn re-renders the line items.
   `output: 'flag'` prints `blocked` when checkout must be disabled, for use with `capture`.
 
-  @param {string} context - Where it is rendered: `page` or `drawer`. Used for unique IDs and line links.
+  @param {string} context - Where it is rendered: `page`, `drawer` or `notification`. Used for unique IDs and line links.
   @param {string} [output] - `summary` or `flag`. Defaults to `summary`.
 
   @example
@@ -35,7 +35,7 @@
     {%- if error_key != blank -%}
       {%- assign blocked = true -%}
       <li>
-        <a href="#WorktopLineError-{{ context }}-{{ forloop.index }}" class="link">
+        <a href="#WorktopLineError-{{ context }}-{{ item.index | plus: 1 }}" class="link">
           {{- item.product.title | escape }}: {{ error_key | t -}}
         </a>
       </li>
@@ -67,6 +67,6 @@
     </div>
   {%- endif -%}
   {%- if context == 'page' -%}
-    <worktop-cart-guard data-blocked="{{ blocked }}" hidden></worktop-cart-guard>
+    <worktop-cart-guard data-blocked="{{ blocked }}" data-context="page" hidden></worktop-cart-guard>
   {%- endif -%}
 {%- endif -%}

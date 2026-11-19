@@ -8,6 +8,15 @@
   {% render 'cart-notification', color_scheme: section.settings.color_scheme, desktop_menu_type: section.settings.menu_type_desktop %}
 {% enddoc %}
 
+<script src="{{ 'worktop-cart-guard.js' | asset_url }}" defer="defer"></script>
+{%- capture worktop_cart_flag -%}
+  {%- render 'worktop-cart-validation', context: 'notification', output: 'flag' -%}
+{%- endcapture -%}
+{%- assign worktop_blocked = false -%}
+{%- if worktop_cart_flag contains 'blocked' -%}
+  {%- assign worktop_blocked = true -%}
+{%- endif -%}
+
 <cart-notification>
   <div class="cart-notification-wrapper{% if desktop_menu_type != 'drawer' %} page-width{% endif %}">
     <div
@@ -42,8 +51,21 @@
         >
           {{- 'general.cart.view_empty_cart' | t -}}
         </a>
-        <form action="{{ routes.cart_url }}" method="post" id="cart-notification-form">
-          <button class="button button--primary button--full-width" name="checkout">
+        <form
+          action="{{ routes.cart_url }}"
+          method="post"
+          id="cart-notification-form"
+          {% if worktop_blocked %}
+            hidden
+          {% endif %}
+        >
+          <button
+            class="button button--primary button--full-width"
+            name="checkout"
+            {% if worktop_blocked %}
+              disabled
+            {% endif %}
+          >
             {{ 'sections.cart.checkout' | t }}
           </button>
         </form>

@@ -1,0 +1,22 @@
+{%- doc -%}
+  Prints `true` when a product is a cut-to-size worktop, otherwise `false`.
+  This is the single test the cart, product cards, buy buttons and configurator share. A product is a worktop
+  when it uses the `worktop` product template or has any of the four size-limit metafields, so a worktop
+  with missing or broken limits is still treated as a worktop and fails closed.
+
+  @param {product} product - The product to test.
+
+  @example
+  {%- capture is_worktop -%}{%- render 'worktop-is-worktop', product: product -%}{%- endcapture -%}
+  {%- if is_worktop == 'true' -%}…{%- endif -%}
+{%- enddoc -%}
+{%- liquid
+  assign limits = product.metafields.custom
+  assign is_worktop = false
+  if product.template_suffix == 'worktop'
+    assign is_worktop = true
+  elsif limits.min_length_mm != blank or limits.max_length_mm != blank or limits.min_width_mm != blank or limits.max_width_mm != blank
+    assign is_worktop = true
+  endif
+  echo is_worktop
+-%}

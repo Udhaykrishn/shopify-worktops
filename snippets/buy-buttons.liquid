@@ -13,14 +13,17 @@
 {% enddoc %}
 <div {{ block.shopify_attributes }}>
   {%- if product != blank -%}
+    {%- capture is_worktop -%}{%- render 'worktop-is-worktop', product: product -%}{%- endcapture -%}
+    {%- assign is_worktop = is_worktop | strip -%}
     {%- liquid
       assign gift_card_recipient_feature_active = false
       if block.settings.show_gift_card_recipient and product.gift_card?
         assign gift_card_recipient_feature_active = true
       endif
 
+      # Worktops never get "Buy it now": it skips the cart, where the size is re-checked.
       assign show_dynamic_checkout = false
-      if block.settings.show_dynamic_checkout and gift_card_recipient_feature_active == false
+      if block.settings.show_dynamic_checkout and gift_card_recipient_feature_active == false and is_worktop != 'true'
         assign show_dynamic_checkout = true
       endif
     -%}
