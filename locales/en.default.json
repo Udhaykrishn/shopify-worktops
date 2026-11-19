@@ -126,7 +126,9 @@
       "invalid_submit": "Check the highlighted sizes before adding to cart.",
       "quote_link": "Need a different size or shape? Request a free quote",
       "choose_size": "Choose size",
-      "texture_caption": "Illustrative texture. Natural stone varies, so ask for a free sample to see the real slab."
+      "texture_caption": "Illustrative texture. Natural stone varies, so ask for a free sample to see the real slab.",
+      "colour_label": "Colour:",
+      "colours_count": "Available in {{ count }} colours"
     },
     "product": {
       "add_to_cart": "Add to cart",

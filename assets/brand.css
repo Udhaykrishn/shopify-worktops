@@ -125,3 +125,102 @@ h2,
   margin: 0.8rem 0 0;
   color: rgba(var(--color-foreground), 0.7);
 }
+
+/* Colour swatches (snippets/worktop-colour-swatches.liquid): each swatch links to that colour's product. */
+.colour-swatches__heading {
+  margin: 0 0 1rem;
+}
+
+.colour-swatches__current {
+  margin-left: 0.4rem;
+  font-weight: 600;
+  color: rgb(var(--color-foreground));
+}
+
+.colour-swatches__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  margin: 0;
+}
+
+.colour-swatches__swatch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  color: rgb(var(--color-foreground));
+  text-decoration: none;
+}
+
+.colour-swatches__chip {
+  position: relative;
+  display: block;
+  width: 5.2rem;
+  height: 5.2rem;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 0 0.1rem rgba(var(--color-foreground), 0.15);
+  transition: box-shadow var(--duration-short) ease, transform var(--duration-short) ease;
+}
+
+.colour-swatches__name {
+  max-width: 7.2rem;
+  font-size: 1.3rem;
+  line-height: 1.3;
+  text-align: center;
+  color: rgba(var(--color-foreground), 0.75);
+}
+
+.colour-swatches__swatch:hover .colour-swatches__chip {
+  transform: scale(1.05);
+}
+
+.colour-swatches__swatch[aria-current='true'] .colour-swatches__chip {
+  box-shadow: 0 0 0 0.2rem rgb(var(--color-background)), 0 0 0 0.4rem rgb(var(--color-foreground));
+}
+
+.colour-swatches__swatch[aria-current='true'] .colour-swatches__name {
+  font-weight: 600;
+  color: rgb(var(--color-foreground));
+}
+
+.colour-swatches__swatch:focus-visible {
+  outline: none;
+}
+
+.colour-swatches__swatch:focus-visible .colour-swatches__chip {
+  box-shadow: 0 0 0 0.2rem rgb(var(--color-background)), 0 0 0 0.4rem rgb(var(--color-foreground)),
+    0 0 0 0.7rem rgba(var(--color-foreground), 0.25);
+}
+
+.product__colour-swatches {
+  margin: 1.6rem 0 0.4rem;
+}
+
+/* Compact swatches on product cards sit above the card's full-size link overlay. */
+.colour-swatches--compact {
+  position: relative;
+  z-index: 1;
+  margin: 0.6rem 0 0.4rem;
+}
+
+.colour-swatches--compact .colour-swatches__list {
+  gap: 0.2rem;
+}
+
+.colour-swatches--compact .colour-swatches__swatch {
+  padding: 0.3rem;
+}
+
+.colour-swatches--compact .colour-swatches__chip {
+  width: 2.2rem;
+  height: 2.2rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .colour-swatches__chip {
+    transition: none;
+  }
+}
+

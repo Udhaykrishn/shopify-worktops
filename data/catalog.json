@@ -2,7 +2,8 @@
   "_notes": [
     "Demo catalogue modelled on the public work-tops.com range (materials, naming style, price levels). Not copied data.",
     "Pricing: price_per_m2 is the customer-facing price. Shopify variant price = price per 0.01 m2 (price_per_m2 / 100), and cart quantity = ceil(area_m2 / 0.01). See README, Task 1.",
-    "Variant modifiers: 30mm = x1.25, Bullnose = +15/m2, Bevelled = +10/m2, Straight = +0."
+    "Variant modifiers: 30mm = x1.25, Bullnose = +15/m2, Bevelled = +10/m2, Straight = +0.",
+    "Colour families: metaobject `stone_family` (name, products: list.product_reference) and product metafield `custom.stone_family` (metaobject_reference) drive the colour swatches. Each colour stays its own product, so colour filtering keeps working."
   ],
   "pricing": {
     "unit_m2": 0.01,
@@ -51,7 +52,19 @@
     { "title": "Nero Marquina Marble", "material": "Marble", "colour": "black", "finish": "polished", "price_per_m2": 422.0 },
     { "title": "Verde Guatemala Marble", "material": "Marble", "colour": "green", "finish": "polished", "price_per_m2": 292.4 },
     { "title": "Rosso Levanto Marble", "material": "Marble", "colour": "red", "finish": "polished", "price_per_m2": 422.0 },
-    { "title": "Taj Mahal Quartzite", "material": "Quartzite", "colour": "cream", "finish": "leathered", "price_per_m2": 498.0 }
+    { "title": "Taj Mahal Quartzite", "material": "Quartzite", "colour": "cream", "finish": "leathered", "price_per_m2": 498.0 },
+    { "title": "Calacatta Gold Quartz", "material": "Quartz", "colour": "cream", "finish": "polished", "price_per_m2": 395.0 },
+    { "title": "Grigio Sparkle White Quartz", "material": "Quartz", "colour": "white", "finish": "sparkle", "price_per_m2": 262.0 },
+    { "title": "Stellar Black Quartz", "material": "Quartz", "colour": "black", "finish": "sparkle", "price_per_m2": 305.0 },
+    { "title": "Stellar White Quartz", "material": "Quartz", "colour": "white", "finish": "sparkle", "price_per_m2": 289.0 },
+    { "title": "Concrete Grey Quartz", "material": "Quartz", "colour": "grey", "finish": "honed", "price_per_m2": 241.0 },
+    { "title": "Concrete White Quartz", "material": "Quartz", "colour": "white", "finish": "honed", "price_per_m2": 252.0 }
+  ],
+  "stone_families": [
+    { "handle": "calacatta", "name": "Calacatta", "products": ["Calacatta Classico Quartz", "Calacatta Portofino Quartz", "Calacatta Gold Quartz"] },
+    { "handle": "grigio-sparkle", "name": "Grigio Sparkle", "products": ["Grigio Sparkle White Quartz", "Grigio Sparkle Light Quartz", "Grigio Sparkle Dark Quartz"] },
+    { "handle": "stellar", "name": "Stellar", "products": ["Stellar White Quartz", "Stellar Blue Quartz", "Stellar Black Quartz"] },
+    { "handle": "concrete", "name": "Concrete", "products": ["Concrete White Quartz", "Concrete Grey Quartz", "Concrete Taupe Quartz"] }
   ],
   "collections": [
     { "title": "Quartz Worktops", "handle": "quartz-worktops", "rule": "product_type = Quartz" },

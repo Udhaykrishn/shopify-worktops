@@ -491,6 +491,10 @@
                       {{ block.settings.text | default: block.settings.page.title | escape }}
                     </button>
                   </modal-opener>
+                {%- when 'colour_swatches' -%}
+                  <div class="product__colour-swatches" {{ block.shopify_attributes }}>
+                    {% render 'worktop-colour-swatches', product: product, uid: block.id, style: 'full' %}
+                  </div>
                 {%- when 'quote_button' -%}
                   {%- liquid
                     assign quote_label = block.settings.label
@@ -977,6 +981,17 @@
           "id": "show_quote_link",
           "default": true,
           "label": "t:sections.main-product.blocks.worktop_configurator.settings.show_quote_link.label"
+        }
+      ]
+    },
+    {
+      "type": "colour_swatches",
+      "name": "t:sections.main-product.blocks.colour_swatches.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "t:sections.main-product.blocks.colour_swatches.settings.paragraph.content"
         }
       ]
     },

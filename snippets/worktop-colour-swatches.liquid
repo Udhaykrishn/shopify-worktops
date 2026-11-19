@@ -1,0 +1,76 @@
+{%- doc -%}
+  Renders the other colours of a stone family as swatch links. Each colour is its own product, grouped by
+  the `stone_family` metaobject (fields `name` and `products`) that the product references through the
+  `custom.stone_family` metafield. Renders nothing when the product has no family or is alone in it.
+
+  Swatch labels are the product title without the family name and product type, so in the "Stellar"
+  family "Stellar Black Quartz" becomes "Black". The current product is marked with `aria-current`.
+
+  @param {product} product - The product being shown.
+  @param {string} uid - A unique ID on the page, used for element and SVG filter IDs.
+  @param {string} [style] - `full` (product page: heading, large swatches with labels) or `compact`
+    (product cards: small swatches, labels for screen readers only). Defaults to `full`.
+  @param {number} [limit] - Maximum number of swatches. Defaults to 6.
+
+  @example
+  {% render 'worktop-colour-swatches', product: product, uid: section.id, style: 'full' %}
+{%- enddoc -%}
+{%- liquid
+  assign family = product.metafields.custom.stone_family.value
+  assign family_products = family.products.value
+  assign swatch_style = style | default: 'full'
+  assign swatch_limit = limit | default: 6
+  assign family_type = product.type
+-%}
+{%- if family != blank and family_products.size > 1 -%}
+  {%- liquid
+    assign current_label = product.title | remove: family.name | remove: family_type | strip
+    assign heading_id = 'ColourSwatches-' | append: uid
+  -%}
+  <div class="colour-swatches colour-swatches--{{ swatch_style }}">
+    {%- if swatch_style == 'full' -%}
+      <p class="colour-swatches__heading form__label" id="{{ heading_id }}">
+        {{- 'products.worktop.colour_label' | t -}}
+        <span class="colour-swatches__current">{{ current_label | escape }}</span>
+      </p>
+    {%- else -%}
+      <p class="visually-hidden" id="{{ heading_id }}">
+        {{- 'products.worktop.colours_count' | t: count: family_products.size -}}
+      </p>
+    {%- endif -%}
+    <ul class="colour-swatches__list list-unstyled" role="list" aria-labelledby="{{ heading_id }}">
+      {%- for sibling in family_products limit: swatch_limit -%}
+        {%- liquid
+          if sibling == blank
+            continue
+          endif
+          assign sibling_label = sibling.title | remove: family.name | remove: sibling.type | strip
+          assign swatch_uid = uid | append: '-' | append: sibling.id
+          assign is_current = false
+          if sibling.id == product.id
+            assign is_current = true
+          endif
+        -%}
+        <li class="colour-swatches__item">
+          <a
+            href="{{ sibling.url }}"
+            class="colour-swatches__swatch"
+            {% if is_current %}
+              aria-current="true"
+            {% endif %}
+            {% if swatch_style == 'compact' %}
+              aria-label="{{ sibling.title | escape }}"
+            {% endif %}
+          >
+            <span class="colour-swatches__chip">
+              {% render 'worktop-stone-art', product: sibling, uid: swatch_uid %}
+            </span>
+            {%- if swatch_style == 'full' -%}
+              <span class="colour-swatches__name">{{ sibling_label | escape }}</span>
+            {%- endif -%}
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+{%- endif -%}

@@ -2029,6 +2029,14 @@
     "main-product": {
       "name": "Product information",
       "blocks": {
+        "colour_swatches": {
+          "name": "Colour swatches",
+          "settings": {
+            "paragraph": {
+              "content": "Shows the other colours of this stone. Set the product's Stone family metafield to group colours."
+            }
+          }
+        },
         "quote_button": {
           "name": "Quote request button",
           "settings": {

@@ -229,6 +229,8 @@
               {%- endif -%}
 
               {%- if card_is_worktop == 'true' -%}
+                {%- assign swatch_uid = section_id | append: '-card-' | append: card_product.id -%}
+                {% render 'worktop-colour-swatches', product: card_product, uid: swatch_uid, style: 'compact', limit: 5 %}
                 {% render 'worktop-unit-price', price: card_product.price, show_from: card_product.price_varies %}
               {%- else -%}
                 {% render 'price', product: card_product, price_class: '', show_compare_at_price: true %}

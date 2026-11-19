@@ -79,11 +79,16 @@
             "label": "",
             "note": "Cut-outs, unusual shapes or a whole kitchen? We'll price it for free."
           }
+        },
+        "colour_swatches": {
+          "type": "colour_swatches",
+          "settings": {}
         }
       },
       "block_order": [
         "eyebrow",
         "title",
+        "colour_swatches",
         "variant_picker",
         "worktop_configurator",
         "buy_buttons",
