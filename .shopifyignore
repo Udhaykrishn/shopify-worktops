@@ -1,0 +1,6 @@
+docs/
+data/
+.claude/
+.github/
+.mcp.json
+*.md

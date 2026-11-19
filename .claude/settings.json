@@ -1,0 +1,26 @@
+{
+  "enabledMcpjsonServers": ["shopify-dev-mcp"],
+  "permissions": {
+    "allow": [
+      "mcp__shopify-dev-mcp__learn_shopify_api",
+      "mcp__shopify-dev-mcp__search_docs_chunks",
+      "mcp__shopify-dev-mcp__validate_theme",
+      "mcp__shopify-dev-mcp__validate",
+      "Bash(shopify theme check:*)",
+      "Bash(shopify theme dev:*)",
+      "Bash(shopify theme list:*)",
+      "Bash(shopify version)",
+      "Bash(npx prettier --check:*)",
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)"
+    ],
+    "ask": [
+      "Bash(shopify theme push:*)",
+      "Bash(shopify theme publish:*)",
+      "Bash(shopify theme delete:*)",
+      "Bash(git push:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}
