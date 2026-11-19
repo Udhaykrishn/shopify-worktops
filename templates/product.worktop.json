@@ -29,9 +29,63 @@
         },
         "description": {
           "type": "description"
+        },
+        "eyebrow": {
+          "type": "text",
+          "settings": {
+            "text": "Cut-to-size worktop",
+            "text_style": "uppercase"
+          }
+        },
+        "trust": {
+          "type": "icon-with-text",
+          "settings": {
+            "layout": "horizontal",
+            "icon_1": "ruler",
+            "heading_1": "Cut to the millimetre",
+            "icon_2": "truck",
+            "heading_2": "UK mainland delivery",
+            "icon_3": "check_mark",
+            "heading_3": "Free samples"
+          }
+        },
+        "tab_specs": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Specification",
+            "icon": "clipboard",
+            "content": "<ul><li>Thickness: 20mm or 30mm</li><li>Edges: straight, bullnose or bevelled, polished on all exposed sides</li><li>Maximum slab size per piece is shown under the size fields</li><li>Sink, hob and tap cut-outs available through a free quote</li></ul>"
+          }
+        },
+        "tab_delivery": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Delivery and lead time",
+            "icon": "truck",
+            "content": "<p>Every worktop is cut to order. Most orders are ready in 7 to 10 working days and delivered by a two-person crew to UK mainland addresses. We call to book a delivery slot.</p>"
+          }
+        },
+        "tab_care": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Care and warranty",
+            "icon": "leaf",
+            "content": "<p>Wipe with warm soapy water and a soft cloth. Avoid harsh chemicals and use a trivet under hot pans. Quartz worktops come with a 15-year manufacturer warranty.</p>"
+          }
         }
       },
-      "block_order": ["title", "variant_picker", "worktop_configurator", "buy_buttons", "description"],
+      "block_order": [
+        "eyebrow",
+        "title",
+        "variant_picker",
+        "worktop_configurator",
+        "buy_buttons",
+        "trust",
+        "description",
+        "tab_specs",
+        "tab_delivery",
+        "tab_care"
+      ],
       "settings": {
         "enable_sticky_info": false,
         "color_scheme": "scheme-1",
@@ -44,7 +98,7 @@
         "mobile_thumbnails": "hide",
         "hide_variants": true,
         "enable_video_looping": false,
-        "padding_top": 36,
+        "padding_top": 24,
         "padding_bottom": 12
       }
     },
@@ -79,5 +133,9 @@
       }
     }
   },
-  "order": ["main", "quote", "related-products"]
+  "order": [
+    "main",
+    "quote",
+    "related-products"
+  ]
 }

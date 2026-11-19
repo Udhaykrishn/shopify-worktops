@@ -1,6 +1,6 @@
 .worktop-config {
   display: block;
-  margin: 1.5rem 0 2.5rem;
+  margin: 2rem 0 2.4rem;
 }
 
 .worktop-config__fieldset {
@@ -12,13 +12,13 @@
 
 .worktop-config__legend {
   padding: 0;
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
 }
 
 .worktop-config__fields {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 0.5rem 1.5rem;
+  gap: 0.4rem 1.6rem;
 }
 
 .worktop-config__field .field {
@@ -26,16 +26,39 @@
 }
 
 .worktop-config__input {
+  height: 5.6rem;
+  padding-right: 5rem;
+  font-size: 1.7rem;
   font-variant-numeric: tabular-nums;
+  background-color: rgb(var(--color-background));
+}
+
+.worktop-config__unit {
+  position: absolute;
+  top: 50%;
+  right: 1.6rem;
+  transform: translateY(-50%);
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: rgba(var(--color-foreground), 0.55);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--duration-short) ease;
+}
+
+/* The floating label already says "(mm)" while the field is empty; show the unit once a value is typed. */
+.worktop-config__input:not(:placeholder-shown) ~ .worktop-config__unit {
+  opacity: 1;
 }
 
 .worktop-config__input[aria-invalid='true'] {
-  box-shadow: 0 0 0 calc(var(--inputs-border-width) + 1px) rgba(var(--color-foreground), 1);
+  box-shadow: 0 0 0 calc(var(--inputs-border-width) + 1px) rgb(var(--color-foreground));
 }
 
 .worktop-config__hint {
   margin: 0.6rem 0 0;
-  color: rgba(var(--color-foreground), 0.75);
+  color: rgba(var(--color-foreground), 0.7);
 }
 
 .worktop-config__error {
@@ -61,15 +84,23 @@
   color: rgb(var(--color-background));
 }
 
+/* Price breakdown: a quiet summary card that ends on a large total. */
 .worktop-breakdown {
-  margin-top: 1rem;
-  padding: 1.5rem;
-  border: var(--inputs-border-width) solid rgba(var(--color-foreground), var(--inputs-border-opacity));
-  border-radius: var(--inputs-radius);
+  margin-top: 0.4rem;
+  padding: 2rem 2.2rem 1.8rem;
+  border-radius: var(--text-boxes-radius);
+  background-color: rgba(var(--color-foreground), 0.04);
+  border: 0.1rem solid rgba(var(--color-foreground), 0.08);
 }
 
 .worktop-breakdown__heading {
-  margin: 0 0 1rem;
+  margin: 0 0 0.8rem;
+  font-family: var(--font-body-family);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(var(--color-foreground), 0.7);
 }
 
 .worktop-breakdown__rows {
@@ -81,8 +112,8 @@
   justify-content: space-between;
   align-items: baseline;
   gap: 1rem;
-  padding: 0.6rem 0;
-  border-top: 0.1rem solid rgba(var(--color-foreground), 0.08);
+  padding: 0.8rem 0;
+  border-top: 0.1rem dashed rgba(var(--color-foreground), 0.14);
 }
 
 .worktop-breakdown__row:first-child {
@@ -100,21 +131,29 @@
   min-width: 10ch;
 }
 
-.worktop-breakdown__row--total dt,
-.worktop-breakdown__total {
+.worktop-breakdown__row--total {
+  margin-top: 0.4rem;
+  padding-top: 1.2rem;
+  border-top: 0.1rem solid rgba(var(--color-foreground), 0.2);
+}
+
+.worktop-breakdown__row--total dt {
   color: rgb(var(--color-foreground));
-  font-size: 1.8rem;
   font-weight: 600;
 }
 
 .worktop-breakdown__total {
   display: inline-block;
-  min-height: 1.5em;
+  min-height: 1.3em;
+  font-family: var(--font-heading-family);
+  font-size: 2.8rem;
+  line-height: 1.2;
+  color: rgb(var(--color-foreground));
 }
 
 .worktop-breakdown__note {
-  margin: 1rem 0 0;
-  color: rgba(var(--color-foreground), 0.75);
+  margin: 1.2rem 0 0;
+  color: rgba(var(--color-foreground), 0.7);
 }
 
 .worktop-config__status {
@@ -125,13 +164,13 @@
 
 .worktop-config__notice {
   margin: 0;
-  padding: 1.5rem;
-  border: var(--inputs-border-width) solid rgba(var(--color-foreground), var(--inputs-border-opacity));
-  border-radius: var(--inputs-radius);
+  padding: 1.6rem;
+  border: 0.1rem solid rgba(var(--color-foreground), 0.2);
+  border-radius: var(--text-boxes-radius);
 }
 
 .worktop-config__quote {
-  margin: 1.5rem 0 0;
+  margin: 0.4rem 0 0;
 }
 
 @media screen and (min-width: 750px) {

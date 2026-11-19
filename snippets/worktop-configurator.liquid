@@ -88,6 +88,7 @@
                 data-max="{{ max }}"
               >
               <label class="field__label" for="{{ input_id }}">{{ label }}</label>
+              <span class="worktop-config__unit" aria-hidden="true">mm</span>
             </div>
             <p class="worktop-config__hint caption" id="{{ input_id }}-hint">
               {{ 'products.worktop.range_hint' | t: min: min, max: max }}
