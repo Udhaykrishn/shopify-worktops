@@ -1,0 +1,68 @@
+{%- doc -%}
+  Re-checks a cart line for a cut-to-size worktop on the server and prints "<status> <expected_quantity>".
+
+  A line is a worktop line when its product has the `custom.min_length_mm` metafield.
+  Statuses: `none` (not a worktop), `ok`, `missing` (no size), `invalid` (not whole millimetres),
+  `out_of_range` (outside the product's metafield limits), `qty_mismatch` (quantity is not a whole multiple
+  of the quantity the size needs), `area_mismatch` (the Area property does not match the size).
+  A missing maximum limit fails closed (every size is out of range).
+  Several pieces of the same size merge into one line, so whole multiples are valid.
+
+  The property keys must match the hidden inputs in `worktop-configurator.liquid`.
+
+  @param {object} item - The cart line item to check.
+
+  @example
+  {%- capture worktop_line -%}{%- render 'worktop-line-status', item: item -%}{%- endcapture -%}
+  {%- assign worktop_status = worktop_line | split: ' ' | first -%}
+{%- enddoc -%}
+{%- liquid
+  assign status = 'none'
+  assign expected_quantity = 0
+  assign limits = item.product.metafields.custom
+
+  if limits.min_length_mm != blank
+    assign status = 'ok'
+    assign unit_mm2 = settings.worktop_area_unit_mm2 | default: 10000 | at_least: 1
+    assign min_length = limits.min_length_mm.value | default: 1
+    assign max_length = limits.max_length_mm.value | default: 0
+    assign min_width = limits.min_width_mm.value | default: 1
+    assign max_width = limits.max_width_mm.value | default: 0
+
+    assign length_raw = item.properties['Length (mm)'] | append: '' | strip
+    assign width_raw = item.properties['Width (mm)'] | append: '' | strip
+    assign area_raw = item.properties['Area (m²)'] | append: '' | strip
+
+    if length_raw == blank or width_raw == blank or area_raw == blank
+      assign status = 'missing'
+    else
+      assign length_mm = length_raw | plus: 0 | floor
+      assign width_mm = width_raw | plus: 0 | floor
+      assign length_check = length_mm | append: ''
+      assign width_check = width_mm | append: ''
+
+      if length_check != length_raw or width_check != width_raw
+        assign status = 'invalid'
+      elsif length_mm < 1 or width_mm < 1
+        assign status = 'out_of_range'
+      elsif length_mm < min_length or length_mm > max_length
+        assign status = 'out_of_range'
+      elsif width_mm < min_width or width_mm > max_width
+        assign status = 'out_of_range'
+      else
+        assign expected_quantity = length_mm | times: width_mm | plus: unit_mm2 | minus: 1 | divided_by: unit_mm2
+        assign quantity_remainder = item.quantity | modulo: expected_quantity
+        assign expected_area_hundredths = expected_quantity | times: unit_mm2 | plus: 5000 | divided_by: 10000
+        assign area_hundredths = area_raw | times: 100 | round
+
+        if item.quantity < expected_quantity or quantity_remainder != 0
+          assign status = 'qty_mismatch'
+        elsif area_hundredths != expected_area_hundredths
+          assign status = 'area_mismatch'
+        endif
+      endif
+    endif
+  endif
+
+  echo status | append: ' ' | append: expected_quantity
+-%}

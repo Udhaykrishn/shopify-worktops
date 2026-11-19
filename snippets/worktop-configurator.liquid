@@ -1,0 +1,155 @@
+{%- doc -%}
+  Renders the cut-to-size worktop configurator inside Dawn's main-product section.
+  Length and width are entered in whole millimetres and checked against the product metafields
+  `custom.min_length_mm`, `custom.max_length_mm`, `custom.min_width_mm` and `custom.max_width_mm`.
+
+  The quantity sent to the cart is the number of area units the size needs (theme setting
+  `worktop_area_unit_mm2`), so Shopify charges variant price × quantity. The size is stored as line item
+  properties. These hidden inputs join Dawn's product form through the `form` attribute.
+  The property keys must match `worktop-line-status.liquid`, which re-checks every line in the cart.
+
+  @param {product} product - The worktop product.
+  @param {string} product_form_id - The ID of Dawn's product form (`product-form-<section id>`).
+  @param {string} section_id - The section ID, used to build unique element IDs.
+  @param {boolean} [show_quote_link] - Whether to link to the quote request form. Defaults to false.
+  @param {block} [block] - The configurator block, for theme editor attributes.
+
+  @example
+  {% render 'worktop-configurator', product: product, product_form_id: product_form_id, section_id: section.id, show_quote_link: block.settings.show_quote_link, block: block %}
+{%- enddoc -%}
+{%- liquid
+  assign variant = product.selected_or_first_available_variant
+  assign limits = product.metafields.custom
+  assign min_length = limits.min_length_mm.value
+  assign max_length = limits.max_length_mm.value
+  assign min_width = limits.min_width_mm.value
+  assign max_width = limits.max_width_mm.value
+  assign unit_mm2 = settings.worktop_area_unit_mm2 | default: 10000 | at_least: 1
+
+  assign configured = true
+  if min_length == blank or max_length == blank or min_width == blank or max_width == blank
+    assign configured = false
+  endif
+
+  assign length_id = 'WorktopLength-' | append: section_id
+  assign width_id = 'WorktopWidth-' | append: section_id
+-%}
+
+{{ 'worktop-configurator.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'worktop-configurator.js' | asset_url }}" defer="defer"></script>
+
+<worktop-configurator
+  class="worktop-config"
+  data-section-id="{{ section_id }}"
+  data-form-id="{{ product_form_id }}"
+  data-product-id="{{ product.id }}"
+  {% if configured == false %}
+    data-disabled
+  {% endif %}
+  {{ block.shopify_attributes }}
+>
+  {%- if configured -%}
+    <fieldset class="worktop-config__fieldset">
+      <legend class="worktop-config__legend form__label">{{ 'products.worktop.dimensions_legend' | t }}</legend>
+      <div class="worktop-config__fields">
+        {%- for dimension in (1..2) -%}
+          {%- liquid
+            if forloop.first
+              assign key = 'length'
+              assign input_id = length_id
+              assign label = 'products.worktop.length_label' | t
+              assign min = min_length
+              assign max = max_length
+            else
+              assign key = 'width'
+              assign input_id = width_id
+              assign label = 'products.worktop.width_label' | t
+              assign min = min_width
+              assign max = max_width
+            endif
+          -%}
+          <div class="worktop-config__field">
+            <div class="field">
+              <input
+                class="field__input worktop-config__input"
+                type="text"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                autocomplete="off"
+                id="{{ input_id }}"
+                placeholder="{{ label }}"
+                required
+                aria-required="true"
+                aria-describedby="{{ input_id }}-hint {{ input_id }}-error"
+                data-worktop-input="{{ key }}"
+                data-min="{{ min }}"
+                data-max="{{ max }}"
+              >
+              <label class="field__label" for="{{ input_id }}">{{ label }}</label>
+            </div>
+            <p class="worktop-config__hint caption" id="{{ input_id }}-hint">
+              {{ 'products.worktop.range_hint' | t: min: min, max: max }}
+            </p>
+            <p class="worktop-config__error" id="{{ input_id }}-error" data-worktop-error="{{ key }}"></p>
+          </div>
+        {%- endfor -%}
+      </div>
+    </fieldset>
+
+    <input type="hidden" name="quantity" value="" form="{{ product_form_id }}" data-worktop-field="quantity">
+    <input
+      type="hidden"
+      name="properties[Length (mm)]"
+      value=""
+      form="{{ product_form_id }}"
+      data-worktop-field="length"
+    >
+    <input
+      type="hidden"
+      name="properties[Width (mm)]"
+      value=""
+      form="{{ product_form_id }}"
+      data-worktop-field="width"
+    >
+    <input
+      type="hidden"
+      name="properties[Area (m²)]"
+      value=""
+      form="{{ product_form_id }}"
+      data-worktop-field="area"
+    >
+
+    {% render 'worktop-price-breakdown', variant: variant, section_id: section_id %}
+
+    <p class="worktop-config__status" role="alert" data-worktop-status></p>
+
+    <script type="application/json" data-worktop-config>
+      {
+        "variantId": {{ variant.id | json }},
+        "variantTitle": {{ variant.title | json }},
+        "unitPrice": {{ variant.price | default: 0 | json }},
+        "available": {{ variant.available | default: false | json }},
+        "unitMm2": {{ unit_mm2 | json }},
+        "currency": {{ cart.currency.iso_code | json }},
+        "locale": {{ request.locale.iso_code | json }},
+        "strings": {
+          "required": {{ 'products.worktop.error_required' | t | json }},
+          "integer": {{ 'products.worktop.error_integer' | t | json }},
+          "min": {{ 'products.worktop.error_min' | t: min: '[min]' | json }},
+          "max": {{ 'products.worktop.error_max' | t: max: '[max]' | json }},
+          "area": {{ 'products.worktop.area_value' | t: area: '[area]' | json }},
+          "placeholder": {{ 'products.worktop.placeholder' | t | json }},
+          "invalidSubmit": {{ 'products.worktop.invalid_submit' | t | json }}
+        }
+      }
+    </script>
+  {%- else -%}
+    <p class="worktop-config__notice">{{ 'products.worktop.not_configured' | t }}</p>
+  {%- endif -%}
+
+  {%- if show_quote_link -%}
+    <p class="worktop-config__quote">
+      <a href="#quote-request" class="link underlined-link">{{ 'products.worktop.quote_link' | t }}</a>
+    </p>
+  {%- endif -%}
+</worktop-configurator>

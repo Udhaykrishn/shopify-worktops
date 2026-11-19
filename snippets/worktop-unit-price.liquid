@@ -1,0 +1,29 @@
+{%- doc -%}
+  Renders a worktop price per square metre. Worktop variants are priced per area unit
+  (theme setting `worktop_area_unit_mm2`, 10,000 mm² = 0.01 m² by default), so the price per m²
+  is the variant price × 1,000,000 ÷ unit.
+
+  @param {number} price - The price of one area unit, in the currency's subunit (for example `variant.price` or `product.price`).
+  @param {boolean} [show_from] - Whether to prefix the price with "From", for products whose variant prices vary. Defaults to false.
+  @param {string} [class] - An extra class for the wrapper.
+
+  @example
+  {% render 'worktop-unit-price', price: card_product.price, show_from: card_product.price_varies %}
+{%- enddoc -%}
+{%- liquid
+  assign unit_mm2 = settings.worktop_area_unit_mm2 | default: 10000 | at_least: 1
+  assign price_per_m2 = price | times: 1000000 | divided_by: unit_mm2
+  if settings.currency_code_enabled
+    assign money_per_m2 = price_per_m2 | money_with_currency
+  else
+    assign money_per_m2 = price_per_m2 | money
+  endif
+  assign label = 'products.worktop.per_m2' | t: price: money_per_m2
+  if show_from
+    assign label = 'products.product.price.from_price_html' | t: price: label
+  endif
+-%}
+<div class="price worktop-unit-price{% if class != blank %} {{ class }}{% endif %}">
+  <span class="visually-hidden">{{ 'products.product.price.regular_price' | t }}</span>
+  <span class="price-item price-item--regular">{{ label }}</span>
+</div>

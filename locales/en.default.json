@@ -105,6 +105,27 @@
     "collection_title": "Your collection's name"
   },
   "products": {
+    "worktop": {
+      "dimensions_legend": "Cut size",
+      "length_label": "Length (mm)",
+      "width_label": "Width (mm)",
+      "range_hint": "Between {{ min }} and {{ max }} mm",
+      "error_required": "Enter a size in millimetres.",
+      "error_integer": "Use whole millimetres, digits only.",
+      "error_min": "Must be at least {{ min }} mm.",
+      "error_max": "Must be no more than {{ max }} mm.",
+      "not_configured": "Online sizing isn't available for this product yet. Request a free quote instead.",
+      "breakdown_heading": "Price breakdown",
+      "price_per_m2": "Price per m²",
+      "area": "Billed area",
+      "total": "Total",
+      "placeholder": "–",
+      "area_value": "{{ area }} m²",
+      "per_m2": "{{ price }} per m²",
+      "billed_note": "Area is charged in steps of {{ step }} m². Your cart re-checks the price before checkout.",
+      "invalid_submit": "Check the highlighted sizes before adding to cart.",
+      "quote_link": "Need a different size or shape? Request a free quote"
+    },
     "product": {
       "add_to_cart": "Add to cart",
       "choose_options": "Choose options",
@@ -271,6 +292,31 @@
     }
   },
   "sections": {
+    "quote_form": {
+      "heading": "Request a free quote",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone (optional)",
+      "postcode": "Postcode",
+      "postcode_hint": "UK postcode, for example SW1A 1AA",
+      "timeframe": "When do you need it?",
+      "timeframe_asap": "As soon as possible",
+      "timeframe_month": "Within a month",
+      "timeframe_quarter": "In 1 to 3 months",
+      "timeframe_browsing": "Just researching",
+      "notes": "Project notes (optional)",
+      "notes_hint": "Sink or hob cut-outs, upstands, splashbacks, access or anything else we should know.",
+      "selection": "Your selection",
+      "selection_size": "{{ length }} × {{ width }} mm ({{ area }} m²)",
+      "required": "Required",
+      "submit": "Request my free quote",
+      "success": "Thanks, your quote request has been sent. We'll be in touch soon.",
+      "error_heading": "Please check the following:",
+      "error_required": "This field is required.",
+      "error_email": "Enter a valid email address, for example name@example.com.",
+      "error_postcode": "Enter a valid UK postcode, for example SW1A 1AA.",
+      "honeypot_label": "Leave this field empty"
+    },
     "announcements": {
       "previous_announcement": "Previous announcement",
       "next_announcement": "Next announcement",
@@ -288,6 +334,23 @@
       }
     },
     "cart": {
+      "worktop": {
+        "size": "Cut size",
+        "size_value": "{{ length }} × {{ width }} mm",
+        "area": "Area",
+        "unit_price": "{{ price }} per m²",
+        "pieces": {
+          "one": "{{ count }} piece",
+          "other": "{{ count }} pieces"
+        },
+        "quantity_locked": "Quantity is set by the cut size. To change the size, remove this item and add it again.",
+        "error_missing": "The cut size is missing. Remove this item and add it again from the product page.",
+        "error_invalid": "The cut size isn't a whole number of millimetres. Remove this item and add it again.",
+        "error_range": "The cut size is outside the sizes we can cut. Remove this item and add it again.",
+        "error_mismatch": "The quantity or area doesn't match the cut size. Remove this item and add it again.",
+        "summary_heading": "Some items need attention before checkout",
+        "checkout_blocked": "Checkout is unavailable until the items marked in your cart are fixed."
+      },
       "title": "Your cart",
       "caption": "Cart items",
       "remove_title": "Remove {{ title }}",

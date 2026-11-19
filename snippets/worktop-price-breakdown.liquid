@@ -1,0 +1,54 @@
+{%- doc -%}
+  Renders the server-side price breakdown for the worktop configurator: price per m², billed area and total.
+  The price per m² comes from the variant. Area and total show a placeholder until
+  `worktop-configurator.js` fills them in, and every row is always rendered so nothing shifts.
+
+  @param {variant} variant - The selected variant. Its price is the price of one area unit.
+  @param {string} section_id - The section ID, used to build unique element IDs.
+
+  @example
+  {% render 'worktop-price-breakdown', variant: product.selected_or_first_available_variant, section_id: section.id %}
+{%- enddoc -%}
+{%- liquid
+  assign unit_mm2 = settings.worktop_area_unit_mm2 | default: 10000 | at_least: 1
+  assign price_per_m2 = variant.price | times: 1000000 | divided_by: unit_mm2
+  assign step_m2 = unit_mm2 | divided_by: 1000000.0
+  assign placeholder = 'products.worktop.placeholder' | t
+-%}
+<div class="worktop-breakdown" id="WorktopBreakdown-{{ section_id }}">
+  <h2 class="worktop-breakdown__heading h5">{{ 'products.worktop.breakdown_heading' | t }}</h2>
+  <dl class="worktop-breakdown__rows">
+    <div class="worktop-breakdown__row">
+      <dt>{{ 'products.worktop.price_per_m2' | t }}</dt>
+      <dd data-worktop-per-m2>
+        {%- if variant -%}
+          {{- price_per_m2 | money -}}
+        {%- else -%}
+          {{- placeholder -}}
+        {%- endif -%}
+      </dd>
+    </div>
+    <div class="worktop-breakdown__row">
+      <dt>{{ 'products.worktop.area' | t }}</dt>
+      <dd data-worktop-area>{{ placeholder }}</dd>
+    </div>
+    <div class="worktop-breakdown__row worktop-breakdown__row--total">
+      <dt id="WorktopTotalLabel-{{ section_id }}">{{ 'products.worktop.total' | t }}</dt>
+      <dd>
+        <output
+          class="worktop-breakdown__total"
+          data-worktop-total
+          aria-live="polite"
+          aria-atomic="true"
+          aria-labelledby="WorktopTotalLabel-{{ section_id }}"
+        >
+          {{- placeholder -}}
+        </output>
+      </dd>
+    </div>
+  </dl>
+  <p class="worktop-breakdown__note caption">
+    {{ 'products.worktop.billed_note' | t: step: step_m2 }}
+    {%- if cart.taxes_included %} {{ 'products.product.taxes_included' | t }}{% endif -%}
+  </p>
+</div>

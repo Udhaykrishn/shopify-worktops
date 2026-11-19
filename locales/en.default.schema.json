@@ -153,6 +153,15 @@
         }
       }
     },
+    "worktops": {
+      "name": "Worktops",
+      "settings": {
+        "worktop_area_unit_mm2": {
+          "label": "Area pricing unit (mm²)",
+          "info": "Area that one unit of quantity buys. Must match how worktop variants are priced. 10000 mm² = 0.01 m²."
+        }
+      }
+    },
     "customer_accounts": {
       "name": "Customer accounts",
       "settings": {
@@ -375,6 +384,28 @@
     }
   },
   "sections": {
+    "quote-request": {
+      "name": "Quote request",
+      "presets": {
+        "name": "Quote request"
+      },
+      "settings": {
+        "heading": {
+          "label": "Heading",
+          "default": "Request a free quote"
+        },
+        "intro": {
+          "label": "Introduction",
+          "default": "<p>Tell us about your project and we'll send you a free, no-obligation quote.</p>"
+        },
+        "show_phone": {
+          "label": "Show phone field"
+        },
+        "show_timeframe": {
+          "label": "Show timeframe field"
+        }
+      }
+    },
     "all": {
       "animation": {
         "content": "Animations",
@@ -1916,6 +1947,17 @@
     "main-product": {
       "name": "Product information",
       "blocks": {
+        "worktop_configurator": {
+          "name": "Worktop configurator",
+          "settings": {
+            "paragraph": {
+              "content": "Uses the product metafields custom.min_length_mm, custom.max_length_mm, custom.min_width_mm and custom.max_width_mm. Remove the Quantity selector block on worktop templates."
+            },
+            "show_quote_link": {
+              "label": "Show quote request link"
+            }
+          }
+        },
         "text": {
           "name": "Text",
           "settings": {
