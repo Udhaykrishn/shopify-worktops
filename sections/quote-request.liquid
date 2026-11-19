@@ -1,0 +1,112 @@
+{{ 'quote-form.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'quote-form.js' | asset_url }}" defer="defer"></script>
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div
+    class="quote-request page-width page-width--narrow section-{{ section.id }}-padding"
+    id="quote-request"
+    tabindex="-1"
+  >
+    <h2 class="quote-request__heading h2">
+      {%- if section.settings.heading != blank -%}
+        {{- section.settings.heading | escape -}}
+      {%- else -%}
+        {{- 'sections.quote_form.heading' | t -}}
+      {%- endif -%}
+    </h2>
+    {%- if section.settings.intro != blank -%}
+      <div class="quote-request__intro rte">{{ section.settings.intro }}</div>
+    {%- endif -%}
+
+    {%- render 'quote-form',
+      section_id: section.id,
+      product: product,
+      variant: product.selected_or_first_available_variant,
+      show_phone: section.settings.show_phone,
+      show_timeframe: section.settings.show_timeframe
+    -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.quote-request.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "default": "t:sections.quote-request.settings.heading.default",
+      "label": "t:sections.quote-request.settings.heading.label"
+    },
+    {
+      "type": "richtext",
+      "id": "intro",
+      "default": "t:sections.quote-request.settings.intro.default",
+      "label": "t:sections.quote-request.settings.intro.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_phone",
+      "default": true,
+      "label": "t:sections.quote-request.settings.show_phone.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_timeframe",
+      "default": true,
+      "label": "t:sections.quote-request.settings.show_timeframe.label"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.quote-request.presets.name"
+    }
+  ]
+}
+{% endschema %}

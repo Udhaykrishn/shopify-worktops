@@ -1,0 +1,244 @@
+{%- doc -%}
+  Renders the "Request a free quote" form as a Shopify contact form. Submissions go to the store's
+  contact email, with the product, variant and size in hidden fields. On product pages,
+  `quote-form.js` keeps those hidden fields in step with the worktop configurator.
+  A honeypot field catches simple bots, and Shopify's contact-form spam protection also applies.
+
+  @param {string} section_id - The section ID, used to build unique element IDs.
+  @param {product} [product] - The product the quote is for. Leave blank on non-product pages.
+  @param {variant} [variant] - The selected variant.
+  @param {boolean} [show_phone] - Whether to show the optional phone field. Defaults to false.
+  @param {boolean} [show_timeframe] - Whether to show the timeframe select. Defaults to false.
+
+  @example
+  {% render 'quote-form', section_id: section.id, product: product, variant: product.selected_or_first_available_variant, show_phone: true, show_timeframe: true %}
+{%- enddoc -%}
+{%- liquid
+  assign form_id = 'QuoteForm-' | append: section_id
+  assign variant_title = ''
+  if product and product.has_only_default_variant == false
+    assign variant_title = variant.title
+  endif
+  assign placeholder = 'products.worktop.placeholder' | t
+-%}
+
+<quote-form class="quote-form" data-product-id="{{ product.id }}">
+  {%- form 'contact', id: form_id, class: 'quote-form__form', novalidate: 'novalidate' -%}
+    {%- if form.posted_successfully? -%}
+      <p class="quote-form__message form__message" tabindex="-1" data-quote-success>
+        {{- 'icon-success.svg' | inline_asset_content -}}
+        {{ 'sections.quote_form.success' | t }}
+      </p>
+    {%- elsif form.errors -%}
+      <div class="quote-form__message" role="alert" tabindex="-1" data-quote-errors>
+        <p class="form__message">
+          {{- 'icon-error.svg' | inline_asset_content -}}
+          {{ 'sections.quote_form.error_heading' | t }}
+        </p>
+        <ul class="quote-form__error-list" role="list">
+          {%- for field in form.errors -%}
+            <li>
+              {%- if field == 'form' -%}
+                {{ form.errors.messages[field] }}
+              {%- else -%}
+                <a href="#{{ form_id }}-{{ field }}" class="link">
+                  {{- form.errors.translated_fields[field] | capitalize }}
+                  {{ form.errors.messages[field] -}}
+                </a>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
+
+    {%- if product -%}
+      <dl class="quote-form__selection">
+        <dt>{{ 'sections.quote_form.selection' | t }}</dt>
+        <dd>
+          <span>{{ product.title | escape }}</span>
+          <span data-quote-variant-label>
+            {%- if variant_title != blank %}, {{ variant_title | escape }}{% endif -%}
+          </span>
+        </dd>
+        <dd class="quote-form__selection-size" data-quote-size-label>{{ placeholder }}</dd>
+      </dl>
+      <input type="hidden" name="contact[product]" value="{{ product.title | escape }}">
+      <input type="hidden" name="contact[product_url]" value="{{ request.origin }}{{ product.url }}">
+      <input type="hidden" name="contact[variant]" value="{{ variant_title | escape }}" data-quote-field="variant">
+      <input type="hidden" name="contact[length_mm]" value="" data-quote-field="length">
+      <input type="hidden" name="contact[width_mm]" value="" data-quote-field="width">
+      <input type="hidden" name="contact[area_m2]" value="" data-quote-field="area">
+    {%- endif -%}
+
+    <div class="quote-form__grid">
+      <div class="quote-form__field">
+        <div class="field">
+          <input
+            class="field__input"
+            type="text"
+            id="{{ form_id }}-name"
+            name="contact[name]"
+            autocomplete="name"
+            value="{% if form.name %}{{ form.name | escape }}{% elsif customer %}{{ customer.name | escape }}{% endif %}"
+            placeholder="{{ 'sections.quote_form.name' | t }}"
+            required
+            aria-required="true"
+            aria-describedby="{{ form_id }}-name-error"
+            {% if form.errors contains 'name' %}
+              aria-invalid="true"
+            {% endif %}
+          >
+          <label class="field__label" for="{{ form_id }}-name">
+            {{- 'sections.quote_form.name' | t }}
+            <span aria-hidden="true">*</span>
+          </label>
+        </div>
+        <p class="quote-form__error" id="{{ form_id }}-name-error" data-quote-error></p>
+      </div>
+
+      <div class="quote-form__field">
+        <div class="field">
+          <input
+            class="field__input"
+            type="email"
+            id="{{ form_id }}-email"
+            name="contact[email]"
+            autocomplete="email"
+            spellcheck="false"
+            autocapitalize="off"
+            value="{% if form.email %}{{ form.email | escape }}{% elsif customer %}{{ customer.email | escape }}{% endif %}"
+            placeholder="{{ 'sections.quote_form.email' | t }}"
+            required
+            aria-required="true"
+            aria-describedby="{{ form_id }}-email-error"
+            {% if form.errors contains 'email' %}
+              aria-invalid="true"
+            {% endif %}
+          >
+          <label class="field__label" for="{{ form_id }}-email">
+            {{- 'sections.quote_form.email' | t }}
+            <span aria-hidden="true">*</span>
+          </label>
+        </div>
+        <p class="quote-form__error" id="{{ form_id }}-email-error" data-quote-error>
+          {%- if form.errors contains 'email' -%}
+            {{ form.errors.translated_fields.email | capitalize }}
+            {{ form.errors.messages.email }}
+          {%- endif -%}
+        </p>
+      </div>
+
+      {%- if show_phone -%}
+        <div class="quote-form__field">
+          <div class="field">
+            <input
+              class="field__input"
+              type="tel"
+              id="{{ form_id }}-phone"
+              name="contact[phone]"
+              autocomplete="tel"
+              value="{% if form.phone %}{{ form.phone | escape }}{% endif %}"
+              placeholder="{{ 'sections.quote_form.phone' | t }}"
+            >
+            <label class="field__label" for="{{ form_id }}-phone">{{ 'sections.quote_form.phone' | t }}</label>
+          </div>
+        </div>
+      {%- endif -%}
+
+      <div class="quote-form__field">
+        <div class="field">
+          <input
+            class="field__input"
+            type="text"
+            id="{{ form_id }}-postcode"
+            name="contact[postcode]"
+            autocomplete="postal-code"
+            autocapitalize="characters"
+            maxlength="10"
+            placeholder="{{ 'sections.quote_form.postcode' | t }}"
+            required
+            aria-required="true"
+            aria-describedby="{{ form_id }}-postcode-hint {{ form_id }}-postcode-error"
+            data-quote-postcode
+          >
+          <label class="field__label" for="{{ form_id }}-postcode">
+            {{- 'sections.quote_form.postcode' | t }}
+            <span aria-hidden="true">*</span>
+          </label>
+        </div>
+        <p class="quote-form__hint caption" id="{{ form_id }}-postcode-hint">
+          {{ 'sections.quote_form.postcode_hint' | t }}
+        </p>
+        <p class="quote-form__error" id="{{ form_id }}-postcode-error" data-quote-error></p>
+      </div>
+
+      {%- if show_timeframe -%}
+        <div class="quote-form__field">
+          <label class="form__label" for="{{ form_id }}-timeframe">{{ 'sections.quote_form.timeframe' | t }}</label>
+          <div class="select">
+            <select class="select__select" id="{{ form_id }}-timeframe" name="contact[timeframe]">
+              <option value="{{ 'sections.quote_form.timeframe_asap' | t }}">
+                {{- 'sections.quote_form.timeframe_asap' | t -}}
+              </option>
+              <option value="{{ 'sections.quote_form.timeframe_month' | t }}">
+                {{- 'sections.quote_form.timeframe_month' | t -}}
+              </option>
+              <option value="{{ 'sections.quote_form.timeframe_quarter' | t }}">
+                {{- 'sections.quote_form.timeframe_quarter' | t -}}
+              </option>
+              <option value="{{ 'sections.quote_form.timeframe_browsing' | t }}">
+                {{- 'sections.quote_form.timeframe_browsing' | t -}}
+              </option>
+            </select>
+            <span class="svg-wrapper">
+              {{- 'icon-caret.svg' | inline_asset_content -}}
+            </span>
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="quote-form__field">
+      <div class="field">
+        <textarea
+          class="text-area field__input"
+          rows="5"
+          id="{{ form_id }}-body"
+          name="contact[body]"
+          placeholder="{{ 'sections.quote_form.notes' | t }}"
+          aria-describedby="{{ form_id }}-body-hint"
+        >
+          {{- form.body | escape -}}
+        </textarea>
+        <label class="form__label field__label" for="{{ form_id }}-body">{{ 'sections.quote_form.notes' | t }}</label>
+      </div>
+      <p class="quote-form__hint caption" id="{{ form_id }}-body-hint">{{ 'sections.quote_form.notes_hint' | t }}</p>
+    </div>
+
+    <div class="quote-form__hp" aria-hidden="true">
+      <label for="{{ form_id }}-hp">{{ 'sections.quote_form.honeypot_label' | t }}</label>
+      <input
+        type="text"
+        id="{{ form_id }}-hp"
+        name="contact[hp_website]"
+        value=""
+        tabindex="-1"
+        autocomplete="off"
+        data-quote-honeypot
+      >
+    </div>
+
+    <button type="submit" class="button quote-form__submit">{{ 'sections.quote_form.submit' | t }}</button>
+
+    <script type="application/json" data-quote-strings>
+      {
+        "required": {{ 'sections.quote_form.error_required' | t | json }},
+        "email": {{ 'sections.quote_form.error_email' | t | json }},
+        "postcode": {{ 'sections.quote_form.error_postcode' | t | json }},
+        "size": {{ 'sections.quote_form.selection_size' | t: length: '[length]', width: '[width]', area: '[area]' | json }},
+        "placeholder": {{ placeholder | json }}
+      }
+    </script>
+  {%- endform -%}
+</quote-form>

@@ -1,0 +1,89 @@
+{%- doc -%}
+  Renders the worktop parts of a cart line in the cart page and the cart drawer.
+
+  `part: 'details'` renders the price per m², the number of pieces and the line's validation error.
+  `part: 'quantity'` replaces Dawn's quantity control with a read-only piece count, because the quantity is
+  set by the cut size. It keeps a hidden `updates[]` input with Dawn's IDs and data attributes, so the cart
+  form still posts one value per line and Dawn's cart.js (remove button, errors) keeps working.
+
+  @param {object} item - The cart line item.
+  @param {number} line - The 1-based line number (`item.index | plus: 1`).
+  @param {string} context - Where the line is rendered: `page` or `drawer`. Used for unique IDs.
+  @param {string} status - The status from `worktop-line-status`.
+  @param {number} expected_quantity - The quantity one piece of this size needs, from `worktop-line-status`.
+  @param {string} part - Which part to render: `details` or `quantity`.
+
+  @example
+  {% render 'worktop-cart-line', item: item, line: forloop.index, context: 'page', status: worktop_status, expected_quantity: worktop_expected, part: 'details' %}
+{%- enddoc -%}
+{%- liquid
+  assign pieces = 0
+  if status == 'ok' and expected_quantity > 0
+    assign pieces = item.quantity | divided_by: expected_quantity
+  endif
+
+  case status
+    when 'missing'
+      assign error_key = 'sections.cart.worktop.error_missing'
+    when 'invalid'
+      assign error_key = 'sections.cart.worktop.error_invalid'
+    when 'out_of_range'
+      assign error_key = 'sections.cart.worktop.error_range'
+    when 'qty_mismatch', 'area_mismatch'
+      assign error_key = 'sections.cart.worktop.error_mismatch'
+    else
+      assign error_key = blank
+  endcase
+
+  if context == 'drawer'
+    assign quantity_id = 'Drawer-quantity-' | append: line
+  else
+    assign quantity_id = 'Quantity-' | append: line
+  endif
+  assign locked_id = 'WorktopLocked-' | append: context | append: '-' | append: line
+-%}
+
+{%- if part == 'quantity' -%}
+  <div class="worktop-line__quantity">
+    <input
+      type="hidden"
+      name="updates[]"
+      value="{{ item.quantity }}"
+      id="{{ quantity_id }}"
+      data-index="{{ line }}"
+      data-quantity-variant-id="{{ item.variant.id }}"
+      data-quantity-line-key="{{ item.key }}"
+    >
+    <span class="worktop-line__pieces" aria-describedby="{{ locked_id }}">
+      {%- if pieces > 0 -%}
+        {{- 'sections.cart.worktop.pieces' | t: count: pieces -}}
+      {%- else -%}
+        {{- 'products.worktop.placeholder' | t -}}
+      {%- endif -%}
+    </span>
+    <span class="visually-hidden" id="{{ locked_id }}">{{ 'sections.cart.worktop.quantity_locked' | t }}</span>
+  </div>
+{%- else -%}
+  {%- liquid
+    assign unit_mm2 = settings.worktop_area_unit_mm2 | default: 10000 | at_least: 1
+    assign price_per_m2 = item.final_price | times: 1000000 | divided_by: unit_mm2 | money
+  -%}
+  <div class="worktop-line">
+    <p class="worktop-line__meta caption">
+      {{ 'sections.cart.worktop.unit_price' | t: price: price_per_m2 }}
+      {%- if pieces > 1 %} · {{ 'sections.cart.worktop.pieces' | t: count: pieces }}{% endif -%}
+    </p>
+    {%- if error_key != blank -%}
+      <p
+        class="worktop-line__error"
+        id="WorktopLineError-{{ context }}-{{ line }}"
+        tabindex="-1"
+      >
+        <span class="svg-wrapper">
+          {{- 'icon-error.svg' | inline_asset_content -}}
+        </span>
+        <span>{{ error_key | t }}</span>
+      </p>
+    {%- endif -%}
+  </div>
+{%- endif -%}

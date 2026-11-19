@@ -9,6 +9,7 @@
 
 {{ 'quantity-popover.css' | asset_url | stylesheet_tag }}
 {{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'worktop-cart.css' | asset_url | stylesheet_tag }}
 
 <script src="{{ 'cart.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'quantity-popover.js' | asset_url }}" defer="defer"></script>
@@ -122,6 +123,12 @@
 
                   <tbody role="rowgroup">
                     {%- for item in cart.items -%}
+                      {%- capture worktop_line -%}{%- render 'worktop-line-status', item: item -%}{%- endcapture -%}
+                      {%- liquid
+                        assign worktop_parts = worktop_line | strip | split: ' '
+                        assign worktop_status = worktop_parts | first
+                        assign worktop_expected = worktop_parts | last | plus: 0
+                      -%}
                       <tr
                         id="CartDrawer-Item-{{ item.index | plus: 1 }}"
                         class="cart-item{% if item.parent_relationship.parent != null %} cart-item__nested-line{% endif %}"
@@ -207,19 +214,19 @@
                                 {%- assign property_first_char = property.first | slice: 0 -%}
                                 {%- if property.last != blank and property_first_char != '_' -%}
                                   <div class="product-option">
-                                    <dt>{{ property.first }}:</dt>
+                                    <dt>{{ property.first | escape }}:</dt>
                                     <dd>
                                       {%- if property.last contains '/uploads/' -%}
                                         <a
-                                          href="{{ property.last }}"
+                                          href="{{ property.last | escape }}"
                                           class="link"
                                           target="_blank"
                                           aria-describedby="a11y-new-window-message"
                                         >
-                                          {{ property.last | split: '/' | last }}
+                                          {{ property.last | split: '/' | last | escape }}
                                         </a>
                                       {%- else -%}
-                                        {{ property.last }}
+                                        {{ property.last | escape }}
                                       {%- endif -%}
                                     </dd>
                                   </div>
@@ -238,10 +245,21 @@
                             {%- for discount in item.line_level_discount_allocations -%}
                               <li class="discounts__discount">
                                 {{- 'icon-discount.svg' | inline_asset_content -}}
-                                {{ discount.discount_application.title }}
+                                {{ discount.discount_application.title | escape }}
                               </li>
                             {%- endfor -%}
                           </ul>
+
+                          {%- if worktop_status != 'none' -%}
+                            {% render 'worktop-cart-line',
+                              item: item,
+                              line: forloop.index,
+                              context: 'drawer',
+                              status: worktop_status,
+                              expected_quantity: worktop_expected,
+                              part: 'details'
+                            %}
+                          {%- endif -%}
                         </td>
 
                         <td class="cart-item__totals right" role="cell" headers="CartDrawer-ColumnTotal">
@@ -295,6 +313,7 @@
                           <quantity-popover>
                             <div class="cart-item__quantity-wrapper quantity-popover-wrapper">
                               <div class="quantity-popover-container{% if has_qty_rules or has_vol_pricing %} quantity-popover-container--hover{% endif %}">
+                                {%- if worktop_status == 'none' -%}
                                 <quantity-input class="quantity cart-quantity">
                                   <button
                                     class="quantity__button"
@@ -356,6 +375,16 @@
                                     </span>
                                   </button>
                                 </quantity-input>
+                                {%- else -%}
+                                  {% render 'worktop-cart-line',
+                                    item: item,
+                                    line: forloop.index,
+                                    context: 'drawer',
+                                    status: worktop_status,
+                                    expected_quantity: worktop_expected,
+                                    part: 'quantity'
+                                  %}
+                                {%- endif -%}
                               </div>
                               <cart-remove-button
                                 id="CartDrawer-Remove-{{ item.index | plus: 1 }}"
@@ -512,6 +541,7 @@
         <!-- Subtotals -->
 
         <div class="cart-drawer__footer" {{ block.shopify_attributes }}>
+          {% render 'worktop-cart-validation', context: 'drawer' %}
           <div>
             {%- if cart.cart_level_discount_applications.size > 0 -%}
               <ul class="discounts list-unstyled" role="list" aria-label="{{ 'customer.order.discount' | t }}">
@@ -574,6 +604,9 @@
 
         <!-- CTAs -->
 
+        {%- capture worktop_cart_flag -%}
+          {%- render 'worktop-cart-validation', context: 'drawer', output: 'flag' -%}
+        {%- endcapture -%}
         <div class="cart__ctas" {{ block.shopify_attributes }}>
           <button
             type="submit"
@@ -581,8 +614,11 @@
             class="cart__checkout-button button"
             name="checkout"
             form="CartDrawer-Form"
-            {% if cart == empty %}
+            {% if cart == empty or worktop_cart_flag contains 'blocked' %}
               disabled
+            {% endif %}
+            {% if worktop_cart_flag contains 'blocked' %}
+              aria-describedby="WorktopCheckoutNote-drawer"
             {% endif %}
           >
             {{ 'sections.cart.checkout' | t }}

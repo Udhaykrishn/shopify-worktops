@@ -2,6 +2,17 @@
 {{ 'component-totals.css' | asset_url | stylesheet_tag }}
 {{ 'component-price.css' | asset_url | stylesheet_tag }}
 {{ 'component-discounts.css' | asset_url | stylesheet_tag }}
+{{ 'worktop-cart.css' | asset_url | stylesheet_tag }}
+
+{%- capture worktop_cart_flag -%}
+  {%- render 'worktop-cart-validation', context: 'page', output: 'flag' -%}
+{%- endcapture -%}
+{%- liquid
+  assign worktop_blocked = false
+  if worktop_cart_flag contains 'blocked'
+    assign worktop_blocked = true
+  endif
+-%}
 
 {%- style -%}
   .section-{{ section.id }}-padding {
@@ -110,17 +121,34 @@
                   id="checkout"
                   class="cart__checkout-button button"
                   name="checkout"
-                  {% if cart == empty %}
+                  {% if cart == empty or worktop_blocked %}
                     disabled
+                  {% endif %}
+                  {% if worktop_blocked %}
+                    aria-describedby="WorktopCheckoutBlocked-page"
                   {% endif %}
                   form="cart"
                 >
                   {{ 'sections.cart.checkout' | t }}
                 </button>
+                <p
+                  class="worktop-cart-blocked caption"
+                  id="WorktopCheckoutBlocked-page"
+                  {% unless worktop_blocked %}
+                    hidden
+                  {% endunless %}
+                >
+                  {{ 'sections.cart.worktop.checkout_blocked' | t }}
+                </p>
               </div>
 
               {%- if additional_checkout_buttons -%}
-                <div class="cart__dynamic-checkout-buttons additional-checkout-buttons">
+                <div
+                  class="cart__dynamic-checkout-buttons additional-checkout-buttons"
+                  {% if worktop_blocked %}
+                    hidden
+                  {% endif %}
+                >
                   {{ content_for_additional_checkout_buttons }}
                 </div>
               {%- endif -%}

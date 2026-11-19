@@ -1,0 +1,72 @@
+{%- doc -%}
+  Re-checks every worktop line in the cart (see `worktop-line-status`) and renders what the cart needs.
+
+  `output: 'summary'` (default) renders an alert that links to each line with a problem, or nothing when
+  the cart is fine. With `context: 'page'` it also renders `<worktop-cart-guard>`, which keeps the cart
+  page's checkout button and express checkout buttons in step after Dawn re-renders the line items.
+  `output: 'flag'` prints `blocked` when checkout must be disabled, for use with `capture`.
+
+  @param {string} context - Where it is rendered: `page` or `drawer`. Used for unique IDs and line links.
+  @param {string} [output] - `summary` or `flag`. Defaults to `summary`.
+
+  @example
+  {%- capture worktop_cart_flag -%}{%- render 'worktop-cart-validation', context: 'page', output: 'flag' -%}{%- endcapture -%}
+  {% render 'worktop-cart-validation', context: 'drawer' %}
+{%- enddoc -%}
+{%- assign blocked = false -%}
+{%- capture summary_items -%}
+  {%- for item in cart.items -%}
+    {%- capture worktop_line -%}{%- render 'worktop-line-status', item: item -%}{%- endcapture -%}
+    {%- liquid
+      assign worktop_status = worktop_line | strip | split: ' ' | first
+      case worktop_status
+        when 'missing'
+          assign error_key = 'sections.cart.worktop.error_missing'
+        when 'invalid'
+          assign error_key = 'sections.cart.worktop.error_invalid'
+        when 'out_of_range'
+          assign error_key = 'sections.cart.worktop.error_range'
+        when 'qty_mismatch', 'area_mismatch'
+          assign error_key = 'sections.cart.worktop.error_mismatch'
+        else
+          assign error_key = blank
+      endcase
+    -%}
+    {%- if error_key != blank -%}
+      {%- assign blocked = true -%}
+      <li>
+        <a href="#WorktopLineError-{{ context }}-{{ forloop.index }}" class="link">
+          {{- item.product.title | escape }}: {{ error_key | t -}}
+        </a>
+      </li>
+    {%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- if output == 'flag' -%}
+  {%- if blocked -%}blocked{%- endif -%}
+{%- else -%}
+  {%- if blocked -%}
+    <div
+      class="worktop-cart-summary"
+      id="WorktopCartSummary-{{ context }}"
+      role="alert"
+    >
+      <p class="worktop-cart-summary__heading">
+        <span class="svg-wrapper">
+          {{- 'icon-error.svg' | inline_asset_content -}}
+        </span>
+        {{ 'sections.cart.worktop.summary_heading' | t }}
+      </p>
+      <ul class="worktop-cart-summary__list" role="list">
+        {{ summary_items }}
+      </ul>
+      <p class="worktop-cart-summary__note caption" id="WorktopCheckoutNote-{{ context }}">
+        {{ 'sections.cart.worktop.checkout_blocked' | t }}
+      </p>
+    </div>
+  {%- endif -%}
+  {%- if context == 'page' -%}
+    <worktop-cart-guard data-blocked="{{ blocked }}" hidden></worktop-cart-guard>
+  {%- endif -%}
+{%- endif -%}

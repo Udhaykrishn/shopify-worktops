@@ -4,6 +4,7 @@
 {{ 'component-price.css' | asset_url | stylesheet_tag }}
 {{ 'component-discounts.css' | asset_url | stylesheet_tag }}
 {{ 'quantity-popover.css' | asset_url | stylesheet_tag }}
+{{ 'worktop-cart.css' | asset_url | stylesheet_tag }}
 
 {%- style -%}
   .section-{{ section.id }}-padding {
@@ -24,6 +25,7 @@
 {%- endunless -%}
 
 <script src="{{ 'quantity-popover.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'worktop-cart-guard.js' | asset_url }}" defer="defer"></script>
 
 <cart-items
   class="gradient color-{{ section.settings.color_scheme }} isolate{% if cart == empty %} is-empty{% else %} section-{{ section.id }}-padding{% endif %}"
@@ -55,6 +57,7 @@
       <div class="cart__items" id="main-cart-items" data-id="{{ section.id }}">
         <div class="js-contents">
           {%- if cart != empty -%}
+            {% render 'worktop-cart-validation', context: 'page' %}
             <table class="cart-items">
               <caption class="visually-hidden">
                 {{ 'sections.cart.title' | t }}
@@ -82,6 +85,12 @@
 
               <tbody>
                 {%- for item in cart.items -%}
+                  {%- capture worktop_line -%}{%- render 'worktop-line-status', item: item -%}{%- endcapture -%}
+                  {%- liquid
+                    assign worktop_parts = worktop_line | strip | split: ' '
+                    assign worktop_status = worktop_parts | first
+                    assign worktop_expected = worktop_parts | last | plus: 0
+                  -%}
                   <tr
                     class="cart-item {% if item.parent_relationship.parent != null %}cart-item__nested-line{% endif %}"
                     id="CartItem-{{ item.index | plus: 1 }}"
@@ -159,14 +168,14 @@
                             {%- assign property_first_char = property.first | slice: 0 -%}
                             {%- if property.last != blank and property_first_char != '_' -%}
                               <div class="product-option">
-                                <dt>{{ property.first }}:</dt>
+                                <dt>{{ property.first | escape }}:</dt>
                                 <dd>
                                   {%- if property.last contains '/uploads/' -%}
-                                    <a href="{{ property.last }}" class="link" target="_blank">
-                                      {{ property.last | split: '/' | last }}
+                                    <a href="{{ property.last | escape }}" class="link" target="_blank">
+                                      {{ property.last | split: '/' | last | escape }}
                                     </a>
                                   {%- else -%}
-                                    {{ property.last }}
+                                    {{ property.last | escape }}
                                   {%- endif -%}
                                 </dd>
                               </div>
@@ -185,6 +194,17 @@
                           </li>
                         {%- endfor -%}
                       </ul>
+
+                      {%- if worktop_status != 'none' -%}
+                        {% render 'worktop-cart-line',
+                          item: item,
+                          line: forloop.index,
+                          context: 'page',
+                          status: worktop_status,
+                          expected_quantity: worktop_expected,
+                          part: 'details'
+                        %}
+                      {%- endif -%}
                     </td>
 
                     <td class="cart-item__totals right medium-hide large-up-hide">
@@ -232,9 +252,11 @@
                     <td class="cart-item__quantity{% if has_qty_rules or has_vol_pricing %} cart-item__quantity--info{% endif %}">
                       <quantity-popover>
                         <div class="cart-item__quantity-wrapper quantity-popover-wrapper">
-                          <label class="visually-hidden" for="Quantity-{{ item.index | plus: 1 }}">
-                            {{ 'products.product.quantity.label' | t }}
-                          </label>
+                          {%- if worktop_status == 'none' -%}
+                            <label class="visually-hidden" for="Quantity-{{ item.index | plus: 1 }}">
+                              {{ 'products.product.quantity.label' | t }}
+                            </label>
+                          {%- endif -%}
                           <div class="quantity-popover-container{% if has_qty_rules or has_vol_pricing %} quantity-popover-container--hover{% endif %}">
                             {%- if has_qty_rules or has_vol_pricing -%}
                               <button
@@ -245,6 +267,7 @@
                                 {{- 'icon-info.svg' | inline_asset_content -}}
                               </button>
                             {%- endif -%}
+                            {%- if worktop_status == 'none' -%}
                             <quantity-input class="quantity cart-quantity">
                               {% assign can_update_quantity = item.instructions.can_update_quantity | default: true %}
                               <button
@@ -299,6 +322,16 @@
                                 </span>
                               </button>
                             </quantity-input>
+                            {%- else -%}
+                              {% render 'worktop-cart-line',
+                                item: item,
+                                line: forloop.index,
+                                context: 'page',
+                                status: worktop_status,
+                                expected_quantity: worktop_expected,
+                                part: 'quantity'
+                              %}
+                            {%- endif -%}
                           </div>
                           <cart-remove-button
                             id="Remove-{{ item.index | plus: 1 }}"

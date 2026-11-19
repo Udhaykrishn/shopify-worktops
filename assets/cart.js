@@ -182,8 +182,18 @@ class CartItems extends window.StandardEvents.createViewEventElement(HTMLElement
           if (drawerWrapper && sourceDrawer && drawerInner) {
             const isEmpty = sourceDrawer.classList.contains('is-empty');
             drawerWrapper.classList.toggle('is-empty', isEmpty);
+            // The CTA is outside the replaced regions, so copy the server's state (empty or worktop lines blocked).
             const checkoutButton = document.getElementById('CartDrawer-Checkout');
-            if (checkoutButton) checkoutButton.disabled = isEmpty;
+            const sourceCheckoutButton = html.getElementById('CartDrawer-Checkout');
+            if (checkoutButton) {
+              checkoutButton.disabled = isEmpty || Boolean(sourceCheckoutButton?.disabled);
+              const describedBy = sourceCheckoutButton?.getAttribute('aria-describedby');
+              if (describedBy) {
+                checkoutButton.setAttribute('aria-describedby', describedBy);
+              } else {
+                checkoutButton.removeAttribute('aria-describedby');
+              }
+            }
             const sourceEmpty = sourceDrawer.querySelector('.drawer__inner-empty');
             const liveEmpty = drawerInner.querySelector('.drawer__inner-empty');
             if (liveEmpty && !sourceEmpty) liveEmpty.remove();
