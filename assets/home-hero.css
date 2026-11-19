@@ -166,6 +166,12 @@
   }
 }
 
+@media screen and (min-width: 750px) and (max-width: 989px) {
+  .home-hero__media {
+    aspect-ratio: 16 / 9;
+  }
+}
+
 @media screen and (min-width: 750px) {
   .home-hero__trust {
     grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));

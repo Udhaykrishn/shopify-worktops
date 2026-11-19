@@ -40,7 +40,7 @@
         "trust": {
           "type": "icon-with-text",
           "settings": {
-            "layout": "horizontal",
+            "layout": "vertical",
             "icon_1": "ruler",
             "heading_1": "Cut to the millimetre",
             "icon_2": "truck",
@@ -104,7 +104,7 @@
         "color_scheme": "scheme-1",
         "media_position": "left",
         "gallery_layout": "stacked",
-        "media_size": "large",
+        "media_size": "medium",
         "constrain_to_viewport": true,
         "media_fit": "contain",
         "image_zoom": "lightbox",

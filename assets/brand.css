@@ -224,3 +224,80 @@ h2,
   }
 }
 
+/* ---------------------------------------------------------------------------
+   Responsive and alignment fixes (audit at 375, 768, 1024 and 1366px).
+   --------------------------------------------------------------------------- */
+
+/* Product page trust list: body type, no mid-word breaks, compact icon + text rows. */
+.product__info-container .icon-with-text--vertical {
+  --icon-size: 2.2rem;
+  display: grid;
+  gap: 1rem;
+  margin: 2rem 0;
+  padding: 1.6rem 0;
+  border-top: 0.1rem solid rgba(var(--color-foreground), 0.1);
+  border-bottom: 0.1rem solid rgba(var(--color-foreground), 0.1);
+}
+
+.product__info-container .icon-with-text--vertical .icon-with-text__item {
+  margin: 0;
+}
+
+.product__info-container .icon-with-text--vertical .h4 {
+  margin: 0;
+  font-family: var(--font-body-family);
+  font-size: 1.4rem;
+  line-height: 1.4;
+  letter-spacing: 0.02rem;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+/* Product page on tablets: give the configurator more room than the texture. */
+@media screen and (min-width: 750px) and (max-width: 989px) {
+  .product:not(.product--no-media) .product__media-wrapper {
+    max-width: 42%;
+    width: calc(42% - var(--grid-desktop-horizontal-spacing) / 2);
+  }
+
+  .product:not(.product--no-media) .product__info-wrapper {
+    max-width: 58%;
+    width: calc(58% - var(--grid-desktop-horizontal-spacing) / 2);
+    padding-left: 3rem;
+  }
+}
+
+/* Smaller variant pills so three edge profiles fit on one line in narrow columns. */
+.product-form__input--pill input[type='radio'] + label {
+  padding: 1rem 1.8rem;
+  margin: 0.6rem 0.6rem 0.2rem 0;
+}
+
+/* Collection list and multicolumn: three across on tablets instead of one giant column. */
+@media screen and (min-width: 750px) and (max-width: 989px) {
+  .collection-list.grid--1-col-tablet-down > .grid__item,
+  .multicolumn-list.grid--1-col-tablet-down > .grid__item {
+    width: calc(33.33% - var(--grid-desktop-horizontal-spacing) * 2 / 3);
+    max-width: calc(33.33% - var(--grid-desktop-horizontal-spacing) * 2 / 3);
+  }
+}
+
+/* Material tiles on phones: landscape banners rather than three portrait screens of stone. */
+@media screen and (max-width: 749px) {
+  .collection-list .card--standard .card__inner.ratio::before {
+    padding-bottom: 56%;
+  }
+}
+
+/* Collection filters on tablets: filters on their own row, sort and count aligned beneath. */
+@media screen and (min-width: 750px) and (max-width: 989px) {
+  .facets__form {
+    grid-template-columns: 1fr max-content;
+    row-gap: 1rem;
+  }
+
+  .facets__form .facets__wrapper {
+    grid-column: 1 / -1;
+  }
+}
+
