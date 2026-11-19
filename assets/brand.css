@@ -301,3 +301,168 @@ h2,
   }
 }
 
+/* ---------------------------------------------------------------------------
+   Dropdowns. Every Dawn select (.select__select) gets the same look as the text
+   inputs. Where customisable selects are supported (appearance: base-select) the
+   option list is styled too; other browsers keep their native, accessible picker.
+   --------------------------------------------------------------------------- */
+.select__select {
+  font-size: 1.5rem;
+  color: rgb(var(--color-foreground));
+  padding-left: 1.8rem;
+  padding-right: calc(var(--inputs-border-width) + 4.4rem);
+}
+
+.select .svg-wrapper {
+  right: 1.8rem;
+  top: calc(50% - 0.35rem);
+  width: 1.2rem;
+  height: 0.7rem;
+  color: rgb(var(--color-foreground));
+  transition: transform var(--duration-short) ease;
+}
+
+.select:focus-within .svg-wrapper {
+  transform: rotate(180deg);
+}
+
+/* Collection sort: a bordered control rather than bare text. The border is Dawn's
+   .select::after ring; selectors are doubled up because component-facets.css loads after this file. */
+.facets .facet-filters__field .facet-filters__sort {
+  height: 4.2rem;
+  padding: 0 4.2rem 0 1.6rem;
+  border: 0;
+  border-radius: var(--inputs-radius);
+  font-size: 1.4rem;
+  background-color: rgb(var(--color-background));
+}
+
+/* Filter bar alignment: everything on one centred line, even gaps. */
+.facets .facets__form {
+  align-items: center;
+  margin-bottom: 1.6rem;
+}
+
+.facets .facets__wrapper {
+  gap: 0.8rem;
+}
+
+.facets .facets__heading {
+  margin: 0 0.4rem 0 0;
+}
+
+.facets .facets__wrapper .facets__disclosure {
+  margin: 0;
+}
+
+.facets .facet-filters.sorting {
+  align-items: center;
+}
+
+.facets .facet-filters__label {
+  margin: 0 1.2rem 0 0;
+}
+
+.facets .facets__form .product-count {
+  align-self: center;
+}
+
+.facet-filters__field .select .svg-wrapper {
+  right: 1.6rem;
+}
+
+/* Collection filter dropdowns (Availability, Price): bordered triggers and a soft panel. */
+.facets__disclosure > .facets__summary {
+  padding: 0.9rem 3.6rem 0.9rem 1.6rem;
+  margin: 0;
+  border: 0.1rem solid rgba(var(--color-foreground), 0.25);
+  border-radius: var(--inputs-radius);
+  color: rgb(var(--color-foreground));
+}
+
+.facets__disclosure > .facets__summary .icon-caret {
+  right: 1.4rem;
+}
+
+.facets__disclosure > .facets__summary:hover .facets__summary-label,
+.facets__disclosure > .facets__summary:hover span {
+  text-decoration: none;
+}
+
+.facets__disclosure[open] > .facets__summary,
+.facets__disclosure > .facets__summary:hover {
+  border-color: rgba(var(--color-foreground), 0.55);
+}
+
+.facets__summary .icon-caret {
+  transition: transform var(--duration-short) ease;
+}
+
+.facets__disclosure[open] .facets__summary .icon-caret {
+  transform: rotate(180deg);
+}
+
+.facets__disclosure .facets__display {
+  left: 0;
+  border-radius: var(--text-boxes-radius);
+  border-color: rgba(var(--color-foreground), 0.1);
+  box-shadow: 0 1.6rem 4rem -1.6rem rgba(var(--color-shadow), 0.35);
+}
+
+@supports (appearance: base-select) {
+  .select__select,
+  .select__select::picker(select) {
+    appearance: base-select;
+  }
+
+  .select__select {
+    display: flex;
+    align-items: center;
+  }
+
+  .select__select::picker-icon {
+    display: none;
+  }
+
+  .select__select::picker(select) {
+    margin-top: 0.6rem;
+    padding: 0.6rem;
+    border: 0.1rem solid rgba(var(--color-foreground), 0.12);
+    border-radius: var(--text-boxes-radius);
+    background-color: rgb(var(--color-background));
+    color: rgb(var(--color-foreground));
+    box-shadow: 0 1.6rem 4rem -1.6rem rgba(var(--color-shadow), 0.4);
+  }
+
+  .select__select option {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-height: 4.2rem;
+    padding: 0.8rem 1.2rem;
+    border-radius: calc(var(--text-boxes-radius) / 2);
+    font-size: 1.5rem;
+  }
+
+  .select__select option:hover,
+  .select__select option:focus-visible {
+    background-color: rgba(var(--color-foreground), 0.06);
+    outline: none;
+  }
+
+  .select__select option:checked {
+    font-weight: 600;
+  }
+
+  .select__select option::checkmark {
+    order: 1;
+    margin-left: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .select .svg-wrapper,
+  .facets__summary .icon-caret {
+    transition: none;
+  }
+}

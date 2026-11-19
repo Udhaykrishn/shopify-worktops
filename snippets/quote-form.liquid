@@ -196,10 +196,12 @@
       </div>
 
       {%- if show_timeframe -%}
-        <div class="quote-form__field">
-          <label class="form__label" for="{{ form_id }}-timeframe">{{ 'sections.quote_form.timeframe' | t }}</label>
-          <div class="select">
-            <select class="select__select" id="{{ form_id }}-timeframe" name="contact[timeframe]">
+        <div class="quote-form__field quote-form__field--full">
+          <div class="select quote-form__select">
+            <label class="quote-form__select-label" for="{{ form_id }}-timeframe">
+              {{- 'sections.quote_form.timeframe' | t -}}
+            </label>
+            <select class="select__select quote-form__select-input" id="{{ form_id }}-timeframe" name="contact[timeframe]">
               {%- liquid
                 assign timeframe_asap = 'sections.quote_form.timeframe_asap' | t
                 assign timeframe_month = 'sections.quote_form.timeframe_month' | t

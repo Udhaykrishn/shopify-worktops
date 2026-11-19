@@ -105,3 +105,30 @@
 .quote-form__message[hidden] {
   display: none;
 }
+
+/* Timeframe select: full width with a floating label, matching the filled text fields. */
+.quote-form__field--full {
+  grid-column: 1 / -1;
+}
+
+.quote-form__field .quote-form__select {
+  margin-top: 0;
+}
+
+.quote-form__select-label {
+  position: absolute;
+  top: calc(var(--inputs-border-width) + 0.6rem);
+  left: calc(var(--inputs-border-width) + 2rem);
+  z-index: 2;
+  font-size: 1rem;
+  letter-spacing: 0.04rem;
+  line-height: 1.5;
+  color: rgba(var(--color-foreground), 0.75);
+  pointer-events: none;
+}
+
+.quote-form__select .quote-form__select-input {
+  height: 4.5rem;
+  padding-top: 1.4rem;
+  font-size: 1.5rem;
+}
