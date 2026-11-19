@@ -1,21 +1,198 @@
 {
   "sections": {
-    "image_banner": {
-      "type": "image-banner",
+    "hero": {
+      "type": "home-hero",
       "blocks": {
+        "trust_1": {
+          "type": "trust_item",
+          "settings": {
+            "text": "Cut to size in 7 to 10 working days"
+          }
+        },
+        "trust_2": {
+          "type": "trust_item",
+          "settings": {
+            "text": "Free samples, posted next day"
+          }
+        },
+        "trust_3": {
+          "type": "trust_item",
+          "settings": {
+            "text": "Delivered across UK mainland"
+          }
+        }
+      },
+      "block_order": [
+        "trust_1",
+        "trust_2",
+        "trust_3"
+      ],
+      "settings": {
+        "eyebrow": "Quartz · Granite · Marble",
+        "heading": "Stone worktops, cut to the millimetre.",
+        "text": "<p>Choose your stone, enter your sizes and see the price straight away. Every worktop is templated, cut and polished in the UK.</p>",
+        "button_label_1": "Shop worktops",
+        "button_link_1": "shopify://collections/quartz-worktops",
+        "button_label_2": "Get a free quote",
+        "button_link_2": "shopify://pages/contact",
+        "collection": "quartz-worktops",
+        "color_scheme": "scheme-2",
+        "padding_top": 56,
+        "padding_bottom": 72,
+        "slab_product": "calacatta-classico-quartz"
+      }
+    },
+    "materials": {
+      "type": "collection-list",
+      "blocks": {
+        "quartz": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "quartz-worktops"
+          }
+        },
+        "granite": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "granite-worktops"
+          }
+        },
+        "marble": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "marble-worktops"
+          }
+        }
+      },
+      "block_order": [
+        "quartz",
+        "granite",
+        "marble"
+      ],
+      "settings": {
+        "title": "Shop by material",
+        "heading_size": "h1",
+        "image_ratio": "portrait",
+        "columns_desktop": 3,
+        "color_scheme": "scheme-1",
+        "show_view_all": false,
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 72,
+        "padding_bottom": 36
+      }
+    },
+    "steps": {
+      "type": "multicolumn",
+      "blocks": {
+        "step_1": {
+          "type": "column",
+          "settings": {
+            "title": "1. Choose your stone",
+            "text": "<p>Pick a quartz, granite or marble worktop, then the thickness and edge profile you want.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "step_2": {
+          "type": "column",
+          "settings": {
+            "title": "2. Enter your sizes",
+            "text": "<p>Type the length and width in millimetres. The price updates as you type, with no surprises at checkout.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "step_3": {
+          "type": "column",
+          "settings": {
+            "title": "3. We cut and deliver",
+            "text": "<p>We cut your worktop to size, polish the edges and deliver it to your door, usually within 10 working days.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "step_1",
+        "step_2",
+        "step_3"
+      ],
+      "settings": {
+        "title": "How it works",
+        "heading_size": "h1",
+        "image_width": "third",
+        "image_ratio": "adapt",
+        "button_label": "",
+        "button_link": "",
+        "columns_desktop": 3,
+        "column_alignment": "left",
+        "background_style": "primary",
+        "color_scheme": "scheme-1",
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "bestsellers": {
+      "type": "featured-collection",
+      "settings": {
+        "title": "Popular quartz worktops",
+        "heading_size": "h1",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "collection": "quartz-worktops",
+        "products_to_show": 8,
+        "columns_desktop": 4,
+        "color_scheme": "scheme-1",
+        "full_width": false,
+        "show_view_all": true,
+        "view_all_style": "link",
+        "enable_desktop_slider": false,
+        "swipe_on_mobile": true,
+        "image_ratio": "portrait",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 56
+      }
+    },
+    "samples": {
+      "type": "rich-text",
+      "blocks": {
+        "caption": {
+          "type": "caption",
+          "settings": {
+            "caption": "Free samples",
+            "text_style": "caption-with-letter-spacing",
+            "text_size": "medium"
+          }
+        },
         "heading": {
           "type": "heading",
           "settings": {
-            "heading": "Browse our latest products",
-            "heading_size": "h0"
+            "heading": "See the stone before you order",
+            "heading_size": "h1"
+          }
+        },
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Natural stone varies from slab to slab. Tell us which worktops you like and we'll post free samples the next working day.</p>"
           }
         },
         "button": {
-          "type": "buttons",
+          "type": "button",
           "settings": {
-            "button_label_1": "Shop all",
-            "button_link_1": "shopify://collections/all",
-            "button_style_secondary_1": true,
+            "button_label": "Request free samples",
+            "button_link": "shopify://pages/contact",
+            "button_style_secondary": false,
             "button_label_2": "",
             "button_link_2": "",
             "button_style_secondary_2": false
@@ -23,53 +200,84 @@
         }
       },
       "block_order": [
+        "caption",
         "heading",
+        "text",
         "button"
       ],
       "settings": {
-        "image_overlay_opacity": 40,
-        "image_height": "large",
-        "desktop_content_position": "bottom-center",
-        "show_text_box": false,
-        "image_behavior": "none",
-        "desktop_content_alignment": "center",
-        "color_scheme": "scheme-3",
-        "mobile_content_alignment": "center",
-        "stack_images_on_mobile": false,
-        "show_text_below": false
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "scheme-4",
+        "full_width": true,
+        "padding_top": 72,
+        "padding_bottom": 80
       }
     },
-    "featured_collection": {
-      "type": "featured-collection",
+    "faq": {
+      "type": "collapsible-content",
+      "blocks": {
+        "q1": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "How do I measure for a worktop?",
+            "icon": "ruler",
+            "row_content": "<p>Measure the length along the back wall and the depth from the wall to the front edge, in millimetres. Add any overhang you want. If your walls are out of square, request a free quote and we'll help.</p>"
+          }
+        },
+        "q2": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "How long does delivery take?",
+            "icon": "truck",
+            "row_content": "<p>Most worktops are cut and ready in 7 to 10 working days. We deliver to UK mainland addresses and call ahead to book a slot.</p>"
+          }
+        },
+        "q3": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "Can you cut holes for my sink and hob?",
+            "icon": "clipboard",
+            "row_content": "<p>Yes. Cut-outs aren't priced online yet, so request a free quote with your sink and hob models and we'll include them.</p>"
+          }
+        },
+        "q4": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "What's the difference between quartz, granite and marble?",
+            "icon": "question_mark",
+            "row_content": "<p>Quartz is engineered, very consistent and low maintenance. Granite is a hard natural stone with a speckled grain. Marble is softer, with dramatic veining, and needs more care.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "q1",
+        "q2",
+        "q3",
+        "q4"
+      ],
       "settings": {
-        "title": "Featured products",
-        "heading_size": "h2",
-        "description": "",
-        "show_description": false,
-        "description_style": "body",
-        "collection": "all",
-        "products_to_show": 8,
-        "columns_desktop": 4,
+        "caption": "",
+        "heading": "Questions, answered",
+        "heading_size": "h1",
+        "heading_alignment": "left",
+        "layout": "none",
+        "container_color_scheme": "scheme-2",
         "color_scheme": "scheme-1",
-        "full_width": false,
-        "show_view_all": true,
-        "view_all_style": "solid",
-        "enable_desktop_slider": false,
-        "swipe_on_mobile": false,
+        "open_first_collapsible_row": false,
         "image_ratio": "adapt",
-        "image_shape": "default",
-        "show_secondary_image": true,
-        "show_vendor": false,
-        "show_rating": false,
-        "quick_add": "none",
-        "columns_mobile": "2",
-        "padding_top": 44,
-        "padding_bottom": 36
+        "desktop_layout": "image_second",
+        "padding_top": 56,
+        "padding_bottom": 56
       }
     }
   },
   "order": [
-    "image_banner",
-    "featured_collection"
+    "hero",
+    "materials",
+    "steps",
+    "bestsellers",
+    "samples",
+    "faq"
   ]
 }

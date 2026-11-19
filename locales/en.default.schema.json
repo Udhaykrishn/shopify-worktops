@@ -390,6 +390,63 @@
     }
   },
   "sections": {
+    "home_hero": {
+      "name": "Hero",
+      "settings": {
+        "eyebrow": {
+          "label": "Eyebrow",
+          "default": "Quartz · Granite · Marble"
+        },
+        "heading": {
+          "label": "Heading",
+          "default": "Stone worktops, cut to the millimetre."
+        },
+        "text": {
+          "label": "Text",
+          "default": "<p>Choose your stone, enter your sizes and see the price straight away. Templated, cut and finished in the UK.</p>"
+        },
+        "button_label_1": {
+          "label": "First button label",
+          "default": "Shop worktops"
+        },
+        "button_link_1": {
+          "label": "First button link"
+        },
+        "button_label_2": {
+          "label": "Second button label",
+          "default": "Get a free quote"
+        },
+        "button_link_2": {
+          "label": "Second button link"
+        },
+        "image": {
+          "label": "Image",
+          "info": "Optional. Without an image the hero shows stone textures from the collection below."
+        },
+        "slab_product": {
+          "label": "Large slab",
+          "info": "Optional. Defaults to the first product in the collection."
+        },
+        "collection": {
+          "label": "Featured stones",
+          "info": "The first product becomes the large slab and the next three become swatches."
+        }
+      },
+      "blocks": {
+        "trust_item": {
+          "name": "Trust point",
+          "settings": {
+            "text": {
+              "label": "Text",
+              "default": "Cut to size in 7 to 10 working days"
+            }
+          }
+        }
+      },
+      "presets": {
+        "name": "Hero"
+      }
+    },
     "quote-request": {
       "name": "Quote request",
       "presets": {
