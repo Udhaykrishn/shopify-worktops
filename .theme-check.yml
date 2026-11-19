@@ -1,0 +1,12 @@
+# Theme Check config for the Work-Tops theme.
+# English-only UK store: missing keys in other locales fall back to en.default.
+extends: theme-check:recommended
+
+MatchingTranslations:
+  enabled: false
+
+# Dawn's disclosure snippets use `applicable_disclosures`, which CLI 3.94 doesn't know yet.
+UnknownFilter:
+  ignore:
+    - snippets/cart-disclosure-indicator.liquid
+    - snippets/product-disclosures.liquid
