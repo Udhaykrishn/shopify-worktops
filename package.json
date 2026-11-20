@@ -1,0 +1,25 @@
+{
+  "name": "worktops-dawn-assessment",
+  "version": "0.3.0-rc.1",
+  "private": true,
+  "description": "Development checks only; the Shopify theme has no build step.",
+  "engines": {
+    "node": ">=22.19"
+  },
+  "scripts": {
+    "test": "node --test scripts/*.test.mjs tests/*.test.mjs",
+    "check:theme": "shopify theme check --fail-level error",
+    "performance": "node scripts/lighthouse.mjs",
+    "performance:preview": "node scripts/preview-theme.mjs create",
+    "performance:cleanup": "node scripts/preview-theme.mjs delete",
+    "art:render": "node data/render-stone-art.mjs"
+  },
+  "devDependencies": {
+    "@shopify/cli": "3.94.3",
+    "chrome-launcher": "1.2.1",
+    "lighthouse": "13.5.0",
+    "liquidjs": "10.30.1",
+    "puppeteer-core": "25.12.0",
+    "sharp": "0.35.5"
+  }
+}

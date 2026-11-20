@@ -3,4 +3,8 @@ node_modules/
 .env
 .shopify/
 config/settings_data.json.bak
-docs/lighthouse/*.json
+.lighthouseci/
+artifacts/
+.env.*
+!.env.example
+graft/.cache/

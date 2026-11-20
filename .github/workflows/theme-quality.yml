@@ -1,0 +1,106 @@
+name: Theme quality and mobile performance
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: theme-quality-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false # Let an uploaded CI theme reach its cleanup step.
+
+env:
+  SHOPIFY_CLI_NO_ANALYTICS: '1'
+
+jobs:
+  checks:
+    name: Theme Check and regression tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm test
+      - name: Theme Check (zero errors)
+        run: |
+          mkdir -p artifacts
+          npm run check:theme -- --output json > artifacts/theme-check.json
+      - name: Retain Theme Check output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: theme-check-${{ github.event.pull_request.head.sha || github.sha }}
+          path: artifacts/
+          retention-days: 30
+
+  performance:
+    name: Mobile performance budgets (uploaded commit)
+    needs: checks
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SHOPIFY_CI_ENABLED: ${{ vars.SHOPIFY_CI_ENABLED }}
+      THEME_MANIFEST: .lighthouseci/theme-manifest.json
+      LIGHTHOUSE_RUNS: '3'
+      LIGHTHOUSE_STRESS_PATH: ${{ vars.LIGHTHOUSE_STRESS_PATH }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Create unique unpublished audit theme
+        env:
+          SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}
+        run: npm run performance:preview
+      - name: Three mobile runs per page; enforce every budget
+        env:
+          SHOPIFY_STORE_PASSWORD: ${{ secrets.SHOPIFY_STORE_PASSWORD }}
+        run: npm run performance
+      - name: Delete only the theme created by this run
+        if: always()
+        env:
+          SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}
+        run: npm run performance:cleanup
+      - name: Report missing measurements visibly
+        if: always()
+        run: |
+          if [ ! -f .lighthouseci/summary.md ]; then
+            echo '## Mobile Lighthouse: NOT MEASURED' >> "$GITHUB_STEP_SUMMARY"
+            echo 'Preview setup or audit failed. This run does not prove the performance budgets. Check SHOPIFY_CI_ENABLED, the Theme Access secret, and the preceding step output.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Retain HTML, JSON and commit/theme manifest (including failures)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
+          path: .lighthouseci/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 30
+
+  fork-performance:
+    name: Performance requires a trusted branch
+    needs: checks
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Explain the unavailable performance gate
+        run: |
+          echo '::error::Fork PR static checks ran without secrets. Performance is unverified; review the changes and rerun from a trusted repository branch. No fork code is executed with store credentials.'
+          exit 1
