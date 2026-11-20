@@ -14,8 +14,23 @@
       <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
     {%- endunless -%}
 
-    {% render 'seo-meta' %}
-    {% render 'meta-tags' %}
+    {%- liquid
+      assign perf_header_font_url = settings.type_header_font | font_url
+    -%}
+    {% render 'perf-lcp-preload' %}
+
+    {%- unless settings.type_body_font.system? -%}
+      {% comment %}theme-check-disable AssetPreload{% endcomment %}
+      <link rel="preload" as="font" href="{{ settings.type_body_font | font_url }}" type="font/woff2" crossorigin>
+      {% comment %}theme-check-enable AssetPreload{% endcomment %}
+    {%- endunless -%}
+    {%- unless settings.type_header_font.system? -%}
+      {% comment %}theme-check-disable AssetPreload{% endcomment %}
+{% # theme-check-disable-next-line RemoteAsset %}
+<link rel="preload" as="font" href="{% if perf_header_font_url contains '/fraunces/fraunces_n4.' %}{{ 'perf-fraunces-optical.woff2' | asset_url }}{% else %}{{ settings.type_header_font | font_url }}{% endif %}" type="font/woff2" crossorigin>      {% comment %}theme-check-enable AssetPreload{% endcomment %}
+    {%- endunless -%}
+
+    {% render 'seo-meta', social_tags: true %}
 
     <script type="module">
       import * as StandardEvents from 'https://cdn.shopify.com/storefront/standard-events.js';
@@ -266,28 +281,18 @@
       }
     {% endstyle %}
 
-    {{ 'base.css' | asset_url | stylesheet_tag: preload: true }}
-    {{ 'brand.css' | asset_url | stylesheet_tag: preload: true }}
+    {% render 'perf-fonts' %}
+    {% render 'perf-base-css' %}
+    {% render 'perf-brand-css' %}
     <link rel="stylesheet" href="{{ 'component-cart-items.css' | asset_url }}" media="print" onload="this.media='all'">
 
     {%- if settings.cart_type == 'drawer' -%}
-      {{ 'component-cart-drawer.css' | asset_url | stylesheet_tag }}
-      {{ 'component-cart.css' | asset_url | stylesheet_tag }}
-      {{ 'component-totals.css' | asset_url | stylesheet_tag }}
-      {{ 'component-price.css' | asset_url | stylesheet_tag }}
-      {{ 'component-discounts.css' | asset_url | stylesheet_tag }}
+      <style>{{ 'component-cart-drawer.css' | inline_asset_content }}</style>
+      <style>{{ 'component-cart.css' | inline_asset_content }}</style>
+      <style>{{ 'component-totals.css' | inline_asset_content }}</style>
+      <style>{{ 'component-price.css' | inline_asset_content }}</style>
+      <style>{{ 'component-discounts.css' | inline_asset_content }}</style>
     {%- endif -%}
-
-    {%- unless settings.type_body_font.system? -%}
-      {% comment %}theme-check-disable AssetPreload{% endcomment %}
-      <link rel="preload" as="font" href="{{ settings.type_body_font | font_url }}" type="font/woff2" crossorigin>
-      {% comment %}theme-check-enable AssetPreload{% endcomment %}
-    {%- endunless -%}
-    {%- unless settings.type_header_font.system? -%}
-      {% comment %}theme-check-disable AssetPreload{% endcomment %}
-      <link rel="preload" as="font" href="{{ settings.type_header_font | font_url }}" type="font/woff2" crossorigin>
-      {% comment %}theme-check-enable AssetPreload{% endcomment %}
-    {%- endunless -%}
 
     {%- if localization.available_countries.size > 1 or localization.available_languages.size > 1 -%}
       {{ 'component-localization-form.css' | asset_url | stylesheet_tag: preload: true }}

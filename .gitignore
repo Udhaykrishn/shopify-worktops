@@ -8,3 +8,6 @@ artifacts/
 .env.*
 !.env.example
 graft/.cache/
+
+# graft's local graph cache — regenerable, not committed (run `graft build`).
+/graft/

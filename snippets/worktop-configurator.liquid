@@ -37,7 +37,7 @@
   assign width_id = 'WorktopWidth-' | append: section_id
 -%}
 
-{{ 'worktop-configurator.css' | asset_url | stylesheet_tag }}
+<style>{{ 'worktop-configurator.css' | inline_asset_content }}</style>
 <script src="{{ 'worktop-configurator.js' | asset_url }}" defer="defer"></script>
 
 <worktop-configurator

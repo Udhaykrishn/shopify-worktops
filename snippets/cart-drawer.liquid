@@ -7,9 +7,11 @@
   {% render 'cart-drawer' %}
 {% enddoc %}
 
-{{ 'quantity-popover.css' | asset_url | stylesheet_tag }}
-{{ 'component-card.css' | asset_url | stylesheet_tag }}
-{{ 'worktop-cart.css' | asset_url | stylesheet_tag }}
+<style>{{ 'quantity-popover.css' | inline_asset_content }}</style>
+{%- if settings.cart_drawer_collection != blank -%}
+  {{ 'component-card.css' | asset_url | stylesheet_tag }}
+{%- endif -%}
+<style>{{ 'worktop-cart.css' | inline_asset_content }}</style>
 
 <script src="{{ 'cart.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'quantity-popover.js' | asset_url }}" defer="defer"></script>

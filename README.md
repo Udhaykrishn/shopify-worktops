@@ -25,7 +25,7 @@ Length, Width and billed Area are public line item properties so Shopify can car
 
 Someone can edit hidden fields, change quantity or properties, call `/cart/add.js` directly, or navigate directly to `/checkout`. The cart checks catch mismatches when that cart is rendered; they cannot prevent all direct checkout/API/permalink bypasses. A Cart and Checkout Validation Function is the server-side enforcement upgrade. It is optional in this assessment and is not claimed as implemented. Staff must check dimensions before fabrication. No client-supplied total determines Shopify’s price.
 
-The reusable Shopify contact form includes name, email, postcode, notes and product/variant/dimension context. Native field validation, a honeypot and Shopify CAPTCHA provide basic spam controls. Server error recovery restores the submitted context. The no-JavaScript form remains reachable. Delivery still requires a real submission and receipt check.
+The reusable Shopify contact form includes name, email, postcode, notes and product/variant/dimension context. Valid submissions previously fell through to a native POST and reloaded the page; the shared component now submits with Fetch and shows loading, confirmed success or errors in place, preserving the existing layout. Confirmed success closes the quote modal and restores focus to its opener; pending or failed submissions keep it open. It retains all form fields and CAPTCHA data, blocks duplicate requests, and keeps entered details on failure. Native field validation, a honeypot and Shopify CAPTCHA remain in place. The no-JavaScript form remains reachable. Local regression tests and intercepted Chrome checks at 375, 768, 1024 and 1440 px cover submission, payload, focus and modal behaviour. Real Shopify delivery and CAPTCHA tokens still require a storefront receipt check; Shopify challenge redirects show an inline error and cannot be completed automatically by this form.
 
 ## Native filtering and indexing
 
@@ -34,6 +34,8 @@ Colour and Finish are merchant-owned metaobjects referenced by product metafield
 Base collections and ordinary pagination are indexable with self-canonicals. Filtered, sorted and tagged collection views use `noindex, follow` and canonicalize to the base collection. Internal search is noindex. A valuable combination such as White Quartz should be a dedicated collection with original content, rather than an indexed filter URL. Product/collection description fallbacks and one page H1 support the normal pages.
 
 ## Performance and SEO
+
+The current performance-only optimization targets **Performance >90, LCP <2500 ms and CLS <0.1** while preserving the design and functionality. Three-run mobile medians are home **93 / 2156 ms / 0 CLS**, product **92 / 2607 ms / 0**, collection **79 / 4549 ms / 0**, and assessment **92 / 2283 ms / 0**. The complete target remains unmet: product LCP, collection score/LCP and individual-run outliers fail the strict gate. See [the optimization record](docs/PERFORMANCE-2026-11-20.md) for ranges, the unpublished candidate and regeneration instructions. The older measurements below remain historical evidence.
 
 The baseline and later measurements live in [docs/lighthouse/](docs/lighthouse/). A result is valid only for the recorded URL, rendered theme and timestamp; a published-store audit does not prove that local changes are deployed. Targets are mobile Performance ≥80, LCP <2500 ms and CLS <0.1. Lab measurements do not establish field Core Web Vitals.
 

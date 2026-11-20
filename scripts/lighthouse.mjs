@@ -71,6 +71,8 @@ try {
       const before = { status: response.status(), ...await inspect() };
       verifyPage(before, target, expectedThemeId);
       result.renderedThemeId = before.themeId || null;
+      // The preflight tab must not run a second copy of storefront scripts during the measured navigation.
+      await page.goto('about:blank');
       for (let run = 1; run <= runs; run++) {
         console.log(`Mobile audit ${name}, run ${run}/${runs}`);
         // Keep storefront authentication cookies while measuring a cold HTTP cache.
@@ -107,7 +109,7 @@ const lines = [
   `## Mobile Lighthouse: ${summary.passed ? 'PASS' : 'FAIL'}`,
   `Commit: \`${sourceSha}\` · Theme: \`${summary.themeId || 'unverified source'}\` · ${runs} runs per page`,
   `Source association: ${summary.sourceAssociation}. Local changes: ${dirty}.`,
-  'Budgets: performance ≥80, LCP <2500 ms, CLS <0.1. Every run must pass; medians are descriptive.',
+  'Budgets: performance >90, LCP <2500 ms, CLS <0.1. Every run must pass; medians are descriptive.',
   '', '| Page | Median performance | Median LCP (ms) | Median CLS | Result |', '|---|---:|---:|---:|---|',
   ...summary.pages.map((page) => `| ${page.path} | ${page.median ? Math.round(page.median.performance * 100) : '—'} | ${page.median ? Math.round(page.median.lcp) : '—'} | ${page.median?.cls?.toFixed(3) ?? '—'} | ${page.issues.length ? 'FAIL' : 'PASS'} |`),
   '', ...summary.errors.map((error) => `- ${error}`),

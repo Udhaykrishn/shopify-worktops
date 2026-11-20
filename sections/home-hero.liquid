@@ -4,7 +4,7 @@
   composition from the chosen collection: a large slab (the chosen product, or the collection's first)
   and swatch chips linking to three other products, so the hero still shows real catalogue items.
 {%- endcomment -%}
-{{ 'home-hero.css' | asset_url | stylesheet_tag }}
+<style>{{ 'home-hero.css' | inline_asset_content }}</style>
 
 {%- liquid
   assign hero_collection = section.settings.collection

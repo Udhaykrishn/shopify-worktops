@@ -1,0 +1,528 @@
+/*
+  Work-Tops brand layer on top of Dawn.
+  Colours, fonts and radii come from theme settings (Dawn's CSS variables); this file only adds
+  what settings can't express: heading rhythm, the stone texture fallback and a few shared helpers.
+*/
+
+/* Typography: the serif display face reads better slightly tighter and lighter. */
+h1,
+h2,
+.h0,
+.h1,
+.h2 {
+  letter-spacing: -0.015em;
+  line-height: 1.12;
+}
+
+.brand-eyebrow {
+  display: inline-block;
+  margin: 0 0 1.2rem;
+  font-family: var(--font-body-family);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(var(--color-foreground), 0.7);
+}
+
+/* Stone texture fallback (snippets/worktop-stone-art.liquid). */
+.stone-art {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.stone-art__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Product cards: a soft frame and a calmer price line. */
+.card-wrapper .card--media .card__inner {
+  overflow: hidden;
+}
+
+.card-information .price {
+  font-size: 1.5rem;
+  letter-spacing: 0;
+}
+
+/* Announcement bar: small caps style message. */
+.announcement-bar__message {
+  font-size: 1.25rem;
+  letter-spacing: 0.08em;
+}
+
+/* Buttons: a touch more weight so CTAs stand out on stone imagery. */
+.button,
+.shopify-challenge__button,
+.customer button {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+
+/* Product page: stone texture in the media column when a worktop has no photos. */
+.worktop-stone-media {
+  margin: 0 0 2.4rem;
+}
+
+.worktop-stone-media__slab {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--media-radius);
+  overflow: hidden;
+  box-shadow: 0 1.6rem 4rem -2.4rem rgba(var(--color-shadow), 0.35);
+}
+
+.worktop-stone-media__caption {
+  margin-top: 1rem;
+  color: rgba(var(--color-foreground), 0.7);
+}
+
+@media screen and (min-width: 750px) {
+  .worktop-stone-media {
+    position: sticky;
+    top: 3rem;
+    margin-bottom: 0;
+  }
+
+  .worktop-stone-media__slab {
+    aspect-ratio: 1 / 1;
+  }
+
+  .worktop-stone-media--constrained .worktop-stone-media__slab {
+    max-height: calc(100vh - 12rem);
+  }
+}
+
+/* Product cards: "Request a quote" button (opens sections/quote-modal.liquid). */
+.card__quote {
+  position: relative;
+  z-index: 1;
+  grid-row-start: 5;
+  margin: 0.4rem 0 1rem;
+}
+
+.card--card .card__quote {
+  margin: 0.4rem 1.3rem 1rem;
+}
+
+.card__quote-button {
+  min-height: 4.2rem;
+  padding: 0 1.6rem;
+  font-size: 1.4rem;
+}
+
+/* Product page: quote button straight after the buy buttons. */
+.product__quote {
+  max-width: 44rem;
+  margin: 1rem 0 2rem;
+}
+
+.product__quote-note {
+  margin: 0.8rem 0 0;
+  color: rgba(var(--color-foreground), 0.7);
+}
+
+/* Colour swatches (snippets/worktop-colour-swatches.liquid): each swatch links to that colour's product. */
+.colour-swatches__heading {
+  margin: 0 0 1rem;
+}
+
+.colour-swatches__current {
+  margin-left: 0.4rem;
+  font-weight: 600;
+  color: rgb(var(--color-foreground));
+}
+
+.colour-swatches__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  margin: 0;
+}
+
+.colour-swatches__swatch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  color: rgb(var(--color-foreground));
+  text-decoration: none;
+}
+
+.colour-swatches__chip {
+  position: relative;
+  display: block;
+  width: 5.2rem;
+  height: 5.2rem;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 0 0.1rem rgba(var(--color-foreground), 0.15);
+  transition: box-shadow var(--duration-short) ease, transform var(--duration-short) ease;
+}
+
+.colour-swatches__name {
+  max-width: 7.2rem;
+  font-size: 1.3rem;
+  line-height: 1.3;
+  text-align: center;
+  color: rgba(var(--color-foreground), 0.75);
+}
+
+.colour-swatches__swatch:hover .colour-swatches__chip {
+  transform: scale(1.05);
+}
+
+.colour-swatches__swatch[aria-current='true'] .colour-swatches__chip {
+  box-shadow: 0 0 0 0.2rem rgb(var(--color-background)), 0 0 0 0.4rem rgb(var(--color-foreground));
+}
+
+.colour-swatches__swatch[aria-current='true'] .colour-swatches__name {
+  font-weight: 600;
+  color: rgb(var(--color-foreground));
+}
+
+.colour-swatches__swatch:focus-visible {
+  outline: none;
+}
+
+.colour-swatches__swatch:focus-visible .colour-swatches__chip {
+  box-shadow: 0 0 0 0.2rem rgb(var(--color-background)), 0 0 0 0.4rem rgb(var(--color-foreground)),
+    0 0 0 0.7rem rgba(var(--color-foreground), 0.25);
+}
+
+colour-picker.colour-swatches {
+  display: block;
+}
+
+/* While another colour loads in place (no page load), dim the swatches and the card it is for. */
+.colour-swatches--loading,
+.card-wrapper--swapping .card__inner,
+.card-wrapper--swapping .card__information {
+  opacity: 0.6;
+  transition: opacity var(--duration-short) ease;
+}
+
+.colour-swatches--loading {
+  pointer-events: none;
+}
+
+.template-search__region--loading {
+  opacity: 0.6;
+  pointer-events: none;
+  transition: opacity var(--duration-short) ease;
+}
+
+.product__colour-swatches {
+  margin: 1.6rem 0 0.4rem;
+}
+
+/* Card colour tray (style: overlay). Absolutely positioned over the bottom of the card image, so showing it
+   never changes the card's height. Hidden by default; shown on hover and keyboard focus where hover exists,
+   and by the "N colours" toggle on touch screens. It sits above the card's full-size link overlay. */
+.colour-swatches--overlay {
+  position: absolute;
+  left: 0.8rem;
+  right: 0.8rem;
+  bottom: 0.8rem;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+  pointer-events: none;
+}
+
+.colour-swatches--overlay .colour-swatches__list {
+  gap: 0.2rem;
+  padding: 0.4rem;
+  border-radius: 999px;
+  background-color: rgba(var(--color-background), 0.92);
+  box-shadow: 0 0.6rem 1.6rem -0.8rem rgba(var(--color-shadow), 0.45);
+  opacity: 0;
+  transform: translateY(0.6rem);
+  visibility: hidden;
+  transition: opacity var(--duration-default) ease, transform var(--duration-default) ease,
+    visibility 0s linear var(--duration-default);
+}
+
+.colour-swatches--overlay .colour-swatches__swatch {
+  padding: 0.3rem;
+  border-radius: 50%;
+}
+
+.colour-swatches--overlay .colour-swatches__chip {
+  width: 2.4rem;
+  height: 2.4rem;
+}
+
+.colour-swatches__toggle {
+  display: none;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 3.2rem;
+  padding: 0.4rem 1.2rem 0.4rem 0.8rem;
+  border: 0;
+  border-radius: 999px;
+  background-color: rgba(var(--color-background), 0.92);
+  color: rgb(var(--color-foreground));
+  font: inherit;
+  font-size: 1.2rem;
+  box-shadow: 0 0.4rem 1.2rem -0.6rem rgba(var(--color-shadow), 0.45);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.colour-swatches__toggle-dots {
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  background: conic-gradient(#efebe4 0 33%, #8a8580 0 66%, #2a2826 0);
+  box-shadow: inset 0 0 0 0.1rem rgba(var(--color-foreground), 0.2);
+}
+
+.colour-swatches__toggle:focus-visible {
+  outline: 0.2rem solid rgb(var(--color-foreground));
+  outline-offset: 0.2rem;
+}
+
+/* Revealed: hover (pointer devices), keyboard focus anywhere in the card, or opened with the toggle. */
+@media (hover: hover) {
+  .card-wrapper:hover .colour-swatches--overlay .colour-swatches__list {
+    opacity: 1;
+    transform: none;
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 0s;
+  }
+}
+
+/* Also while a picked colour loads, so focus can return to the new swatch (worktop-card-colours.js). */
+.card-wrapper:focus-within .colour-swatches--overlay .colour-swatches__list,
+.card-wrapper--swapping .colour-swatches--overlay .colour-swatches__list,
+.colour-swatches--overlay[open] .colour-swatches__list {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+/* Touch screens: no hover, so a tap on "N colours" opens the tray. */
+@media (hover: none) {
+  .colour-swatches__toggle {
+    display: inline-flex;
+  }
+}
+
+/* Without JavaScript the toggle can't work: show the tray on touch screens instead. */
+@media (hover: none) {
+  html:not(.js) .colour-swatches--overlay .colour-swatches__list {
+    opacity: 1;
+    transform: none;
+    visibility: visible;
+    pointer-events: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .colour-swatches--overlay .colour-swatches__list {
+    transform: none;
+    transition: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .colour-swatches__chip {
+    transition: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Responsive and alignment fixes (audit at 375, 768, 1024 and 1366px).
+   --------------------------------------------------------------------------- */
+
+/* Product page trust list: body type, no mid-word breaks, compact icon + text rows. */
+.product__info-container .icon-with-text--vertical {
+  --icon-size: 2.2rem;
+  display: grid;
+  gap: 1rem;
+  margin: 2rem 0;
+  padding: 1.6rem 0;
+  border-top: 0.1rem solid rgba(var(--color-foreground), 0.1);
+  border-bottom: 0.1rem solid rgba(var(--color-foreground), 0.1);
+}
+
+.product__info-container .icon-with-text--vertical .icon-with-text__item {
+  margin: 0;
+}
+
+.product__info-container .icon-with-text--vertical .h4 {
+  margin: 0;
+  font-family: var(--font-body-family);
+  font-size: 1.4rem;
+  line-height: 1.4;
+  letter-spacing: 0.02rem;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+/* Product page on tablets: give the configurator more room than the texture. */
+@media screen and (min-width: 750px) and (max-width: 989px) {
+  .product:not(.product--no-media) .product__media-wrapper {
+    max-width: 42%;
+    width: calc(42% - var(--grid-desktop-horizontal-spacing) / 2);
+  }
+
+  .product:not(.product--no-media) .product__info-wrapper {
+    max-width: 58%;
+    width: calc(58% - var(--grid-desktop-horizontal-spacing) / 2);
+    padding-left: 3rem;
+  }
+}
+
+/* Smaller variant pills so three edge profiles fit on one line in narrow columns. */
+.product-form__input--pill input[type='radio'] + label {
+  padding: 1rem 1.8rem;
+  margin: 0.6rem 0.6rem 0.2rem 0;
+}
+
+/* Collection list and multicolumn: three across on tablets instead of one giant column. */
+@media screen and (min-width: 750px) and (max-width: 989px) {
+  .collection-list.grid--1-col-tablet-down > .grid__item,
+  .multicolumn-list.grid--1-col-tablet-down > .grid__item {
+    width: calc(33.33% - var(--grid-desktop-horizontal-spacing) * 2 / 3);
+    max-width: calc(33.33% - var(--grid-desktop-horizontal-spacing) * 2 / 3);
+  }
+}
+
+/* Material tiles on phones: landscape banners rather than three portrait screens of stone. */
+@media screen and (max-width: 749px) {
+  .collection-list .card--standard .card__inner.ratio::before {
+    padding-bottom: 56%;
+  }
+}
+
+/* Collection filters on tablets: filters on their own row, sort and count aligned beneath. */
+@media screen and (min-width: 750px) and (max-width: 989px) {
+  .facets__form {
+    grid-template-columns: 1fr max-content;
+    row-gap: 1rem;
+  }
+
+  .facets__form .facets__wrapper {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Dropdowns. Every Dawn select (.select__select) gets the same look as the text
+   inputs. Where customisable selects are supported (appearance: base-select) the
+   option list is styled too; other browsers keep their native, accessible picker.
+   --------------------------------------------------------------------------- */
+.select__select {
+  font-size: 1.5rem;
+  color: rgb(var(--color-foreground));
+  padding-left: 1.8rem;
+  padding-right: calc(var(--inputs-border-width) + 4.4rem);
+}
+
+.select .svg-wrapper {
+  right: 1.8rem;
+  top: calc(50% - 0.35rem);
+  width: 1.2rem;
+  height: 0.7rem;
+  color: rgb(var(--color-foreground));
+  transition: transform var(--duration-short) ease;
+}
+
+.select:focus-within .svg-wrapper {
+  transform: rotate(180deg);
+}
+
+/* Collection sort: a bordered control rather than bare text. The border is Dawn's
+   .select::after ring; selectors are doubled up because component-facets.css loads after this file. */
+.facets .facet-filters__field .facet-filters__sort {
+  height: 4.2rem;
+  padding: 0 4.2rem 0 1.6rem;
+  border: 0;
+  border-radius: var(--inputs-radius);
+  font-size: 1.4rem;
+  background-color: rgb(var(--color-background));
+}
+
+/* Filter bar alignment: everything on one centred line, even gaps. */
+.facets .facets__form {
+  align-items: center;
+  margin-bottom: 1.6rem;
+}
+
+.facets .facets__wrapper {
+  gap: 0.8rem;
+}
+
+.facets .facets__heading {
+  margin: 0 0.4rem 0 0;
+}
+
+.facets .facets__wrapper .facets__disclosure {
+  margin: 0;
+}
+
+.facets .facet-filters.sorting {
+  align-items: center;
+}
+
+.facets .facet-filters__label {
+  margin: 0 1.2rem 0 0;
+}
+
+.facets .facets__form .product-count {
+  align-self: center;
+}
+
+.facet-filters__field .select .svg-wrapper {
+  right: 1.6rem;
+}
+
+/* Collection filter dropdowns (Availability, Price): bordered triggers and a soft panel. */
+.facets__disclosure > .facets__summary {
+  padding: 0.9rem 3.6rem 0.9rem 1.6rem;
+  margin: 0;
+  border: 0.1rem solid rgba(var(--color-foreground), 0.25);
+  border-radius: var(--inputs-radius);
+  color: rgb(var(--color-foreground));
+}
+
+.facets__disclosure > .facets__summary .icon-caret {
+  right: 1.4rem;
+}
+
+.facets__disclosure > .facets__summary:hover .facets__summary-label,
+.facets__disclosure > .facets__summary:hover span {
+  text-decoration: none;
+}
+
+.facets__disclosure[open] > .facets__summary,
+.facets__disclosure > .facets__summary:hover {
+  border-color: rgba(var(--color-foreground), 0.55);
+}
+
+.facets__summary .icon-caret {
+  transition: transform var(--duration-short) ease;
+}
+
+.facets__disclosure[open] .facets__summary .icon-caret {
+  transform: rotate(180deg);
+}
+
+.facets__disclosure .facets__display {
+  left: 0;
+  border-radius: var(--text-boxes-radius);
+  border-color: rgba(var(--color-foreground), 0.1);
+  box-shadow: 0 1.6rem 4rem -1.6rem rgba(var(--color-shadow), 0.35);
+}

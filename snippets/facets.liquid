@@ -11,9 +11,9 @@
   {% render 'facets', results: collection, enable_filtering: true, enable_sorting: true, filter_type: 'vertical' %}
 {% enddoc %}
 
-{{ 'component-show-more.css' | asset_url | stylesheet_tag }}
-{{ 'component-swatch-input.css' | asset_url | stylesheet_tag }}
-{{ 'component-swatch.css' | asset_url | stylesheet_tag }}
+<style>{{ 'component-show-more.css' | inline_asset_content }}</style>
+<style>{{ 'component-swatch-input.css' | inline_asset_content }}</style>
+<style>{{ 'component-swatch.css' | inline_asset_content }}</style>
 
 {%- liquid
   assign sort_by = results.sort_by | default: results.default_sort_by

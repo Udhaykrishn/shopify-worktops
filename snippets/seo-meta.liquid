@@ -12,6 +12,8 @@
   Titles add "Page N" on pagination so paginated pages don't share a title. Collections and products without
   an SEO description fall back to a short generated one.
 
+  @param {boolean} [social_tags] - Include social metadata in the document head, not AJAX payload templates.
+
   @example
   {% render 'seo-meta' %}
 {%- enddoc -%}
@@ -22,6 +24,9 @@
 
   case request.page_type
     when 'index'
+      if template.suffix == 'assessment'
+        assign seo_noindex = true
+      endif
       if seo_description == blank
         assign seo_description = 'general.meta.home_description' | t: shop: shop.name
       endif
@@ -62,11 +67,8 @@
 
     when 'search'
       assign seo_noindex = true
-    when 'index'
-      if template.suffix == 'assessment'
-        assign seo_noindex = true
-      endif
   endcase
+  assign seo_description = seo_description | strip_html | strip_newlines | truncate: 160
 -%}
 <title>
   {{ page_title | escape }}
@@ -76,9 +78,12 @@
 </title>
 
 {%- if seo_description != blank %}
-  <meta name="description" content="{{ seo_description | strip_html | strip_newlines | truncate: 160 | escape }}">
+  <meta name="description" content="{{ seo_description | escape }}">
 {%- endif %}
 <link rel="canonical" href="{{ seo_canonical | escape }}">
 {%- if seo_noindex %}
   <meta name="robots" content="noindex, follow">
 {%- endif %}
+{%- if social_tags -%}
+  {% render 'meta-tags', seo_description: seo_description, seo_canonical: seo_canonical %}
+{%- endif -%}

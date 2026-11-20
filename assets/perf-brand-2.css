@@ -1,0 +1,165 @@
+
+
+@supports (appearance: base-select) {
+  .select__select,
+  .select__select::picker(select) {
+    appearance: base-select;
+  }
+
+  .select__select {
+    display: flex;
+    align-items: center;
+  }
+
+  .select__select::picker-icon {
+    display: none;
+  }
+
+  .select__select::picker(select) {
+    margin-top: 0.6rem;
+    padding: 0.6rem;
+    border: 0.1rem solid rgba(var(--color-foreground), 0.12);
+    border-radius: var(--text-boxes-radius);
+    background-color: rgb(var(--color-background));
+    color: rgb(var(--color-foreground));
+    box-shadow: 0 1.6rem 4rem -1.6rem rgba(var(--color-shadow), 0.4);
+  }
+
+  .select__select option {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-height: 4.2rem;
+    padding: 0.8rem 1.2rem;
+    border-radius: calc(var(--text-boxes-radius) / 2);
+    font-size: 1.5rem;
+  }
+
+  .select__select option:hover,
+  .select__select option:focus-visible {
+    background-color: rgba(var(--color-foreground), 0.06);
+    outline: none;
+  }
+
+  .select__select option:checked {
+    font-weight: 600;
+  }
+
+  .select__select option::checkmark {
+    order: 1;
+    margin-left: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .select .svg-wrapper,
+  .facets__summary .icon-caret {
+    transition: none;
+  }
+}
+
+/* Collection sidebar filters (vertical layout): open groups, compact checkbox rows, sort bar aligned. */
+@media screen and (min-width: 750px) {
+  .facets-vertical .facets-wrapper {
+    padding-right: 4rem;
+  }
+
+  .facets-vertical .facets__form-vertical {
+    width: 24rem;
+  }
+
+  .facets-vertical .facets__heading--vertical {
+    margin: 0 0 0.8rem;
+    font-size: 1.2rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(var(--color-foreground), 0.65);
+  }
+
+  .facets-vertical .facets__disclosure-vertical {
+    border-top-color: rgba(var(--color-foreground), 0.12);
+  }
+
+  .facets-vertical .facets__summary {
+    padding-top: 1.8rem;
+    padding-bottom: 1.2rem;
+  }
+
+  .facets-vertical .facets__summary-label {
+    font-family: var(--font-heading-family);
+    font-size: 1.7rem;
+    color: rgb(var(--color-foreground));
+  }
+
+  .facets-vertical .facets__display-vertical {
+    padding-bottom: 1.8rem;
+  }
+
+  .facets-vertical .facets__list--vertical .facets__item {
+    padding: 0.2rem 0;
+  }
+
+  .facets-vertical .facet-checkbox {
+    padding: 0.6rem 0;
+    font-size: 1.4rem;
+  }
+
+  .facets-vertical .button-show-more {
+    margin-top: 0.4rem;
+    padding: 0.4rem 0;
+    font-size: 1.4rem;
+    color: rgb(var(--color-foreground));
+  }
+
+  .facets-vertical-form {
+    align-items: center;
+    gap: 2.4rem;
+    margin-bottom: 1.6rem;
+  }
+
+  .facets-vertical-form .facet-filters.sorting {
+    padding: 0;
+  }
+
+  .facets-vertical-form .product-count-vertical {
+    margin: 0;
+  }
+
+  .facets-vertical-form .product-count__text {
+    margin: 0;
+  }
+}
+
+/* Empty filter results (snippets/facet-empty-state.liquid) */
+.facet-empty-state {
+  max-width: 52rem;
+  margin: 2.4rem auto;
+  padding: 4rem 2.4rem;
+  text-align: center;
+  border: 0.1rem dashed rgba(var(--color-foreground), 0.2);
+  border-radius: var(--text-boxes-radius);
+}
+
+.facet-empty-state__title {
+  margin: 0 0 0.8rem;
+}
+
+.facet-empty-state__text {
+  margin: 0 0 2.4rem;
+  color: rgba(var(--color-foreground), 0.75);
+}
+
+/* Equal card heights in a row: Dawn wraps each card in <product-component> (Shopify standard events), which
+   broke the card's height: 100%, so a two-line title pushed that card's quote button out of line. */
+.grid__item > product-component {
+  display: block;
+  height: 100%;
+}
+
+/* Dawn gives the card image wrapper `transform: perspective(0)`, which makes it its own stacking context and
+   traps the colour tray beneath the card's full-size link overlay (taps on "N colours" opened the product).
+   It only scopes background gradients, which card colour schemes here don't use. Cards with a tray drop it;
+   the image wrapper still clips with overflow: hidden. */
+.card-wrapper .card__inner.gradient:has(> .colour-swatches--overlay) {
+  transform: none;
+}

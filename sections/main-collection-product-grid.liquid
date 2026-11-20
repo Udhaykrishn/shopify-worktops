@@ -1,14 +1,14 @@
-{{ 'template-collection.css' | asset_url | stylesheet_tag }}
-{{ 'component-card.css' | asset_url | stylesheet_tag }}
+<style>{{ 'template-collection.css' | inline_asset_content }}</style>
+<style>{{ 'component-card.css' | inline_asset_content }}</style>
 <script src="{{ 'worktop-card-colours.js' | asset_url }}" defer="defer"></script>
-{{ 'component-price.css' | asset_url | stylesheet_tag }}
+<style>{{ 'component-price.css' | inline_asset_content }}</style>
 
 {% if section.settings.image_shape == 'blob' %}
-  {{ 'mask-blobs.css' | asset_url | stylesheet_tag }}
+  <style>{{ 'mask-blobs.css' | inline_asset_content }}</style>
 {%- endif -%}
 
 {%- unless section.settings.quick_add == 'none' -%}
-  {{ 'quick-add.css' | asset_url | stylesheet_tag }}
+  <style>{{ 'quick-add.css' | inline_asset_content }}</style>
 {%- endunless -%}
 
 {%- if section.settings.quick_add == 'standard' -%}
@@ -104,7 +104,7 @@
       {%- endif -%}
 
       <div class="{% if section.settings.filter_type == 'vertical' %} facets-vertical page-width{% endif %}">
-        {{ 'component-facets.css' | asset_url | stylesheet_tag }}
+        {% render 'perf-component-facets-css' %}
         <script src="{{ 'facets.js' | asset_url }}" defer="defer"></script>
         {%- if section.settings.enable_filtering or section.settings.enable_sorting -%}
           <aside

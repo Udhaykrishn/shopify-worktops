@@ -1,4 +1,4 @@
-{% if template.suffix == 'assessment' %}{{ 'assessment-content.css' | asset_url | stylesheet_tag }}{{ 'component-mega-menu.css' | asset_url | stylesheet_tag }}{% endif %}
+{% if template.suffix == 'assessment' %}<style>{{ 'assessment-content.css' | inline_asset_content }}</style><style>{{ 'component-mega-menu.css' | inline_asset_content }}</style>{% endif %}
 <link rel="stylesheet" href="{{ 'component-list-menu.css' | asset_url }}" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="{{ 'component-search.css' | asset_url }}" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="{{ 'component-menu-drawer.css' | asset_url }}" media="print" onload="this.media='all'">

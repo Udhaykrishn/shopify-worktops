@@ -121,7 +121,7 @@
   {%- endif -%}
 
   {%- if show_pickup_availability -%}
-    {{ 'component-pickup-availability.css' | asset_url | stylesheet_tag }}
+    <style>{{ 'component-pickup-availability.css' | inline_asset_content }}</style>
 
     {%- liquid
       assign show_physical_stores = block.settings.show_physical_stores

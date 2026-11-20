@@ -1,0 +1,18 @@
+{% doc %}
+  A smaller full-character Fraunces file for the current merchant-selected face.
+  Optical sizing, weights and glyph advances are preserved. Other font selections continue to use Shopify's font library.
+{% enddoc %}
+{%- liquid
+  assign header_font_url = settings.type_header_font | font_url
+-%}
+<style>
+  {%- if header_font_url contains '/fraunces/fraunces_n4.' -%}
+    @font-face {
+      font-family: {{ settings.type_header_font.family }};
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url({{ 'perf-fraunces-optical.woff2' | asset_url | json }}) format('woff2');
+    }
+  {%- endif -%}
+</style>

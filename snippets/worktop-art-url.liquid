@@ -1,0 +1,13 @@
+{%- doc -%}
+  Returns the cached 1200px illustration URL for a known demo product, otherwise an empty string.
+  @param {product} product - The product whose decorative artwork is displayed.
+  @example
+  {% render 'worktop-art-url', product: product %}
+{%- enddoc -%}
+{%- liquid
+  assign raster_handles = '|calacatta-classico-quartz|calacatta-portofino-quartz|bianco-arizona-quartz|orkney-white-quartz|crema-ice-quartz|kasha-quartz|nero-marquina-quartz|iron-grey-quartz|grigio-sparkle-light-quartz|grigio-sparkle-dark-quartz|stellar-blue-quartz|concrete-taupe-quartz|black-fusion-granite|steel-grey-granite|blue-pearl-granite|viscount-white-granite|fantasy-brown-granite|carrara-campanili-marble|nero-marquina-marble|verde-guatemala-marble|rosso-levanto-marble|taj-mahal-quartzite|calacatta-gold-quartz|grigio-sparkle-white-quartz|stellar-black-quartz|stellar-white-quartz|concrete-grey-quartz|concrete-white-quartz|'
+  assign raster_handle = '|' | append: product.handle | append: '|'
+  if product != blank and raster_handles contains raster_handle
+    echo 'worktop-art-' | append: product.handle | append: '-1200.webp' | asset_url
+  endif
+-%}

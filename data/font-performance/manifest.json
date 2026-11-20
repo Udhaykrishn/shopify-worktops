@@ -1,0 +1,14 @@
+{
+  "note": "Full Fraunces character coverage and optical sizing retained. Unstyled SOFT/WONK axes frozen at original defaults. Copyright and SIL OFL in assets/perf-fonts-license.txt.",
+  "fonts": [
+    {
+      "name": "fraunces",
+      "sourceUrl": "https://mi-task-store.myshopify.com/cdn/fonts/fraunces/fraunces_n4.8e6986daad4907c36a536fb8d55aaf5318c974ca.woff2",
+      "sourceBytes": 79436,
+      "sourceSha256": "41eab4f5045a4b58a36d7237d9f94918f21985b1f4997acb55ec87dd64b17ba8",
+      "file": "assets/perf-fraunces-optical.woff2",
+      "bytes": 45204,
+      "sha256": "5047ec779096c0ed242767a0d9ecad8963141d7b2919fc05c8fd93e2a96e2472"
+    }
+  ]
+}

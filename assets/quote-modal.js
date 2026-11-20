@@ -24,7 +24,7 @@
         this.dialog.addEventListener('close', this.onClose);
 
         // After a form post the page reloads: reopen so the success or error message is seen.
-        const hasResult = this.querySelector('[data-quote-success], [data-quote-errors]');
+        const hasResult = this.querySelector('[data-quote-success]:not([hidden]), [data-quote-errors]:not([hidden])');
         if (hasResult || window.location.hash === '#quote') this.open();
       }
 
@@ -46,7 +46,7 @@
         // Start on the result message after a post, otherwise on the first field to fill in.
         // (Left alone, the browser would focus the scrollable panel.)
         const target =
-          this.querySelector('[data-quote-success], [data-quote-errors]') ||
+          this.querySelector('[data-quote-success]:not([hidden]), [data-quote-errors]:not([hidden])') ||
           this.querySelector('.quote-form__form input:not([type="hidden"]):not([tabindex="-1"])');
         if (target) target.focus();
       }

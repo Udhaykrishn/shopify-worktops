@@ -1,0 +1,44 @@
+
+{% doc %}
+  Discover the existing worktop product LCP illustration before
+  parsing section CSS and scripts.
+
+  Its srcset and sizes match worktop-stone-art.
+  Native product media retains its normal image handling.
+{% enddoc %}
+
+{%- liquid
+  assign lcp_product = nil
+  assign lcp_sizes = '(min-width: 990px) 50vw, 100vw'
+
+  if request.page_type == 'product'
+    assign lcp_product = product
+  elsif request.page_type == 'collection' and current_page == 1
+    assign lcp_product = collection.products.first
+    assign lcp_sizes = '(min-width: 990px) 33vw, 50vw'
+  endif
+-%}
+
+{%- if lcp_product != blank and lcp_product.featured_media == blank -%}
+
+  {%- capture art_url -%}
+    {%- render 'worktop-art-url', product: lcp_product -%}
+  {%- endcapture -%}
+
+  {%- if art_url != blank -%}
+
+    {%- assign art_name = 'worktop-art-' | append: lcp_product.handle -%}
+
+    {%- assign lcp_400 = art_name | append: '-400.webp' | asset_url -%}
+    {%- assign lcp_800 = art_name | append: '-800.webp' | asset_url -%}
+    {%- assign lcp_1200 = art_name | append: '-1200.webp' | asset_url -%}
+
+    {%- capture lcp_srcset -%}
+      {{ lcp_400 }} 400w, {{ lcp_800 }} 800w, {{ lcp_1200 }} 1200w
+    {%- endcapture -%}
+
+    {{- lcp_800 | preload_tag: as: 'image', imagesrcset: lcp_srcset, imagesizes: lcp_sizes, fetchpriority: 'high' -}}
+
+  {%- endif -%}
+
+{%- endif -%}

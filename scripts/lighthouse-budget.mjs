@@ -1,5 +1,5 @@
 export const STORE = 'mi-task-store.myshopify.com';
-export const BUDGETS = Object.freeze({ performance: 0.8, lcp: 2500, cls: 0.1 });
+export const BUDGETS = Object.freeze({ performance: 0.9, lcp: 2500, cls: 0.1 });
 
 export function allowedURL(value) {
   const url = new URL(value);
@@ -27,7 +27,7 @@ export function checkReport(report, requestedURL) {
   for (const [key, value] of Object.entries(metrics)) {
     if (typeof value !== 'number' || !Number.isFinite(value)) issues.push(`Missing valid ${key} measurement`);
   }
-  if (typeof metrics.performance === 'number' && metrics.performance < BUDGETS.performance) issues.push('Performance must be at least 80.');
+  if (typeof metrics.performance === 'number' && metrics.performance <= BUDGETS.performance) issues.push('Performance must be above 90.');
   if (typeof metrics.lcp === 'number' && metrics.lcp >= BUDGETS.lcp) issues.push('LCP must be below 2500 ms.');
   if (typeof metrics.cls === 'number' && metrics.cls >= BUDGETS.cls) issues.push('CLS must be below 0.1.');
   return { metrics, issues };

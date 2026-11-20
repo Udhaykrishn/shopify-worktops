@@ -3,7 +3,7 @@
   as BreadcrumbList JSON-LD, so the structured data always matches what shoppers see.
   On a product reached outside a collection, the first collection other than the home page one is used.
 {%- endcomment -%}
-{{ 'section-breadcrumbs.css' | asset_url | stylesheet_tag }}
+<style>{{ 'section-breadcrumbs.css' | inline_asset_content }}</style>
 
 {%- liquid
   assign separator = '|~|'

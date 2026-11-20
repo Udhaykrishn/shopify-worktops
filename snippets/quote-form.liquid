@@ -31,20 +31,19 @@
   {%- form 'contact', id: form_id, class: 'quote-form__form' -%}
     <p class="quote-form__message form__message" role="alert" tabindex="-1" data-quote-blocked hidden>
       {{- 'icon-error.svg' | inline_asset_content -}}
-      {{ 'sections.quote_form.error_generic' | t }}
+      <span data-quote-message>{{ 'sections.quote_form.error_generic' | t }}</span>
     </p>
-    {%- if form.posted_successfully? -%}
-      <p class="quote-form__message form__message" tabindex="-1" data-quote-success>
-        {{- 'icon-success.svg' | inline_asset_content -}}
-        {{ 'sections.quote_form.success' | t }}
-      </p>
-    {%- elsif form.errors -%}
+    <p class="quote-form__message form__message" role="status" tabindex="-1" data-quote-success{% unless form.posted_successfully? %} hidden{% endunless %}>
+      {{- 'icon-success.svg' | inline_asset_content -}}
+      {{ 'sections.quote_form.success' | t }}
+    </p>
+    {%- if form.errors -%}
       <div class="quote-form__message" role="alert" tabindex="-1" data-quote-errors>
         <p class="form__message">
           {{- 'icon-error.svg' | inline_asset_content -}}
           {{ 'sections.quote_form.error_heading' | t }}
         </p>
-        <ul class="quote-form__error-list" role="list">
+        <ul class="quote-form__error-list" role="list" data-quote-message>
           {%- for field in form.errors -%}
             <li>
               {%- if field == 'form' -%}
@@ -59,6 +58,11 @@
           {%- endfor -%}
         </ul>
       </div>
+    {%- else -%}
+      <p class="quote-form__message form__message" role="alert" tabindex="-1" data-quote-errors hidden>
+        {{- 'icon-error.svg' | inline_asset_content -}}
+        <span data-quote-message></span>
+      </p>
     {%- endif -%}
 
     {%- if product -%}
@@ -258,10 +262,13 @@
       >
     </div>
 
-    <button type="submit" class="button quote-form__submit">{{ 'sections.quote_form.submit' | t }}</button>
+    <button type="submit" class="button quote-form__submit" aria-live="polite">{{ 'sections.quote_form.submit' | t }}</button>
 
     <script type="application/json" data-quote-strings>
       {
+        "submitting": {{ 'sections.quote_form.submitting' | t | json }},
+        "failed": {{ 'sections.quote_form.error_submission' | t | json }},
+        "challenge": {{ 'sections.quote_form.error_challenge' | t | json }},
         "required": {{ 'sections.quote_form.error_required' | t | json }},
         "email": {{ 'sections.quote_form.error_email' | t | json }},
         "postcode": {{ 'sections.quote_form.error_postcode' | t | json }},

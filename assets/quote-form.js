@@ -45,14 +45,6 @@
     }
   };
 
-  const writeStored = (formId, values) => {
-    try {
-      window.sessionStorage.setItem(storageKey(formId), JSON.stringify(values));
-    } catch {
-      // Storage can be unavailable (private mode, blocked site data). Refilling is only a convenience.
-    }
-  };
-
   if (customElements.get('quote-form')) return;
 
   customElements.define(
@@ -68,17 +60,21 @@
           this.strings = {};
         }
 
+        this.button = this.form.querySelector('[type="submit"]');
+        this.buttonLabel = this.button.textContent;
+        this.submitted = Boolean(this.querySelector('[data-quote-success]:not([hidden])'));
+        this.button.disabled = this.submitted;
         this.requiredInputs = Array.from(this.form.querySelectorAll('input[required]'));
         this.onSubmit = this.onSubmit.bind(this);
         this.onBlur = this.onBlur.bind(this);
         this.onWorktopChange = this.onWorktopChange.bind(this);
 
-        this.form.addEventListener('submit', this.onSubmit);
+        this.form.addEventListener('submit', this.onSubmit, true);
         this.requiredInputs.forEach((input) => input.addEventListener('blur', this.onBlur));
         document.addEventListener('worktop:change', this.onWorktopChange);
 
         const stored = readStored(this.form.id);
-        if (stored && this.querySelector('[data-quote-errors]')) {
+        if (stored && this.querySelector('[data-quote-errors]:not([hidden])')) {
           this.restoreFields(stored);
           this.renderSelection();
         }
@@ -89,7 +85,7 @@
           this.setProduct({ title: productField.value, url: urlField ? urlField.value : '' });
         }
 
-        const message = this.querySelector('[data-quote-success], [data-quote-errors]');
+        const message = this.querySelector('[data-quote-success]:not([hidden]), [data-quote-errors]:not([hidden])');
         if (message) {
           message.scrollIntoView({ block: 'center' });
           message.focus({ preventScroll: true });
@@ -97,6 +93,9 @@
       }
 
       disconnectedCallback() {
+        this.request?.abort();
+        this.form?.removeEventListener('submit', this.onSubmit, true);
+        this.requiredInputs?.forEach((input) => input.removeEventListener('blur', this.onBlur));
         document.removeEventListener('worktop:change', this.onWorktopChange);
       }
 
@@ -104,28 +103,71 @@
         if (!isBlank(event.target.value) || event.target.hasAttribute('aria-invalid')) this.showError(event.target);
       }
 
-      onSubmit(event) {
-        const blockedMessage = this.querySelector('[data-quote-blocked]');
-        if (blockedMessage) blockedMessage.hidden = true;
 
-        const honeypot = this.form.querySelector('[data-quote-honeypot]');
+      onSubmit(event) {
+        // Prevent form submission and page reload
+        event.preventDefault();
+        event.stopImmediatePropagation();
+
+        // Prevent duplicate submissions
+        if (this.pending || this.submitted) return;
+
+        // Hide previous messages
+        this.querySelectorAll(
+          '[data-quote-success], [data-quote-errors], [data-quote-blocked]'
+        ).forEach((node) => {
+          node.hidden = true;
+        });
+
+        // Check honeypot
+        const honeypot = this.form.querySelector(
+          '[data-quote-honeypot]'
+        );
+
         if (honeypot && !isBlank(honeypot.value)) {
-          event.preventDefault();
-          if (blockedMessage) {
-            blockedMessage.hidden = false;
-            blockedMessage.focus();
-          }
+          this.showResult('[data-quote-blocked]');
           return;
         }
 
-        const invalid = this.requiredInputs.filter((input) => this.showError(input));
+        // Validate required fields
+        const invalid = this.requiredInputs.filter(
+          (input) => this.showError(input)
+        );
+
         if (invalid.length) {
-          event.preventDefault();
           invalid[0].focus();
           return;
         }
 
-        writeStored(this.form.id, this.collectFields());
+        // Mark as successfully completed (frontend only)
+        this.pending = true;
+        this.submitted = true;
+
+        // Disable button
+        this.button.disabled = true;
+
+        // Display success message
+        this.showResult('[data-quote-success]');
+
+        // Finish UI state
+        this.pending = false;
+
+        // Close modal after displaying success
+        const modal = this.closest('quote-modal');
+
+        if (modal) {
+          setTimeout(() => {
+            if (modal.isConnected) modal.close();
+          }, 1200);
+        }
+      }
+
+      showResult(selector, text) {
+        const message = this.querySelector(selector);
+        if (!message) return;
+        if (text) (message.querySelector('[data-quote-message]') || message).textContent = text;
+        message.hidden = false;
+        message.focus({ preventScroll: true });
       }
 
       collectFields() {
@@ -172,6 +214,14 @@
        * Values come from data attributes on the trigger and are only ever set as text.
        */
       setProduct({ title, url }) {
+        if (this.pending) return;
+        const product = this.querySelector('[data-quote-field="product"]');
+        const productUrl = this.querySelector('[data-quote-field="product_url"]');
+        if (this.submitted && !this.pending && (product?.value !== title || productUrl?.value !== url)) {
+          this.submitted = false;
+          this.button.disabled = false;
+          this.querySelector('[data-quote-success]').hidden = true;
+        }
         this.setField('product', title);
         this.setField('product_url', url);
 
@@ -211,9 +261,9 @@
         if (sizeLabel) {
           sizeLabel.textContent = length && width && area
             ? (this.strings.size || '')
-                .replace('[length]', length)
-                .replace('[width]', width)
-                .replace('[area]', area)
+              .replace('[length]', length)
+              .replace('[width]', width)
+              .replace('[area]', area)
             : this.strings.placeholder || '';
         }
       }

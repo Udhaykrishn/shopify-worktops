@@ -33,8 +33,12 @@ jobs:
       - run: npm test
       - name: Theme Check (zero errors)
         run: |
+          report="$RUNNER_TEMP/theme-check.json"
+          status=0
+          npm run --silent check:theme -- --output json > "$report" || status=$?
           mkdir -p artifacts
-          npm run check:theme -- --output json > artifacts/theme-check.json
+          mv "$report" artifacts/theme-check.json
+          exit "$status"
       - name: Retain Theme Check output
         if: always()
         uses: actions/upload-artifact@v4
