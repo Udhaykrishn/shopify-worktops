@@ -198,24 +198,117 @@ h2,
   margin: 1.6rem 0 0.4rem;
 }
 
-/* Compact swatches on product cards sit above the card's full-size link overlay. */
-.colour-swatches--compact {
-  position: relative;
-  z-index: 1;
-  margin: 0.6rem 0 0.4rem;
+/* Card colour tray (style: overlay). Absolutely positioned over the bottom of the card image, so showing it
+   never changes the card's height. Hidden by default; shown on hover and keyboard focus where hover exists,
+   and by the "N colours" toggle on touch screens. It sits above the card's full-size link overlay. */
+.colour-swatches--overlay {
+  position: absolute;
+  left: 0.8rem;
+  right: 0.8rem;
+  bottom: 0.8rem;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+  pointer-events: none;
 }
 
-.colour-swatches--compact .colour-swatches__list {
+.colour-swatches--overlay .colour-swatches__list {
   gap: 0.2rem;
+  padding: 0.4rem;
+  border-radius: 999px;
+  background-color: rgba(var(--color-background), 0.92);
+  box-shadow: 0 0.6rem 1.6rem -0.8rem rgba(var(--color-shadow), 0.45);
+  opacity: 0;
+  transform: translateY(0.6rem);
+  visibility: hidden;
+  transition: opacity var(--duration-default) ease, transform var(--duration-default) ease,
+    visibility 0s linear var(--duration-default);
 }
 
-.colour-swatches--compact .colour-swatches__swatch {
+.colour-swatches--overlay .colour-swatches__swatch {
   padding: 0.3rem;
+  border-radius: 50%;
 }
 
-.colour-swatches--compact .colour-swatches__chip {
-  width: 2.2rem;
-  height: 2.2rem;
+.colour-swatches--overlay .colour-swatches__chip {
+  width: 2.4rem;
+  height: 2.4rem;
+}
+
+.colour-swatches__toggle {
+  display: none;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 3.2rem;
+  padding: 0.4rem 1.2rem 0.4rem 0.8rem;
+  border: 0;
+  border-radius: 999px;
+  background-color: rgba(var(--color-background), 0.92);
+  color: rgb(var(--color-foreground));
+  font: inherit;
+  font-size: 1.2rem;
+  box-shadow: 0 0.4rem 1.2rem -0.6rem rgba(var(--color-shadow), 0.45);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.colour-swatches__toggle-dots {
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  background: conic-gradient(#efebe4 0 33%, #8a8580 0 66%, #2a2826 0);
+  box-shadow: inset 0 0 0 0.1rem rgba(var(--color-foreground), 0.2);
+}
+
+.colour-swatches__toggle:focus-visible {
+  outline: 0.2rem solid rgb(var(--color-foreground));
+  outline-offset: 0.2rem;
+}
+
+/* Revealed: hover (pointer devices), keyboard focus anywhere in the card, or opened with the toggle. */
+@media (hover: hover) {
+  .card-wrapper:hover .colour-swatches--overlay .colour-swatches__list {
+    opacity: 1;
+    transform: none;
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 0s;
+  }
+}
+
+.card-wrapper:focus-within .colour-swatches--overlay .colour-swatches__list,
+.colour-swatches--overlay[open] .colour-swatches__list {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+/* Touch screens: no hover, so a tap on "N colours" opens the tray. */
+@media (hover: none) {
+  .colour-swatches__toggle {
+    display: inline-flex;
+  }
+}
+
+/* Without JavaScript the toggle can't work: show the tray on touch screens instead. */
+@media (hover: none) {
+  html:not(.js) .colour-swatches--overlay .colour-swatches__list {
+    opacity: 1;
+    transform: none;
+    visibility: visible;
+    pointer-events: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .colour-swatches--overlay .colour-swatches__list {
+    transform: none;
+    transition: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -556,4 +649,19 @@ h2,
 .facet-empty-state__text {
   margin: 0 0 2.4rem;
   color: rgba(var(--color-foreground), 0.75);
+}
+
+/* Equal card heights in a row: Dawn wraps each card in <product-component> (Shopify standard events), which
+   broke the card's height: 100%, so a two-line title pushed that card's quote button out of line. */
+.grid__item > product-component {
+  display: block;
+  height: 100%;
+}
+
+/* Dawn gives the card image wrapper `transform: perspective(0)`, which makes it its own stacking context and
+   traps the colour tray beneath the card's full-size link overlay (taps on "N colours" opened the product).
+   It only scopes background gradients, which card colour schemes here don't use. Cards with a tray drop it;
+   the image wrapper still clips with overflow: hidden. */
+.card-wrapper .card__inner.gradient:has(> .colour-swatches--overlay) {
+  transform: none;
 }

@@ -130,6 +130,14 @@
               </div>
             </div>
           {%- endif -%}
+          {%- if card_is_worktop == 'true' -%}
+            {%- comment -%}
+              Other colours of this stone: a tray over the image, revealed on hover, keyboard focus or (on touch
+              screens) a tap on "N colours". It is absolutely positioned, so cards keep the same height.
+            {%- endcomment -%}
+            {%- assign swatch_uid = section_id | append: '-card-' | append: card_product.id -%}
+            {% render 'worktop-colour-swatches', product: card_product, uid: swatch_uid, style: 'overlay', limit: 6 %}
+          {%- endif -%}
           <div class="card__content">
             <div class="card__information">
               <h3
@@ -229,8 +237,6 @@
               {%- endif -%}
 
               {%- if card_is_worktop == 'true' -%}
-                {%- assign swatch_uid = section_id | append: '-card-' | append: card_product.id -%}
-                {% render 'worktop-colour-swatches', product: card_product, uid: swatch_uid, style: 'compact', limit: 5 %}
                 {% render 'worktop-unit-price', price: card_product.price, show_from: card_product.price_varies %}
               {%- else -%}
                 {% render 'price', product: card_product, price_class: '', show_compare_at_price: true %}

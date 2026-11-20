@@ -8,8 +8,9 @@
 
   @param {product} product - The product being shown.
   @param {string} uid - A unique ID on the page, used for element and SVG filter IDs.
-  @param {string} [style] - `full` (product page: heading, large swatches with labels) or `compact`
-    (product cards: small swatches, labels for screen readers only). Defaults to `full`.
+  @param {string} [style] - `full` (product page: heading, large swatches with labels) or `overlay`
+    (product cards: a tray of small swatches over the card image, hidden until the card is hovered or focused;
+    on touch screens a "N colours" button opens it, see assets/worktop-card-colours.js). Defaults to `full`.
   @param {number} [limit] - Maximum number of swatches. Defaults to 6.
 
   @example
@@ -27,7 +28,21 @@
     assign current_label = product.title | remove: family.name | remove: family_type | strip
     assign heading_id = 'ColourSwatches-' | append: uid
   -%}
-  <div class="colour-swatches colour-swatches--{{ swatch_style }}">
+  {%- if swatch_style == 'overlay' -%}
+    {%- assign list_id = 'ColourSwatchList-' | append: uid -%}
+    <card-colours class="colour-swatches colour-swatches--overlay">
+      <button
+        type="button"
+        class="colour-swatches__toggle"
+        aria-expanded="false"
+        aria-controls="{{ list_id }}"
+      >
+        <span class="colour-swatches__toggle-dots" aria-hidden="true"></span>
+        {{- 'products.worktop.colours_short' | t: count: family_products.size -}}
+      </button>
+  {%- else -%}
+    <div class="colour-swatches colour-swatches--{{ swatch_style }}">
+  {%- endif -%}
     {%- if swatch_style == 'full' -%}
       <p class="colour-swatches__heading form__label" id="{{ heading_id }}">
         {{- 'products.worktop.colour_label' | t -}}
@@ -38,7 +53,14 @@
         {{- 'products.worktop.colours_count' | t: count: family_products.size -}}
       </p>
     {%- endif -%}
-    <ul class="colour-swatches__list list-unstyled" role="list" aria-labelledby="{{ heading_id }}">
+    <ul
+      {% if swatch_style == 'overlay' %}
+        id="{{ list_id }}"
+      {% endif %}
+      class="colour-swatches__list list-unstyled"
+      role="list"
+      aria-labelledby="{{ heading_id }}"
+    >
       {%- for sibling in family_products limit: swatch_limit -%}
         {%- liquid
           if sibling == blank
@@ -58,7 +80,7 @@
             {% if is_current %}
               aria-current="true"
             {% endif %}
-            {% if swatch_style == 'compact' %}
+            {% if swatch_style == 'overlay' %}
               aria-label="{{ sibling.title | escape }}"
             {% endif %}
           >
@@ -72,5 +94,9 @@
         </li>
       {%- endfor -%}
     </ul>
-  </div>
+  {%- if swatch_style == 'overlay' -%}
+    </card-colours>
+  {%- else -%}
+    </div>
+  {%- endif -%}
 {%- endif -%}
