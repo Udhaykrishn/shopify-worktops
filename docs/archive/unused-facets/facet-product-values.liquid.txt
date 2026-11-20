@@ -1,0 +1,40 @@
+{%- doc -%}
+  Outputs one product's filter values as a JSON object for assets/facet-panel.js. Keys are filter groups and
+  values are lists of value handles. The groups match the ones snippets/facet-panel.liquid builds:
+  - `category`: the product type
+  - `colour` and `finish`: the display name of the `custom.colour` / `custom.finish` metaobject
+  - `option-<name>`: each product option, for example `option-thickness`
+  - `availability`: `in-stock` or `out-of-stock`
+
+  Filtering happens in the theme (no app): every product on the page carries its values, and the script
+  filters, counts and paginates them. The output is JSON, so escape it when placing it in an attribute.
+
+  @param {product} product - The product.
+
+  @example
+  {%- capture facet_values -%}{% render 'facet-product-values', product: product %}{%- endcapture -%}
+  <li data-facet-values="{{ facet_values | strip | escape }}">
+{%- enddoc -%}
+{%- liquid
+  assign colour = product.metafields.custom.colour.value.name.value
+  assign finish = product.metafields.custom.finish.value.name.value
+  if product.available
+    assign availability = 'in-stock'
+  else
+    assign availability = 'out-of-stock'
+  endif
+-%}
+{
+"category":[{% if product.type != blank %}{{ product.type | handleize | json }}{% endif %}],
+"colour":[{% if colour != blank %}{{ colour | handleize | json }}{% endif %}],
+"finish":[{% if finish != blank %}{{ finish | handleize | json }}{% endif %}],
+{%- for option in product.options_with_values -%}
+  {%- if option.name == 'Title' -%}{%- continue -%}{%- endif -%}
+  {{ 'option-' | append: option.name | handleize | json }}:[
+  {%- for value in option.values -%}
+    {{ value | handleize | json }}{% unless forloop.last %},{% endunless %}
+  {%- endfor -%}
+  ],
+{%- endfor -%}
+"availability":[{{ availability | json }}]
+}

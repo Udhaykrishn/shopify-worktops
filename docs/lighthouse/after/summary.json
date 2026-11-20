@@ -1,0 +1,236 @@
+{
+  "label": "final-preview",
+  "createdAt": "2026-11-20T08:37:19.255Z",
+  "sourceSha": "b44e940f4710c34176dfabfdb9b990a6eb3caee3",
+  "localChanges": true,
+  "sourceAssociation": "remote-storefront-not-proven-to-match-local-source",
+  "themeId": "190265196835",
+  "origin": "https://mi-task-store.myshopify.com",
+  "runsPerPage": 3,
+  "budgets": {
+    "performance": 0.8,
+    "lcp": 2500,
+    "cls": 0.1
+  },
+  "method": "Lighthouse default mobile simulated throttling; every run must pass all three budgets.",
+  "pages": [
+    {
+      "path": "/",
+      "requestedUrl": "https://mi-task-store.myshopify.com/?preview_theme_id=190265196835&_fd=0&pb=0",
+      "runs": [
+        {
+          "run": 1,
+          "performance": 0.55,
+          "lcp": 6698.664000000001,
+          "cls": 0,
+          "issues": [
+            "Performance must be at least 80.",
+            "LCP must be below 2500 ms."
+          ],
+          "html": "home-1.html",
+          "json": "home-1.json"
+        },
+        {
+          "run": 2,
+          "performance": 0.58,
+          "lcp": 5790.938200000001,
+          "cls": 0,
+          "issues": [
+            "Performance must be at least 80.",
+            "LCP must be below 2500 ms."
+          ],
+          "html": "home-2.html",
+          "json": "home-2.json"
+        },
+        {
+          "run": 3,
+          "performance": 0.53,
+          "lcp": 3175.4652,
+          "cls": 0,
+          "issues": [
+            "Performance must be at least 80.",
+            "LCP must be below 2500 ms."
+          ],
+          "html": "home-3.html",
+          "json": "home-3.json"
+        }
+      ],
+      "issues": [
+        "Run 1: Performance must be at least 80.",
+        "Run 1: LCP must be below 2500 ms.",
+        "Run 2: Performance must be at least 80.",
+        "Run 2: LCP must be below 2500 ms.",
+        "Run 3: Performance must be at least 80.",
+        "Run 3: LCP must be below 2500 ms."
+      ],
+      "renderedThemeId": 190265196835,
+      "median": {
+        "performance": 0.55,
+        "lcp": 5790.938200000001,
+        "cls": 0
+      }
+    },
+    {
+      "path": "/products/concrete-white-quartz",
+      "requestedUrl": "https://mi-task-store.myshopify.com/products/concrete-white-quartz?preview_theme_id=190265196835&_fd=0&pb=0",
+      "runs": [
+        {
+          "run": 1,
+          "performance": 0.67,
+          "lcp": 6724.1545,
+          "cls": 0,
+          "issues": [
+            "Performance must be at least 80.",
+            "LCP must be below 2500 ms."
+          ],
+          "html": "products-concrete-white-quartz-1.html",
+          "json": "products-concrete-white-quartz-1.json"
+        },
+        {
+          "run": 2,
+          "performance": 0.72,
+          "lcp": 5181.8735,
+          "cls": 0,
+          "issues": [
+            "Performance must be at least 80.",
+            "LCP must be below 2500 ms."
+          ],
+          "html": "products-concrete-white-quartz-2.html",
+          "json": "products-concrete-white-quartz-2.json"
+        },
+        {
+          "run": 3,
+          "performance": 0.67,
+          "lcp": 5373.162130000001,
+          "cls": 0,
+          "issues": [
+            "Performance must be at least 80.",
+            "LCP must be below 2500 ms."
+          ],
+          "html": "products-concrete-white-quartz-3.html",
+          "json": "products-concrete-white-quartz-3.json"
+        }
+      ],
+      "issues": [
+        "Run 1: Performance must be at least 80.",
+        "Run 1: LCP must be below 2500 ms.",
+        "Run 2: Performance must be at least 80.",
+        "Run 2: LCP must be below 2500 ms.",
+        "Run 3: Performance must be at least 80.",
+        "Run 3: LCP must be below 2500 ms."
+      ],
+      "renderedThemeId": 190265196835,
+      "median": {
+        "performance": 0.67,
+        "lcp": 5373.162130000001,
+        "cls": 0
+      }
+    },
+    {
+      "path": "/collections/quartz-worktops",
+      "requestedUrl": "https://mi-task-store.myshopify.com/collections/quartz-worktops?preview_theme_id=190265196835&_fd=0&pb=0",
+      "runs": [
+        {
+          "run": 1,
+          "performance": 0.55,
+          "lcp": 6920.533500000001,
+          "cls": 0,
+          "issues": [
+            "Performance must be at least 80.",
+            "LCP must be below 2500 ms."
+          ],
+          "html": "collections-quartz-worktops-1.html",
+          "json": "collections-quartz-worktops-1.json"
+        },
+        {
+          "run": 2,
+          "performance": 0.71,
+          "lcp": 2876.1454999999996,
+          "cls": 0,
+          "issues": [
+            "Performance must be at least 80.",
+            "LCP must be below 2500 ms."
+          ],
+          "html": "collections-quartz-worktops-2.html",
+          "json": "collections-quartz-worktops-2.json"
+        },
+        {
+          "run": 3,
+          "performance": 0.85,
+          "lcp": 3171.6761000000006,
+          "cls": 0,
+          "issues": [
+            "LCP must be below 2500 ms."
+          ],
+          "html": "collections-quartz-worktops-3.html",
+          "json": "collections-quartz-worktops-3.json"
+        }
+      ],
+      "issues": [
+        "Run 1: Performance must be at least 80.",
+        "Run 1: LCP must be below 2500 ms.",
+        "Run 2: Performance must be at least 80.",
+        "Run 2: LCP must be below 2500 ms.",
+        "Run 3: LCP must be below 2500 ms."
+      ],
+      "renderedThemeId": 190265196835,
+      "median": {
+        "performance": 0.71,
+        "lcp": 3171.6761000000006,
+        "cls": 0
+      }
+    },
+    {
+      "path": "/?view=assessment",
+      "requestedUrl": "https://mi-task-store.myshopify.com/?view=assessment&preview_theme_id=190265196835&_fd=0&pb=0",
+      "runs": [
+        {
+          "run": 1,
+          "performance": 0.82,
+          "lcp": 3866.875799999998,
+          "cls": 0,
+          "issues": [
+            "LCP must be below 2500 ms."
+          ],
+          "html": "home-assessment-1.html",
+          "json": "home-assessment-1.json"
+        },
+        {
+          "run": 2,
+          "performance": 0.85,
+          "lcp": 3626.2904999999996,
+          "cls": 0,
+          "issues": [
+            "LCP must be below 2500 ms."
+          ],
+          "html": "home-assessment-2.html",
+          "json": "home-assessment-2.json"
+        },
+        {
+          "run": 3,
+          "performance": 0.9,
+          "lcp": 3024.0589,
+          "cls": 0,
+          "issues": [
+            "LCP must be below 2500 ms."
+          ],
+          "html": "home-assessment-3.html",
+          "json": "home-assessment-3.json"
+        }
+      ],
+      "issues": [
+        "Run 1: LCP must be below 2500 ms.",
+        "Run 2: LCP must be below 2500 ms.",
+        "Run 3: LCP must be below 2500 ms."
+      ],
+      "renderedThemeId": 190265196835,
+      "median": {
+        "performance": 0.85,
+        "lcp": 3626.2904999999996,
+        "cls": 0
+      }
+    }
+  ],
+  "errors": [],
+  "passed": false
+}

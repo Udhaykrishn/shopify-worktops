@@ -1,0 +1,107 @@
+{%- doc -%}
+  Renders one filter group of snippets/facet-panel.liquid: a disclosure with a checkbox per value and its
+  product count. Markup and classes follow Dawn's vertical facets, so the existing facet styles apply.
+  Values arrive in display order; assets/facet-panel.js re-sorts them (selected first, empty last), updates the
+  counts as filters change and reveals values beyond `show_count` with "Show more".
+
+  @param {string} key - The group key, also the URL parameter, for example `colour` or `option-thickness`.
+  @param {string} label - The group heading.
+  @param {string} entries - The values as `handle::label` pairs separated by `~~`.
+  @param {string} occurrences - Every product's value handles, each wrapped in `|`, used for the counts.
+  @param {number} show_count - Values shown before "Show more".
+  @param {string} uid - A unique ID for this panel on the page.
+  @param {metaobject[]} [swatch_colours] - The `colour` metaobject entries, to show a swatch next to each value.
+
+  @example
+  {% render 'facet-panel-group', key: 'colour', label: 'Colour', entries: colour_entries, occurrences: colour_hits, show_count: 5, uid: section.id, swatch_colours: shop.metaobjects.colour.values %}
+{%- enddoc -%}
+{%- liquid
+  assign values = entries | split: '~~' | uniq
+  assign list_id = 'FacetPanelList-' | append: uid | append: '-' | append: key
+  assign counted_hits = '#' | append: occurrences | append: '#'
+-%}
+<details
+  class="facets__disclosure-vertical facet-panel__group"
+  data-facet-group="{{ key | escape }}"
+  data-facet-label="{{ label | escape }}"
+  open
+>
+  <summary class="facets__summary caption-large focus-offset">
+    <div>
+      <span class="facets__summary-label">
+        {{- label | escape -}}
+        <span class="facets__selected hidden" data-facet-selected></span>
+      </span>
+      {{- 'icon-caret.svg' | inline_asset_content -}}
+    </div>
+  </summary>
+  <div class="facets__display-vertical">
+    <fieldset class="facets-wrap facets-wrap-vertical">
+      <legend class="visually-hidden">{{ label | escape }}</legend>
+      <ul
+        id="{{ list_id }}"
+        class="facets-layout facets-layout-list facets-layout-list--text facets__list--vertical list-unstyled"
+        role="list"
+      >
+        {%- for entry in values -%}
+          {%- liquid
+            assign value_handle = entry | split: '::' | first
+            assign value_label = entry | split: '::' | last
+            assign token = '|' | append: value_handle | append: '|'
+            assign value_count = counted_hits | split: token | size | minus: 1
+            assign input_id = 'FacetPanel-' | append: uid | append: '-' | append: key | append: '-' | append: forloop.index
+          -%}
+          <li
+            class="list-menu__item facets__item{% if forloop.index > show_count %} hidden{% endif %}"
+            data-facet-option
+            data-index="{{ forloop.index0 }}"
+          >
+            <label for="{{ input_id }}" class="facets__label facet-checkbox{% if value_count == 0 %} disabled{% endif %}">
+              <input
+                type="checkbox"
+                id="{{ input_id }}"
+                value="{{ value_handle | escape }}"
+                data-facet-input
+                data-facet-value-label="{{ value_label | escape }}"
+                {% if value_count == 0 %}
+                  disabled
+                {% endif %}
+              >
+              {{- 'square.svg' | inline_asset_content -}}
+              <div class="svg-wrapper">
+                {{- 'icon-checkmark.svg' | inline_asset_content -}}
+              </div>
+              <span class="facet-checkbox__text" aria-hidden="true">
+                {%- if swatch_colours -%}
+                  {%- render 'facet-swatch', label: value_label, colours: swatch_colours -%}
+                {%- endif -%}
+                <span class="facet-checkbox__text-label">{{ value_label | escape }}</span>
+                (<span data-facet-count>{{ value_count }}</span>)
+              </span>
+              <span class="visually-hidden" data-facet-count-label>
+                {{- value_label | escape }} (
+                {%- if value_count == 1 -%}
+                  {{- 'products.facets.product_count_simple.one' | t: count: value_count -}}
+                {%- else -%}
+                  {{- 'products.facets.product_count_simple.other' | t: count: value_count -}}
+                {%- endif -%}
+                )
+              </span>
+            </label>
+          </li>
+        {%- endfor -%}
+      </ul>
+      {%- if values.size > show_count -%}
+        <button
+          type="button"
+          class="button-show-more link underlined-link"
+          aria-expanded="false"
+          aria-controls="{{ list_id }}"
+          data-facet-more
+        >
+          <span aria-hidden="true">+ </span><span data-facet-more-label>{{ 'products.facets.show_more' | t }}</span>
+        </button>
+      {%- endif -%}
+    </fieldset>
+  </div>
+</details>
