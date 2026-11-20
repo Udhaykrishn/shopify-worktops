@@ -1879,6 +1879,14 @@
     "main-collection-product-grid": {
       "name": "Product grid",
       "settings": {
+        "filter_show_count": {
+          "label": "Values shown per filter",
+          "info": "Applies to the vertical layout. The rest are behind \"Show more\"; selected values are always shown first."
+        },
+        "show_price_filter": {
+          "label": "Show price filter",
+          "info": "Turn off for worktop collections: worktop variants are priced per 0.01 m², so filter prices don't match the price per m²."
+        },
         "show_quote_button": {
           "label": "Show request a quote button on product cards"
         },

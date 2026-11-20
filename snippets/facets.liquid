@@ -22,6 +22,15 @@
   # The Colour filter (a `colour` metaobject reference) shows each value's swatch next to its name.
   assign colour_filter_param = 'filter.p.m.custom.colour'
   assign colour_swatches = shop.metaobjects.colour.values
+  # Sidebar defaults: every group starts open, each list shows its first few values and hides the rest
+  # behind "+ Show more" (section setting, 5 by default).
+  assign filter_show_count = section.settings.filter_show_count | default: 5
+  # Worktop variants are priced per area unit (0.01 m²), so a price filter would show prices that match nothing
+  # on the page. Sections can hide it.
+  assign hide_price_filter = false
+  if section.settings.show_price_filter == false
+    assign hide_price_filter = true
+  endif
   if results.url
     assign results_url = results.url
   else
@@ -117,6 +126,7 @@
             <script src="{{ 'show-more.js' | asset_url }}" defer="defer"></script>
             {% comment %} Filters for both horizontal and vertical filter {% endcomment %}
             {%- for filter in results.filters -%}
+              {%- if filter.type == 'price_range' and hide_price_filter -%}{%- continue -%}{%- endif -%}
               {% liquid
                 assign total_active_values = total_active_values | plus: filter.active_values.size
                 assign presentation = filter.presentation | default: default_presentation
@@ -125,7 +135,7 @@
                   assign show_more_number = 12
                   assign visual_layout_class = 'facets-layout facets-layout-grid facets-layout-grid--' | append: presentation
                 else
-                  assign show_more_number = 10
+                  assign show_more_number = filter_show_count
                   assign visual_layout_class = 'facets-layout facets-layout-list facets-layout-list--' | append: presentation
                 endif
               %}
@@ -136,7 +146,7 @@
                     id="Details-{{ filter.param_name | escape }}-{{ section.id }}"
                     class="{% if filter_type == 'horizontal' %}disclosure-has-popup facets__disclosure{% else %} facets__disclosure-vertical{% endif %} js-filter"
                     data-index="{{ forloop.index }}"
-                    {% if filter_type == 'vertical' and forloop.index == 1 %}
+                    {% if filter_type == 'vertical' %}
                       open
                     {% endif %}
                   >
@@ -187,15 +197,16 @@
                       <fieldset class="facets-wrap parent-wrap {% if filter_type == 'vertical' %} facets-wrap-vertical{% endif %}">
                         <legend class="visually-hidden">{{ filter.label | escape }}</legend>
                         {%- liquid
-                          assign sorted_values = filter.values
-                          # Keep the selected values grouped together when operator is AND
-                          if filter.operator == 'AND'
-                            assign active_filter_values = filter.values | where: 'active', true
-                            assign inactive_filter_values = filter.values | where: 'active', false
-                            assign sorted_values = active_filter_values | concat: inactive_filter_values
-                          endif
+                          # Selected values first, so a ticked value is never hidden behind "Show more", then values
+                          # with matching products, then values that would return nothing (shown disabled).
+                          assign active_filter_values = filter.values | where: 'active', true
+                          assign inactive_filter_values = filter.values | where: 'active', false
+                          assign available_filter_values = inactive_filter_values | reject: 'count', 0
+                          assign empty_filter_values = inactive_filter_values | where: 'count', 0
+                          assign sorted_values = active_filter_values | concat: available_filter_values | concat: empty_filter_values
                         -%}
                         <ul
+                          id="FacetList-{{ forloop.index }}-{{ section.id }}"
                           class="{{ visual_layout_class }}{% if filter_type == 'vertical' %} facets__list--vertical{% else %} facets__list{% endif %} list-unstyled"
                           role="list"
                         >
@@ -293,6 +304,8 @@
                             class="button-show-more link underlined-link"
                             id="Show-More-{{ forloop.index }}-{{ section.id }}"
                             type="button"
+                            aria-expanded="false"
+                            aria-controls="FacetList-{{ forloop.index }}-{{ section.id }}"
                           >
                             <span class="label-show-more label-text"
                               ><span aria-hidden="true">+ </span>{{ 'products.facets.show_more' | t -}}
@@ -310,7 +323,7 @@
                     id="Details-{{ filter.param_name | escape }}-{{ section.id }}"
                     class="{% if filter_type == 'horizontal' %}disclosure-has-popup facets__disclosure{% else %} facets__disclosure-vertical{% endif %} js-filter"
                     data-index="{{ forloop.index }}"
-                    {% if filter_type == 'vertical' and forloop.index == 1 %}
+                    {% if filter_type == 'vertical' %}
                       open
                     {% endif %}
                   >
@@ -519,6 +532,7 @@
             >
               {%- if enable_filtering -%}
                 {%- for filter in results.filters -%}
+                  {%- if filter.type == 'price_range' and hide_price_filter -%}{%- continue -%}{%- endif -%}
                   {% liquid
                     assign presentation = filter.presentation | default: default_presentation
                     if presentation == 'image'

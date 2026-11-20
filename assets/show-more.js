@@ -17,6 +17,8 @@ if (!customElements.get('show-more-button')) {
         const parentDisplay = event.target.closest('[id^="Show-More-"]').closest('.parent-display');
         const parentWrap = parentDisplay.querySelector('.parent-wrap');
         this.querySelectorAll('.label-text').forEach((element) => element.classList.toggle('hidden'));
+        const button = this.querySelector('button');
+        button.setAttribute('aria-expanded', button.getAttribute('aria-expanded') === 'true' ? 'false' : 'true');
         parentDisplay.querySelectorAll('.show-more-item').forEach((item) => item.classList.toggle('hidden'));
         if (!this.querySelector('.label-show-less')) {
           this.classList.add('hidden');
