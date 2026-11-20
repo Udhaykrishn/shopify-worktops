@@ -2,10 +2,10 @@
 
 Dawn 16.2.0, Liquid, vanilla JavaScript Custom Elements and plain CSS. The theme has no storefront build step. Shopify owns catalogue, custom data, cart, orders and contact delivery.
 
-- Development store: https://mi-task-store.myshopify.com/
-- Repository: https://github.com/Udhaykrishn/shopify-worktops
-- Unpublished preview: https://mi-task-store.myshopify.com/?preview_theme_id=190265196835
-- Assessment workload: `/?view=assessment` on the reviewed theme preview.
+- **Live storefront:** https://mi-task-store.myshopify.com/ — `Work-Tops-performance-review` (theme ID `190267228451`, confirmed `[live]` by Shopify CLI on 20 November 2026).
+- **Assessment workload on the live theme:** https://mi-task-store.myshopify.com/?view=assessment
+- **Historical unpublished assessment preview:** https://mi-task-store.myshopify.com/?preview_theme_id=190265196835 (`Work-Tops-v0.3.0-rc.1`); this is **not** the currently published theme.
+- **Repository:** https://github.com/Udhaykrishn/shopify-worktops
 - Written answers: [docs/ANSWERS.md](docs/ANSWERS.md).
 - Requirements and data model: [TASKS.md](TASKS.md), [ARCHITECTURE.md](ARCHITECTURE.md).
 
@@ -43,13 +43,13 @@ Base collections and ordinary pagination are indexable with self-canonicals. Fil
 
 ### Targets, audit scope and status
 
-The **assessment's required mobile targets** are **Performance ≥80, LCP <2.5 s and CLS <0.1**. The separate **stretch/CI gate** in this project is stricter: **Performance >90, LCP <2.5 s and CLS <0.1 on every run**. The stretch gate is not the assessment threshold. The current optimized candidate has not passed the full stretch gate, nor has every assessed page satisfied the assignment's LCP threshold.
+The **assessment's required mobile targets** are **Performance ≥80, LCP <2.5 s and CLS <0.1**. The separate **stretch/CI gate** in this project is stricter: **Performance >90, LCP <2.5 s and CLS <0.1 on every run**. The stretch gate is not the assessment threshold. The performance theme is now **published**, but the last retained audit did **not** pass the full stretch gate, and not every assessed page satisfied the assignment's LCP threshold.
 
-Lighthouse measurements are **mobile simulated lab tests**, not field Core Web Vitals. Scores depend on the tested URL, deployed theme, device conditions and run. The assessment preview is theme `190265196835`; the later performance candidate is a **different unpublished preview** (theme `190267228451`). These must not be conflated, and a public-store browser screenshot does not verify the unpublished candidate or the current Git commit.
+Lighthouse measurements are **mobile simulated lab tests**, not field Core Web Vitals. Scores depend on the tested URL, deployed theme, device conditions and run. The historical assessment preview is theme `190265196835`; the later performance theme is `190267228451`, **now marked live by Shopify CLI**. Its archived Lighthouse tests were conducted **while it was unpublished**. These results must not be conflated, and the publication status alone does not prove that the current remote files match a particular local Git commit or that the store's password protection is disabled.
 
-### Latest retained optimized preview — mobile (3 runs per page)
+### Latest retained optimized-theme audit — mobile (3 runs per page, measured before publication)
 
-[Optimization record with full per-run ranges, HTML/JSON and regeneration commands](docs/PERFORMANCE-2026-11-20.md). These measurements were taken against unpublished theme [190267228451](https://mi-task-store.myshopify.com/?preview_theme_id=190267228451).
+[Optimization record with full per-run ranges, HTML/JSON and regeneration commands](docs/PERFORMANCE-2026-11-20.md). These measurements were taken when theme `190267228451` was **unpublished**; the same theme ID is **now live** at [the storefront](https://mi-task-store.myshopify.com/). No new post-publication audit is claimed.
 
 | Page | Median Performance (range) | Median LCP (range) | Median CLS (max) | Assessment requirements |
 |---|---:|---:|---:|---|
@@ -62,7 +62,7 @@ The homepage and assessment-workload **medians** meet all three assignment thres
 
 ### Additional Chrome DevTools browser checks — desktop vs mobile
 
-The following **single-run browser screenshots** were taken on `https://mi-task-store.myshopify.com/`, **not** on a verified uploaded-commit preview. They provide useful diagnostics but **are not a controlled before/after comparison** and should not replace the archived multi-run evidence.
+The following **single-run browser screenshots** were taken on `https://mi-task-store.myshopify.com/` before the publication status was confirmed, **not** on a verified uploaded-commit preview. They provide useful diagnostics but **are not a controlled before/after comparison** or proof of the current published theme's metrics, and should not replace the archived multi-run evidence.
 
 | Browser run | Performance | FCP | LCP | TBT | CLS | Best Practices |
 |---|---:|---:|---:|---:|---:|---:|
@@ -102,6 +102,6 @@ Problem → cause → fix: stale SEO after AJAX navigation came from updating on
 
 ## Remaining release evidence / trade-offs
 
-See [docs/VERIFICATION.md](docs/VERIFICATION.md) for confirmed checks and pending external gates. GBP is a store/market setting: displaying a pound sign over USD prices would be incorrect. Native filter activation, GBP configuration, Admin order visibility, quote receipt, performance targets and a credentialed CI audit remain outstanding. Browser checks confirmed dimension properties and matching totals in the cart drawer and checkout; no order or contact email was submitted.
+Shopify CLI reports `Work-Tops-performance-review` (`190267228451`) as the **live** theme. See [docs/VERIFICATION.md](docs/VERIFICATION.md) for the previously recorded checks and still-pending external gates; that evidence was gathered before the publication status was updated. GBP is a store/market setting: displaying a pound sign over USD prices would be incorrect. Native filter activation, GBP configuration, Admin order visibility, quote receipt, performance targets and a credentialed CI audit remain outstanding. Browser checks confirmed dimension properties and matching totals in the cart drawer and checkout; no order or contact email was submitted.
 
 With more time: enforce worktop validation server-side with a Function, use approved photography and genuine customer reviews, add measured field monitoring, and test a representative large native catalogue. The theme paginates server-side; it does not download the full catalogue to simulate filtering.
