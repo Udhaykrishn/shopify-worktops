@@ -3,7 +3,7 @@
 Dawn 16.2.0, Liquid, vanilla JavaScript Custom Elements and plain CSS. The theme has no storefront build step. Shopify owns catalogue, custom data, cart, orders and contact delivery.
 
 - Development store: https://mi-task-store.myshopify.com/
-- Repository: https://github.com/Udhaykrishn/shopify-worktops-assessment
+- Repository: https://github.com/Udhaykrishn/shopify-worktops
 - Unpublished preview: https://mi-task-store.myshopify.com/?preview_theme_id=190265196835
 - Assessment workload: `/?view=assessment` on the reviewed theme preview.
 - Written answers: [docs/ANSWERS.md](docs/ANSWERS.md).
@@ -23,7 +23,13 @@ For length L and width W in millimetres, area = L×W/1,000,000; billable units =
 
 Length, Width and billed Area are public line item properties so Shopify can carry them to checkout and the order. Cart page, drawer and notification render property values as escaped text, with restricted URL handling for uploaded files. The cart rechecks integer dimensions, product limits, exact billed-area formatting and quantity. Invalid lines show a reason and disable the theme’s checkout controls. Dynamic checkout is disabled for worktops.
 
-Someone can edit hidden fields, change quantity or properties, call `/cart/add.js` directly, or navigate directly to `/checkout`. The cart checks catch mismatches when that cart is rendered; they cannot prevent all direct checkout/API/permalink bypasses. A Cart and Checkout Validation Function is the server-side enforcement upgrade. It is optional in this assessment and is not claimed as implemented. Staff must check dimensions before fabrication. No client-supplied total determines Shopify’s price.
+### How a customer could pay less by editing the page
+
+**Concrete tampering example:** select a 1000 × 600 mm worktop. Its area is 0.60 m², so the configurator calculates `ceil(1000 × 600 / 10,000) = 60` billable units. If Shopify's variant price is 2.52 per 0.01 m², the legitimate line total is **151.20** in the store currency. A customer could open browser DevTools, change the submitted quantity from **60 to 1**, or skip the configurator and send a direct `/cart/add.js` request containing that variant with quantity 1. If that line reaches checkout, Shopify's normal variant-price calculation would charge **2.52** rather than 151.20. They could also change the submitted dimension properties to make an incorrectly priced line appear valid. Editing the displayed price or hidden total alone cannot change Shopify's server-owned variant price; changing quantity is the more important risk.
+
+**Mitigations in this assessment:** the product UI checks integer length/width against the configured minimum and slab maximum, rounds billable area **up** to 0.01 m² increments, and derives displayed totals from the selected Shopify variant price. Dimensions and billed area are included as public line item properties. When the theme cart is rendered, it recalculates the required billed units from the recorded dimensions, verifies the formatting and permitted bounds, and compares them to the line quantity. It shows an error and disables the theme's checkout controls for mismatches. Dynamic checkout buttons are disabled for worktops. These measures discourage mistakes and catch ordinary browser-side tampering **when the theme cart is visited**.
+
+**Security limitation:** these checks run in storefront Liquid/JavaScript, not in Shopify's checkout validation layer. A determined customer could submit an inconsistent line directly through the Cart API, bypass the theme cart using a checkout link/permalink, or tamper with the dimensions and quantity together. The current implementation **cannot guarantee that an underpriced custom-size order is blocked server-side**. A production release should use a **Cart and Checkout Validation Function** to reject invalid dimensions, quantities and property inconsistencies at the server boundary, and should use a server-enforced pricing strategy when arbitrary dimensions cannot be represented safely by catalogue unit pricing. This Function is **not implemented** for the assessment. Staff must verify recorded dimensions and the charged amount before fabrication. No client-supplied total is accepted as an authoritative Shopify price.
 
 The reusable Shopify contact form includes name, email, postcode, notes and product/variant/dimension context. Valid submissions previously fell through to a native POST and reloaded the page; the shared component now submits with Fetch and shows loading, confirmed success or errors in place, preserving the existing layout. Confirmed success closes the quote modal and restores focus to its opener; pending or failed submissions keep it open. It retains all form fields and CAPTCHA data, blocks duplicate requests, and keeps entered details on failure. Native field validation, a honeypot and Shopify CAPTCHA remain in place. The no-JavaScript form remains reachable. Local regression tests and intercepted Chrome checks at 375, 768, 1024 and 1440 px cover submission, payload, focus and modal behaviour. Real Shopify delivery and CAPTCHA tokens still require a storefront receipt check; Shopify challenge redirects show an inline error and cannot be completed automatically by this form.
 
@@ -35,15 +41,46 @@ Base collections and ordinary pagination are indexable with self-canonicals. Fil
 
 ## Performance and SEO
 
-The current performance-only optimization targets **Performance >90, LCP <2500 ms and CLS <0.1** while preserving the design and functionality. Three-run mobile medians are home **93 / 2156 ms / 0 CLS**, product **92 / 2607 ms / 0**, collection **79 / 4549 ms / 0**, and assessment **92 / 2283 ms / 0**. The complete target remains unmet: product LCP, collection score/LCP and individual-run outliers fail the strict gate. See [the optimization record](docs/PERFORMANCE-2026-11-20.md) for ranges, the unpublished candidate and regeneration instructions. The older measurements below remain historical evidence.
+### Targets, audit scope and status
 
-The baseline and later measurements live in [docs/lighthouse/](docs/lighthouse/). A result is valid only for the recorded URL, rendered theme and timestamp; a published-store audit does not prove that local changes are deployed. Targets are mobile Performance ≥80, LCP <2500 ms and CLS <0.1. Lab measurements do not establish field Core Web Vitals.
+The **assessment's required mobile targets** are **Performance ≥80, LCP <2.5 s and CLS <0.1**. The separate **stretch/CI gate** in this project is stricter: **Performance >90, LCP <2.5 s and CLS <0.1 on every run**. The stretch gate is not the assessment threshold. The current optimized candidate has not passed the full stretch gate, nor has every assessed page satisfied the assignment's LCP threshold.
 
-The original homepage baseline on 20 November 2026 recorded Performance 38, LCP 6304 ms and CLS 0 (Lighthouse 13.5.0, default mobile simulation). It predates deployment of this change. Do not interpret a new workload page as a directly comparable before/after pair with the original homepage.
+Lighthouse measurements are **mobile simulated lab tests**, not field Core Web Vitals. Scores depend on the tested URL, deployed theme, device conditions and run. The assessment preview is theme `190265196835`; the later performance candidate is a **different unpublished preview** (theme `190267228451`). These must not be conflated, and a public-store browser screenshot does not verify the unpublished candidate or the current Git commit.
 
-The retained preview was measured three times per page. Median results were home **55 / 5791 ms / 0 CLS**, product **67 / 5373 ms / 0 CLS**, collection **71 / 3172 ms / 0 CLS**, and assessment workload **85 / 3626 ms / 0 CLS**. All four pages fail the complete budget because LCP remains above 2500 ms; the normal pages also fail the performance score target. Full HTML/JSON and per-run failures are saved under `docs/lighthouse/after/`. These local remote-page audits identify the rendered theme but do not cryptographically associate it with the current Git commit; the CI upload manifest provides that association when credentials are configured.
+### Latest retained optimized preview — mobile (3 runs per page)
 
-Concrete theme improvements include cached responsive WebP illustrations in place of repeatedly painted SVG turbulence, eager/high-priority above-fold hero media, explicit image dimensions, lazy loading below-fold product media, conditional card/section assets and moving first-paint styles/font hints before Shopify’s streamed header content. Shopify’s required `content_for_header` remains intact. Platform pixels, account scripts and apps can still affect load time.
+[Optimization record with full per-run ranges, HTML/JSON and regeneration commands](docs/PERFORMANCE-2026-11-20.md). These measurements were taken against unpublished theme [190267228451](https://mi-task-store.myshopify.com/?preview_theme_id=190267228451).
+
+| Page | Median Performance (range) | Median LCP (range) | Median CLS (max) | Assessment requirements |
+|---|---:|---:|---:|---|
+| Home | **93** (89–96) | **2.156 s** (2.019–3.078) | **0** (0) | Median passes; an LCP run fails |
+| Product | **92** (90–93) | **2.607 s** (2.319–3.078) | **0** (0) | **Fails LCP** |
+| Collection | **79** (75–84) | **4.549 s** (4.078–5.335) | **0** (0) | **Fails score and LCP** |
+| Assessment workload | **92** (91–95) | **2.283 s** (2.160–2.505) | **0** (0.039) | Median passes; an LCP run fails |
+
+The homepage and assessment-workload **medians** meet all three assignment thresholds, but at least one run in each exceeds 2.5 s LCP. Product LCP and collection score/LCP remain outside budget. **All reported CLS results pass.** The project's strict every-run performance check therefore still **FAILS**; no 90+ / sub-2.5 s universal pass is claimed.
+
+### Additional Chrome DevTools browser checks — desktop vs mobile
+
+The following **single-run browser screenshots** were taken on `https://mi-task-store.myshopify.com/`, **not** on a verified uploaded-commit preview. They provide useful diagnostics but **are not a controlled before/after comparison** and should not replace the archived multi-run evidence.
+
+| Browser run | Performance | FCP | LCP | TBT | CLS | Best Practices |
+|---|---:|---:|---:|---:|---:|---:|
+| Desktop Chrome profile | **98** | 0.7 s | **1.0 s** | 0 ms | 0.051 | 73 |
+| Mobile Chrome profile, extension warning | **78** | 2.2 s | **3.6 s** | 310 ms | 0 | 73 |
+| Mobile Chrome Incognito | **85** | 2.0 s | **2.9 s** | 360 ms | 0 | 96 |
+
+The desktop screenshot meets the performance, LCP and CLS targets in that run. Incognito mobile meets the assessment's **score ≥80** and **CLS <0.1**, but **does not meet LCP <2.5 s**. Chrome explicitly reported extension interference in the earlier non-Incognito mobile audit. The changes between these browser runs cannot be attributed solely to extensions.
+
+### Baseline and older assessment-preview evidence
+
+On **20 November 2026**, the original published-homepage baseline scored **38**, with **6.304 s LCP** and **0 CLS** (Lighthouse 13.5.0, default mobile simulation). In the older unpublished assessment preview (**theme 190265196835**, 3 runs each), mobile medians were: **home 55 / 5.791 s / 0 CLS; product 67 / 5.373 s / 0; collection 71 / 3.172 s / 0; assessment 85 / 3.626 s / 0**. Those results **failed** the complete assignment budget, and are retained in [docs/lighthouse/](docs/lighthouse/) with HTML/JSON reports. The original homepage and the newly built assessment workload are different workloads; do not describe them as a matched before/after pair. The remote runs identify a rendered theme but are not cryptographic proof of a clean checked-out commit; the CI upload manifest is designed to provide source-to-preview association when enabled.
+
+### Changes, findings and remaining work
+
+Implemented optimizations include cached 400/800/1200 px responsive WebP illustrations instead of repeatedly painted SVG turbulence; appropriate above-fold image priority and preloading; explicit image dimensions/aspect ratios; lazy loading below-fold media; conditional section assets; earlier font preloads; inlined critical styles in original cascade order; and a smaller Fraunces font. These are documented in the [optimization record](docs/PERFORMANCE-2026-11-20.md). Shopify's mandatory `content_for_header` remains intact.
+
+Mobile Lighthouse also identified a network dependency tree containing Shopify-hosted platform scripts/telemetry, unnecessary connection hints on the measured page, and an image-delivery opportunity for `worktop-art-fantasy-brown-granite-400.webp` (approximately **48 KiB estimated potential savings**). These are **diagnostic opportunities**, not claimed fixes. Collection-page LCP is still the largest unresolved performance issue; keep the existing layout and verify the actual LCP element and loading sequence before changing media or removing platform functionality.
 
 The 28 existing decorative illustrations were preserved as SVG sources in `data/stone-art/`. `node data/render-stone-art.mjs` regenerates their 400/800/1200 px WebP assets. They are illustrations, not product photographs. Known catalogue handles use these cached files; unrecognized products retain the dynamic SVG fallback. If a product’s illustration/colour changes, regenerate its asset and handle mapping. A production catalogue should use approved product photography.
 
