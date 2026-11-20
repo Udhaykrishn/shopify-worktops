@@ -1,0 +1,101 @@
+{%- doc -%}
+  Renders Product JSON-LD: name, description, images, SKU, brand and one Offer per variant with price,
+  currency and availability. There is no `aggregateRating`, because the store has no real reviews.
+
+  Worktop variants are priced per area unit (0.01 m² by default), which is not a price a shopper sees. For
+  worktops each Offer gives the price per m², the price shown on the page, with a UnitPriceSpecification
+  whose reference quantity is 1 m² (UN/CEFACT unit code MTK).
+
+  Images come from the product media, then the shop logo, so the markup still has an image when a product
+  has no photos yet.
+
+  @param {product} product - The product to describe.
+
+  @example
+  {% render 'structured-data-product', product: product %}
+{%- enddoc -%}
+{%- liquid
+  capture is_worktop
+    render 'worktop-is-worktop', product: product
+  endcapture
+  assign unit_mm2 = settings.worktop_area_unit_mm2 | plus: 0 | round | at_least: 1
+  assign currency = cart.currency.iso_code
+  assign product_url = request.origin | append: product.url
+  assign brand_name = product.vendor | default: shop.name
+  assign description = product.description | strip_html | strip_newlines | strip | truncate: 500
+  if description == blank
+    assign description = 'general.meta.product_description' | t: title: product.title, shop: shop.name
+  endif
+-%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "@id": {{ product_url | append: '#product' | json }},
+    "name": {{ product.title | json }},
+    "url": {{ product_url | json }},
+    "description": {{ description | json }},
+    {%- if product.media.size > 0 or settings.logo != blank %}
+      "image": [
+        {%- if product.media.size > 0 -%}
+          {%- for media in product.media limit: 4 -%}
+            {{ media.preview_image | image_url: width: 1200 | prepend: 'https:' | json }}{% unless forloop.last %},{% endunless %}
+          {%- endfor -%}
+        {%- else -%}
+          {{ settings.logo | image_url: width: 1200 | prepend: 'https:' | json }}
+        {%- endif -%}
+      ],
+    {%- endif %}
+    {%- if product.selected_or_first_available_variant.sku != blank %}
+      "sku": {{ product.selected_or_first_available_variant.sku | json }},
+    {%- endif %}
+    {%- if product.type != blank %}
+      "category": {{ product.type | json }},
+    {%- endif %}
+    "brand": {
+      "@type": "Brand",
+      "name": {{ brand_name | json }}
+    },
+    "offers": [
+      {%- for variant in product.variants -%}
+        {%- liquid
+          if is_worktop == 'true'
+            assign offer_price = variant.price | times: 1000000 | divided_by: unit_mm2 | divided_by: 100.0 | round: 2
+          else
+            assign offer_price = variant.price | divided_by: 100.0 | round: 2
+          endif
+        -%}
+        {
+          "@type": "Offer",
+          {%- if product.has_only_default_variant == false %}
+            "name": {{ variant.title | json }},
+          {%- endif %}
+          {%- if variant.sku != blank %}
+            "sku": {{ variant.sku | json }},
+          {%- endif %}
+          "url": {{ request.origin | append: variant.url | json }},
+          "price": {{ offer_price | json }},
+          "priceCurrency": {{ currency | json }},
+          {%- if is_worktop == 'true' %}
+            "priceSpecification": {
+              "@type": "UnitPriceSpecification",
+              "price": {{ offer_price | json }},
+              "priceCurrency": {{ currency | json }},
+              "referenceQuantity": {
+                "@type": "QuantitativeValue",
+                "value": 1,
+                "unitCode": "MTK"
+              }
+            },
+          {%- endif %}
+          "availability": {% if variant.available %}"https://schema.org/InStock"{% else %}"https://schema.org/OutOfStock"{% endif %},
+          "itemCondition": "https://schema.org/NewCondition",
+          "seller": {
+            "@type": "Organization",
+            "name": {{ shop.name | json }}
+          }
+        }{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ]
+  }
+</script>

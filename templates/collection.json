@@ -1,5 +1,11 @@
 {
   "sections": {
+    "breadcrumbs": {
+      "type": "breadcrumbs",
+      "settings": {
+        "color_scheme": "scheme-1"
+      }
+    },
     "banner": {
       "type": "main-collection-banner",
       "settings": {
@@ -40,6 +46,7 @@
     }
   },
   "order": [
+    "breadcrumbs",
     "banner",
     "product-grid",
     "quote_modal"

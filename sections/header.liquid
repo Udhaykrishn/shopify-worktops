@@ -468,17 +468,24 @@
     {% if settings.logo %}
       "logo": {{ settings.logo | image_url: width: 500 | prepend: "https:" | json }},
     {% endif %}
-    "sameAs": [
-      {{ settings.social_twitter_link | json }},
-      {{ settings.social_facebook_link | json }},
-      {{ settings.social_pinterest_link | json }},
-      {{ settings.social_instagram_link | json }},
-      {{ settings.social_tiktok_link | json }},
-      {{ settings.social_tumblr_link | json }},
-      {{ settings.social_snapchat_link | json }},
-      {{ settings.social_youtube_link | json }},
-      {{ settings.social_vimeo_link | json }}
-    ],
+    {%- liquid
+      # Only list the social profiles that are set: Dawn printed an empty string for every unset link.
+      assign social_links = ''
+      assign social_settings = 'social_twitter_link,social_facebook_link,social_pinterest_link,social_instagram_link,social_tiktok_link,social_tumblr_link,social_snapchat_link,social_youtube_link,social_vimeo_link' | split: ','
+      for key in social_settings
+        if settings[key] != blank
+          assign social_links = social_links | append: settings[key] | append: '|'
+        endif
+      endfor
+      assign social_links = social_links | split: '|'
+    -%}
+    {%- if social_links.size > 0 %}
+      "sameAs": [
+        {%- for link in social_links -%}
+          {{ link | json }}{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ],
+    {%- endif %}
     "url": {{ request.origin | append: page.url | json }}
   }
 </script>

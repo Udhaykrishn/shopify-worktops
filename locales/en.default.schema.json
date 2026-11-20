@@ -406,6 +406,9 @@
       },
       "presets": { "name": "Quote request modal" }
     },
+    "breadcrumbs": {
+      "name": "Breadcrumbs"
+    },
     "home_hero": {
       "name": "Hero",
       "settings": {

@@ -1,0 +1,26 @@
+{%- doc -%}
+  Renders BreadcrumbList JSON-LD for the same trail the visible breadcrumbs show.
+
+  @param {string[]} names - The crumb names, from Home to the current page.
+  @param {string[]} urls - The crumb URLs (relative), in the same order as `names`.
+
+  @example
+  {% render 'structured-data-breadcrumb', names: crumb_names, urls: crumb_urls %}
+{%- enddoc -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {%- for name in names -%}
+        {%- assign index = forloop.index0 -%}
+        {
+          "@type": "ListItem",
+          "position": {{ forloop.index }},
+          "name": {{ name | json }},
+          "item": {{ request.origin | append: urls[index] | json }}
+        }{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ]
+  }
+</script>

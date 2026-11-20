@@ -1,0 +1,39 @@
+.breadcrumbs {
+  padding-top: 1.6rem;
+  padding-bottom: 0.4rem;
+}
+
+.breadcrumbs__list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.8rem;
+  margin: 0;
+  font-size: 1.3rem;
+  line-height: 1.5;
+}
+
+.breadcrumbs__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  min-width: 0;
+}
+
+.breadcrumbs__link {
+  color: rgba(var(--color-foreground), 0.75);
+  text-underline-offset: 0.3rem;
+}
+
+.breadcrumbs__link:hover {
+  color: rgb(var(--color-foreground));
+}
+
+.breadcrumbs__separator {
+  color: rgba(var(--color-foreground), 0.4);
+}
+
+.breadcrumbs__current {
+  color: rgb(var(--color-foreground));
+  overflow-wrap: anywhere;
+}
