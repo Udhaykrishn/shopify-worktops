@@ -1,0 +1,23 @@
+{%- doc -%}
+  Renders the message shown when the active filters match no products, with a "Clear all filters" link.
+  On search results the link keeps the search query and sort order, so only the filters are removed.
+
+  @param {string} clear_url - The URL that removes every filter (and nothing else).
+  @param {string} [terms] - The search query, when on search results.
+
+  @example
+  {% render 'facet-empty-state', clear_url: collection.url, terms: blank %}
+{%- enddoc -%}
+<div class="facet-empty-state" role="status">
+  <h2 class="facet-empty-state__title h3">{{ 'products.facets.empty_title' | t }}</h2>
+  <p class="facet-empty-state__text">
+    {%- if terms != blank -%}
+      {{ 'products.facets.empty_text_search' | t: terms: terms }}
+    {%- else -%}
+      {{ 'products.facets.empty_text' | t }}
+    {%- endif -%}
+  </p>
+  <a class="button button--secondary facet-empty-state__button" href="{{ clear_url }}">
+    {{- 'products.facets.clear_all_filters' | t -}}
+  </a>
+</div>

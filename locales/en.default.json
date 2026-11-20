@@ -222,6 +222,10 @@
       "label": "Media gallery"
     },
     "facets": {
+      "empty_title": "No products match these filters",
+      "empty_text": "Try removing a filter or two to see more stones.",
+      "empty_text_search": "Nothing for “{{ terms }}” matches these filters. Try removing a filter or two.",
+      "clear_all_filters": "Clear all filters",
       "filter_and_operator_subtitle": "Match all",
       "apply": "Apply",
       "clear": "Clear",

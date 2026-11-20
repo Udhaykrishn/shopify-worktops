@@ -328,8 +328,34 @@ class FacetFiltersForm extends HTMLElement {
   }
 
   createSearchParams(form) {
-    const formData = new FormData(form);
-    return new URLSearchParams(formData).toString();
+    return FacetFiltersForm.cleanSearchParams(new URLSearchParams(new FormData(form))).toString();
+  }
+
+  /**
+   * Merges the params of several forms (sort form + filter form) into one query string. Filter values
+   * (`filter.*`) can repeat; every other key (q, type, options[prefix], sort_by) is kept once, so the search
+   * query is never duplicated. Empty values, such as an unused price input, are dropped.
+   */
+  static mergeSearchParams(paramStrings) {
+    const merged = new URLSearchParams();
+    paramStrings.forEach((paramString) => {
+      new URLSearchParams(paramString).forEach((value, key) => {
+        if (key.startsWith('filter.')) {
+          if (!merged.getAll(key).includes(value)) merged.append(key, value);
+        } else {
+          merged.set(key, value);
+        }
+      });
+    });
+    return FacetFiltersForm.cleanSearchParams(merged).toString();
+  }
+
+  static cleanSearchParams(params) {
+    const cleaned = new URLSearchParams();
+    params.forEach((value, key) => {
+      if (value !== '') cleaned.append(key, value);
+    });
+    return cleaned;
   }
 
   onSubmitForm(searchParams, event) {
@@ -355,7 +381,7 @@ class FacetFiltersForm extends HTMLElement {
           forms.push(this.createSearchParams(form));
         }
       });
-      this.onSubmitForm(forms.join('&'), event);
+      this.onSubmitForm(FacetFiltersForm.mergeSearchParams(forms), event);
     }
   }
 
@@ -369,6 +395,26 @@ class FacetFiltersForm extends HTMLElement {
     FacetFiltersForm.renderPage(url);
   }
 }
+
+/*
+ * A new query typed into the search page's own search form keeps the active filters and sort order, so changing
+ * the query doesn't silently reset them. Clearing filters is a separate, explicit action ("Clear all").
+ */
+document.addEventListener('submit', (event) => {
+  const form = event.target;
+  if (!(form instanceof HTMLFormElement) || !form.hasAttribute('data-keep-refinements')) return;
+
+  form.querySelectorAll('[data-kept-refinement]').forEach((input) => input.remove());
+  new URLSearchParams(window.location.search).forEach((value, key) => {
+    if (!key.startsWith('filter.') && key !== 'sort_by') return;
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = key;
+    input.value = value;
+    input.dataset.keptRefinement = '';
+    form.appendChild(input);
+  });
+});
 
 FacetFiltersForm.filterData = [];
 FacetFiltersForm.searchParamsInitial = window.location.search.slice(1);

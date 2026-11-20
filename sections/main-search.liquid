@@ -45,8 +45,8 @@
 
 {%- liquid
   assign sort_by = search.sort_by | default: search.default_sort_by
-  assign terms = search.terms | escape
-  assign search_url = '?q=' | append: terms | append: '&options%5Bprefix%5D=last&sort_by=' | append: sort_by
+  assign terms = search.terms | url_encode
+  assign search_url = '?q=' | append: terms | append: '&type=product&options%5Bprefix%5D=last&sort_by=' | append: sort_by
 -%}
 
 {%- style -%}
@@ -78,7 +78,7 @@
           <predictive-search data-loading-text="{{ 'accessibility.loading' | t }}">
         {%- endif -%}
         <main-search>
-          <form action="{{ routes.search_url }}" method="get" role="search" class="search">
+          <form action="{{ routes.search_url }}" method="get" role="search" class="search" data-keep-refinements>
             <div class="field">
               <input
                 class="search__input field__input"
@@ -102,6 +102,7 @@
               >
               <label class="field__label" for="Search-In-Template">{{ 'general.search.search' | t }}</label>
               <input name="options[prefix]" type="hidden" value="last">
+              <input type="hidden" name="type" value="product">
 
               {%- if settings.predictive_search_enabled -%}
                 <div class="predictive-search predictive-search--search-template" tabindex="-1" data-predictive-search>
@@ -233,16 +234,7 @@
               data-id="{{ section.id }}"
             >
               <div class="loading-overlay gradient"></div>
-              <div class="title-wrapper center">
-                <h2 class="title title--primary">
-                  {{ 'sections.collection_template.empty' | t -}}
-                  <br>
-                  {{
-                    'sections.collection_template.use_fewer_filters_html'
-                    | t: link: search_url, class: 'underlined-link link'
-                  }}
-                </h2>
-              </div>
+              {% render 'facet-empty-state', clear_url: search_url, terms: search.terms %}
             </div>
           {%- else -%}
             <div
@@ -280,7 +272,8 @@
                           show_rating: section.settings.show_rating,
                           lazy_load: lazy_load,
                           skip_styles: skip_card_product_styles,
-                          product_view_context: 'search'
+                          product_view_context: 'search',
+                          show_quote_button: true
                         %}
                         {%- assign skip_card_product_styles = true -%}
                       {%- when 'article' -%}
@@ -477,6 +470,23 @@
       ],
       "default": "horizontal",
       "label": "t:sections.main-collection-product-grid.settings.filter_type.label"
+    },
+    {
+      "type": "range",
+      "id": "filter_show_count",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "default": 5,
+      "label": "t:sections.main-collection-product-grid.settings.filter_show_count.label",
+      "info": "t:sections.main-collection-product-grid.settings.filter_show_count.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price_filter",
+      "default": true,
+      "label": "t:sections.main-collection-product-grid.settings.show_price_filter.label",
+      "info": "t:sections.main-collection-product-grid.settings.show_price_filter.info"
     },
     {
       "type": "checkbox",
