@@ -55,6 +55,14 @@
       "next_slide": "Slide right",
       "previous_slide": "Slide left",
       "name": "Slider"
+    },
+    "meta": {
+      "collection_description": "Shop {{ title }} from {{ shop }}: cut to size in the UK, priced per square metre, with free samples.",
+      "product_description": "{{ title }} worktop from {{ shop }}, cut to your exact size and priced per square metre. Order online or request a free quote."
+    },
+    "breadcrumbs": {
+      "home": "Home",
+      "label": "Breadcrumb"
     }
   },
   "newsletter": {
@@ -334,7 +342,6 @@
       "announcement": "Announcement",
       "announcement_bar": "Announcement bar"
     },
-
     "header": {
       "announcement": "Announcement",
       "menu": "Menu",

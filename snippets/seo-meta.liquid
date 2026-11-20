@@ -1,0 +1,75 @@
+{%- doc -%}
+  Renders the title, meta description, canonical link and robots meta for every page.
+
+  Indexing rules (see README, "Indexing filtered collections"):
+  - A base collection, and its plain pagination (`?page=2`), is indexable with a self-referencing canonical.
+  - A collection with any storefront filter, a `sort_by` parameter or tag filtering is a duplicate view of the
+    base collection: `noindex, follow` and a canonical to the base collection, so link equity still flows
+    through the product links. High-value combinations ("White Quartz Worktops") get their own collection
+    with its own content instead of an indexed filter URL.
+  - Internal search results are `noindex, follow`.
+
+  Titles add "Page N" on pagination so paginated pages don't share a title. Collections and products without
+  an SEO description fall back to a short generated one.
+
+  @example
+  {% render 'seo-meta' %}
+{%- enddoc -%}
+{%- liquid
+  assign seo_canonical = canonical_url
+  assign seo_noindex = false
+  assign seo_description = page_description
+
+  case request.page_type
+    when 'collection'
+      assign is_filtered = false
+      if collection.sort_by != blank or current_tags
+        assign is_filtered = true
+      else
+        for filter in collection.filters
+          if filter.type == 'price_range'
+            if filter.min_value.value != blank or filter.max_value.value != blank
+              assign is_filtered = true
+              break
+            endif
+          elsif filter.active_values.size > 0
+            assign is_filtered = true
+            break
+          endif
+        endfor
+      endif
+
+      assign seo_canonical = request.origin | append: collection.url
+      if is_filtered
+        assign seo_noindex = true
+      elsif current_page > 1
+        assign seo_canonical = seo_canonical | append: '?page=' | append: current_page
+      endif
+
+      if seo_description == blank
+        assign seo_description = 'general.meta.collection_description' | t: title: collection.title, shop: shop.name
+      endif
+
+    when 'product'
+      if seo_description == blank
+        assign seo_description = 'general.meta.product_description' | t: title: product.title, shop: shop.name
+      endif
+
+    when 'search'
+      assign seo_noindex = true
+  endcase
+-%}
+<title>
+  {{ page_title }}
+  {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
+  {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+  {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+</title>
+
+{%- if seo_description != blank %}
+  <meta name="description" content="{{ seo_description | strip_html | strip_newlines | truncate: 160 | escape }}">
+{%- endif %}
+<link rel="canonical" href="{{ seo_canonical }}">
+{%- if seo_noindex %}
+  <meta name="robots" content="noindex, follow">
+{%- endif %}
