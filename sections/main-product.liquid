@@ -492,6 +492,7 @@
                     </button>
                   </modal-opener>
                 {%- when 'colour_swatches' -%}
+                  <script src="{{ 'worktop-colour-picker.js' | asset_url }}" defer="defer"></script>
                   <div class="product__colour-swatches" {{ block.shopify_attributes }}>
                     {% render 'worktop-colour-swatches', product: product, uid: block.id, style: 'full' %}
                   </div>

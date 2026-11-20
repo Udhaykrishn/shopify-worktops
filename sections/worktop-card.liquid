@@ -1,0 +1,26 @@
+{%- comment -%}
+  One product card for the current product, rendered only through the Section Rendering API
+  (`/products/<handle>?section_id=worktop-card`). Product cards fetch it when a colour swatch is picked, to swap
+  the card to that colour without a page load (assets/worktop-card-colours.js). It has no presets, so merchants
+  can't add it to a page.
+
+  `section_id` is the placeholder `SWAPUID`; the script replaces it with an ID that is unique on the page.
+  Layout settings (image ratio, quote button) stay those of the card being swapped; only its content is used.
+{%- endcomment -%}
+{% render 'card-product',
+  card_product: product,
+  media_aspect_ratio: 'adapt',
+  image_shape: 'default',
+  show_secondary_image: false,
+  lazy_load: false,
+  skip_styles: true,
+  show_quote_button: true,
+  section_id: 'SWAPUID'
+%}
+
+{% schema %}
+{
+  "name": "t:sections.worktop_card.name",
+  "tag": "div"
+}
+{% endschema %}

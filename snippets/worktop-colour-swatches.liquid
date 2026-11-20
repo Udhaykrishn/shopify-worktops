@@ -8,6 +8,10 @@
 
   @param {product} product - The product being shown.
   @param {string} uid - A unique ID on the page, used for element and SVG filter IDs.
+  Picking a colour swaps the content in place, without a page load: on the product page through
+  `<colour-picker>` (assets/worktop-colour-picker.js), on cards through `<card-colours>`
+  (assets/worktop-card-colours.js). Both are plain links without JavaScript.
+
   @param {string} [style] - `full` (product page: heading, large swatches with labels) or `overlay`
     (product cards: a tray of small swatches over the card image, hidden until the card is hovered or focused;
     on touch screens a "N colours" button opens it, see assets/worktop-card-colours.js). Defaults to `full`.
@@ -41,7 +45,7 @@
         {{- 'products.worktop.colours_short' | t: count: family_products.size -}}
       </button>
   {%- else -%}
-    <div class="colour-swatches colour-swatches--{{ swatch_style }}">
+    <colour-picker class="colour-swatches colour-swatches--{{ swatch_style }}">
   {%- endif -%}
     {%- if swatch_style == 'full' -%}
       <p class="colour-swatches__heading form__label" id="{{ heading_id }}">
@@ -97,6 +101,6 @@
   {%- if swatch_style == 'overlay' -%}
     </card-colours>
   {%- else -%}
-    </div>
+    </colour-picker>
   {%- endif -%}
 {%- endif -%}

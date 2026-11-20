@@ -194,6 +194,28 @@ h2,
     0 0 0 0.7rem rgba(var(--color-foreground), 0.25);
 }
 
+colour-picker.colour-swatches {
+  display: block;
+}
+
+/* While another colour loads in place (no page load), dim the swatches and the card it is for. */
+.colour-swatches--loading,
+.card-wrapper--swapping .card__inner,
+.card-wrapper--swapping .card__information {
+  opacity: 0.6;
+  transition: opacity var(--duration-short) ease;
+}
+
+.colour-swatches--loading {
+  pointer-events: none;
+}
+
+.template-search__region--loading {
+  opacity: 0.6;
+  pointer-events: none;
+  transition: opacity var(--duration-short) ease;
+}
+
 .product__colour-swatches {
   margin: 1.6rem 0 0.4rem;
 }
@@ -278,7 +300,9 @@ h2,
   }
 }
 
+/* Also while a picked colour loads, so focus can return to the new swatch (worktop-card-colours.js). */
 .card-wrapper:focus-within .colour-swatches--overlay .colour-swatches__list,
+.card-wrapper--swapping .colour-swatches--overlay .colour-swatches__list,
 .colour-swatches--overlay[open] .colour-swatches__list {
   opacity: 1;
   transform: none;

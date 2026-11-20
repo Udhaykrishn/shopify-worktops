@@ -1,5 +1,5 @@
 {%- doc -%}
-  Renders the message shown when the active filters match no products, with a "Clear all filters" link.
+  Renders the message shown when the active filters match no products, with a "Clear all filters" button.
   On search results the link keeps the search query and sort order, so only the filters are removed.
 
   @param {string} clear_url - The URL that removes every filter (and nothing else).
@@ -17,7 +17,10 @@
       {{ 'products.facets.empty_text' | t }}
     {%- endif -%}
   </p>
-  <a class="button button--secondary facet-empty-state__button" href="{{ clear_url }}">
-    {{- 'products.facets.clear_all_filters' | t -}}
-  </a>
+  {%- comment -%}<facet-remove> (assets/facets.js) loads the cleared results without a full page load.{%- endcomment -%}
+  <facet-remove>
+    <a class="button button--secondary facet-empty-state__button" href="{{ clear_url }}">
+      {{- 'products.facets.clear_all_filters' | t -}}
+    </a>
+  </facet-remove>
 </div>

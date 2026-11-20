@@ -134,6 +134,7 @@
           </predictive-search>
         {%- endif -%}
       </div>
+      <div class="template-search__status" data-search-status>
       {%- if search.performed -%}
         {%- unless section.settings.enable_filtering or section.settings.enable_sorting -%}
           {%- if search.results_count > 0 -%}
@@ -146,7 +147,25 @@
           <p role="status">{{ 'templates.search.no_results' | t: terms: search.terms }}</p>
         {%- endif -%}
       {%- endif -%}
+      </div>
+      <p class="visually-hidden" aria-live="polite" data-search-announcer></p>
     </div>
+    {%- liquid
+      assign results_page_title = page_title
+      unless page_title contains shop.name
+        assign results_page_title = page_title | append: ' – ' | append: shop.name
+      endunless
+    -%}
+    {%- comment -%}
+      Everything below the search box. assets/main-search.js swaps this region (and the status above) when a new
+      query is searched or the browser goes back and forward, so the page never fully reloads.
+    {%- endcomment -%}
+    <div
+      class="template-search__region"
+      data-search-results
+      data-section-id="{{ section.id }}"
+      data-page-title="{{ results_page_title | escape }}"
+    >
     {%- if search.performed -%}
       {%- if section.settings.enable_sorting
         and section.settings.filter_type == 'vertical'
@@ -321,6 +340,7 @@
         </div>
       </div>
     {%- endif -%}
+    </div>
   </div>
 {% endpaginate %}
 {% if section.settings.image_shape == 'arch' %}

@@ -406,6 +406,9 @@
       },
       "presets": { "name": "Quote request modal" }
     },
+    "worktop_card": {
+      "name": "Worktop card"
+    },
     "breadcrumbs": {
       "name": "Breadcrumbs"
     },

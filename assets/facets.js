@@ -16,6 +16,8 @@ class FacetFiltersForm extends HTMLElement {
 
   static setListeners() {
     const onHistoryChange = (event) => {
+      // On search results, main-search.js re-renders the whole results region, because the query may have changed.
+      if (document.querySelector('[data-search-results]')) return;
       const searchParams = event.state ? event.state.searchParams : FacetFiltersForm.searchParamsInitial;
       if (searchParams === FacetFiltersForm.searchParamsPrev) return;
       FacetFiltersForm.renderPage(searchParams, null, false);
@@ -29,8 +31,15 @@ class FacetFiltersForm extends HTMLElement {
     });
   }
 
-  static renderPage(searchParams, event, updateURLHash = true) {
+  /**
+   * @param {string} searchParams - The query string to render.
+   * @param {Event} [event] - The input event, used to keep focus on the filter that changed.
+   * @param {boolean} [updateURLHash] - Whether to push the new URL onto the history.
+   * @param {{ focusGrid?: boolean }} [options] - `focusGrid` scrolls to the grid and moves focus to it (pagination).
+   */
+  static renderPage(searchParams, event, updateURLHash = true, { focusGrid = false } = {}) {
     FacetFiltersForm.searchParamsPrev = searchParams;
+    FacetFiltersForm.focusGridAfterRender = focusGrid;
     const sections = FacetFiltersForm.getSections();
     const updateEvent = FacetFiltersForm.startUpdateEvent(searchParams);
     const countContainer = document.getElementById('ProductCount');
@@ -112,13 +121,20 @@ class FacetFiltersForm extends HTMLElement {
   }
 
   static renderSectionFromFetch(url, event, updateEvent) {
-    fetch(url)
-      .then((response) => response.text())
+    // Only the latest request may render, so a slow response can't overwrite a newer one.
+    FacetFiltersForm.abortController?.abort();
+    FacetFiltersForm.abortController = new AbortController();
+    fetch(url, { signal: FacetFiltersForm.abortController.signal })
+      .then((response) => {
+        if (!response.ok) throw new Error(`Filter request failed: ${response.status}`);
+        return response.text();
+      })
       .then((html) => {
         FacetFiltersForm.filterData = [...FacetFiltersForm.filterData, { html, url }];
         FacetFiltersForm.renderSection(html, event, updateEvent);
       })
       .catch((error) => {
+        if (error.name === 'AbortError') return;
         console.error(error);
         updateEvent?.reject(error);
       });
@@ -134,6 +150,23 @@ class FacetFiltersForm extends HTMLElement {
     FacetFiltersForm.renderProductGridContainer(html);
     FacetFiltersForm.renderProductCount(html, updateEvent);
     if (typeof initializeScrollAnimationTrigger === 'function') initializeScrollAnimationTrigger(html.innerHTML);
+    if (FacetFiltersForm.focusGridAfterRender) FacetFiltersForm.focusGrid();
+  }
+
+  /** After a page change: bring the top of the results into view and move focus there for keyboard users. */
+  static focusGrid() {
+    FacetFiltersForm.focusGridAfterRender = false;
+    const grid = document.getElementById('ProductGridContainer');
+    if (!grid) return;
+
+    const header = document.querySelector('.shopify-section-header-sticky');
+    const offset = header ? header.getBoundingClientRect().height : 0;
+    const top = grid.getBoundingClientRect().top + window.scrollY - offset - 16;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: Math.max(top, 0), behavior: reduceMotion ? 'auto' : 'smooth' });
+
+    grid.setAttribute('tabindex', '-1');
+    grid.focus({ preventScroll: true });
   }
 
   static renderProductGridContainer(html) {
@@ -152,9 +185,11 @@ class FacetFiltersForm extends HTMLElement {
   static renderProductCount(html, updateEvent) {
     const parsedHtml = new DOMParser().parseFromString(html, 'text/html');
     const sourceCount = parsedHtml.getElementById('ProductCount');
+    if (!sourceCount) return;
     const count = sourceCount.innerHTML;
     const container = document.getElementById('ProductCount');
     const containerDesktop = document.getElementById('ProductCountDesktop');
+    if (!container) return;
     container.innerHTML = count;
     container.dataset.productCount = sourceCount.dataset.productCount || '';
     container.dataset.totalCount = sourceCount.dataset.totalCount || '';
@@ -269,11 +304,12 @@ class FacetFiltersForm extends HTMLElement {
     const mobileElementSelectors = ['.mobile-facets__open', '.mobile-facets__count', '.sorting'];
 
     mobileElementSelectors.forEach((selector) => {
-      if (!html.querySelector(selector)) return;
-      document.querySelector(selector).innerHTML = html.querySelector(selector).innerHTML;
+      const source = html.querySelector(selector);
+      const target = document.querySelector(selector);
+      if (source && target) target.innerHTML = source.innerHTML;
     });
 
-    document.getElementById('FacetFiltersFormMobile').closest('menu-drawer').bindEvents();
+    document.getElementById('FacetFiltersFormMobile')?.closest('menu-drawer')?.bindEvents();
   }
 
   static renderCounts(source, target) {
@@ -397,23 +433,20 @@ class FacetFiltersForm extends HTMLElement {
 }
 
 /*
- * A new query typed into the search page's own search form keeps the active filters and sort order, so changing
- * the query doesn't silently reset them. Clearing filters is a separate, explicit action ("Clear all").
+ * Pagination inside the product grid loads the next page with the Section Rendering API instead of a full page
+ * load. The link's query string already carries the filters, sort order and search query, so they are kept, and
+ * the new URL is pushed so Back returns to the previous page. Modified clicks (new tab, etc.) behave as links.
  */
-document.addEventListener('submit', (event) => {
-  const form = event.target;
-  if (!(form instanceof HTMLFormElement) || !form.hasAttribute('data-keep-refinements')) return;
+document.addEventListener('click', (event) => {
+  const link = event.target.closest('#ProductGridContainer .pagination a[href]');
+  if (!link || event.defaultPrevented || event.button !== 0) return;
+  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
 
-  form.querySelectorAll('[data-kept-refinement]').forEach((input) => input.remove());
-  new URLSearchParams(window.location.search).forEach((value, key) => {
-    if (!key.startsWith('filter.') && key !== 'sort_by') return;
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = key;
-    input.value = value;
-    input.dataset.keptRefinement = '';
-    form.appendChild(input);
-  });
+  const url = new URL(link.href, window.location.href);
+  if (url.origin !== window.location.origin || url.pathname !== window.location.pathname) return;
+
+  event.preventDefault();
+  FacetFiltersForm.renderPage(url.searchParams.toString(), null, true, { focusGrid: true });
 });
 
 FacetFiltersForm.filterData = [];
