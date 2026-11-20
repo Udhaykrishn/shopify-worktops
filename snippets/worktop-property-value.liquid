@@ -1,0 +1,29 @@
+{%- doc -%}
+  Renders a public cart property as escaped text, or a safe uploaded-file link.
+  @param {string} value - The untrusted line item property value.
+  @param {string} [described_by] - Optional ID describing the new-window behaviour.
+{%- enddoc -%}
+{%- liquid
+  assign upload_url = value | append: '' | strip
+  assign upload_path = upload_url
+  assign prefix_http = upload_url | slice: 0, 7
+  assign prefix_https = upload_url | slice: 0, 8
+  assign prefix_relative = upload_url | slice: 0, 9
+  assign safe_scheme = false
+  if prefix_http == 'http://' or prefix_https == 'https://'
+    assign upload_authority_path = upload_url | remove_first: 'http://' | remove_first: 'https://'
+    assign upload_host = upload_authority_path | split: '/' | first
+    assign upload_path = upload_authority_path | remove_first: upload_host
+    assign safe_scheme = true
+  elsif prefix_relative == '/uploads/'
+    assign safe_scheme = true
+  endif
+  assign upload_path = upload_path | split: '?' | first | split: '#' | first
+-%}
+{%- if safe_scheme and upload_path contains '/uploads/' -%}
+  <a href="{{ upload_url | escape }}" class="link" target="_blank" rel="noopener noreferrer"{% if described_by %} aria-describedby="{{ described_by | escape }}"{% endif %}>
+    {{- upload_path | split: '/' | last | escape -}}
+  </a>
+{%- else -%}
+  {{- value | escape -}}
+{%- endif -%}

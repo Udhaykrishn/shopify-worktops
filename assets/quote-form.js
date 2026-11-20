@@ -28,6 +28,10 @@
     'contact[timeframe]',
     'contact[product]',
     'contact[product_url]',
+    'contact[variant]',
+    'contact[length_mm]',
+    'contact[width_mm]',
+    'contact[area_m2]',
   ];
   const storageKey = (formId) => `quote-form:${formId}`;
 
@@ -74,7 +78,10 @@
         document.addEventListener('worktop:change', this.onWorktopChange);
 
         const stored = readStored(this.form.id);
-        if (stored && this.querySelector('[data-quote-errors]')) this.restoreFields(stored);
+        if (stored && this.querySelector('[data-quote-errors]')) {
+          this.restoreFields(stored);
+          this.renderSelection();
+        }
 
         const productField = this.querySelector('[data-quote-field="product"]');
         if (productField && productField.value) {
@@ -137,7 +144,7 @@
           if (field.tagName === 'SELECT') {
             const option = Array.from(field.options).find((item) => item.value === values[name]);
             if (option) field.value = values[name];
-          } else if (isBlank(field.value)) {
+          } else if (field.type === 'hidden' || isBlank(field.value)) {
             field.value = values[name];
           }
         });
@@ -184,19 +191,29 @@
         this.setField('width', hasSize ? String(detail.widthMm) : '');
         this.setField('area', hasSize ? detail.areaM2 : '');
 
+        this.renderSelection();
+      }
+
+      renderSelection() {
+        const value = (name) => this.querySelector(`[data-quote-field="${name}"]`)?.value || '';
+        const variant = value('variant');
+        const length = value('length');
+        const width = value('width');
+        const area = value('area');
+
         const variantLabel = this.querySelector('[data-quote-variant-label]');
         if (variantLabel) {
-          const showVariant = detail.variantTitle && detail.variantTitle !== 'Default Title';
-          variantLabel.textContent = showVariant ? `, ${detail.variantTitle}` : '';
+          const showVariant = variant && variant !== 'Default Title';
+          variantLabel.textContent = showVariant ? `, ${variant}` : '';
         }
 
         const sizeLabel = this.querySelector('[data-quote-size-label]');
         if (sizeLabel) {
-          sizeLabel.textContent = hasSize
+          sizeLabel.textContent = length && width && area
             ? (this.strings.size || '')
-                .replace('[length]', detail.lengthMm)
-                .replace('[width]', detail.widthMm)
-                .replace('[area]', detail.areaM2)
+                .replace('[length]', length)
+                .replace('[width]', width)
+                .replace('[area]', area)
             : this.strings.placeholder || '';
         }
       }

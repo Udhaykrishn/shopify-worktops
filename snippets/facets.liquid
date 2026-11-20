@@ -21,7 +21,7 @@
   assign default_presentation = 'text'
   # The Colour filter (a `colour` metaobject reference) shows each value's swatch next to its name.
   assign colour_filter_param = 'filter.p.m.custom.colour'
-  assign colour_swatches = shop.metaobjects.colour.values
+  assign colour_swatches = metaobjects.colour.values
   # Sidebar defaults: every group starts open, each list shows its first few values and hides the rest
   # behind "+ Show more" (section setting, 5 by default).
   assign filter_show_count = section.settings.filter_show_count | default: 5

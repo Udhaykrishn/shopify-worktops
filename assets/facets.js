@@ -18,7 +18,7 @@ class FacetFiltersForm extends HTMLElement {
     const onHistoryChange = (event) => {
       // On search results, main-search.js re-renders the whole results region, because the query may have changed.
       if (document.querySelector('[data-search-results]')) return;
-      const searchParams = event.state ? event.state.searchParams : FacetFiltersForm.searchParamsInitial;
+      const searchParams = window.location.search.slice(1);
       if (searchParams === FacetFiltersForm.searchParamsPrev) return;
       FacetFiltersForm.renderPage(searchParams, null, false);
     };
@@ -38,6 +38,8 @@ class FacetFiltersForm extends HTMLElement {
    * @param {{ focusGrid?: boolean }} [options] - `focusGrid` scrolls to the grid and moves focus to it (pagination).
    */
   static renderPage(searchParams, event, updateURLHash = true, { focusGrid = false } = {}) {
+    searchParams = FacetFiltersForm.keepPendingQuery(searchParams);
+    const controller = FacetFiltersForm.beginRequest();
     FacetFiltersForm.searchParamsPrev = searchParams;
     FacetFiltersForm.focusGridAfterRender = focusGrid;
     const sections = FacetFiltersForm.getSections();
@@ -62,7 +64,7 @@ class FacetFiltersForm extends HTMLElement {
 
       FacetFiltersForm.filterData.some(filterDataUrl)
         ? FacetFiltersForm.renderSectionFromCache(filterDataUrl, event, updateEvent)
-        : FacetFiltersForm.renderSectionFromFetch(url, event, updateEvent);
+        : FacetFiltersForm.renderSectionFromFetch(url, event, updateEvent, controller);
     });
 
     if (updateURLHash) FacetFiltersForm.updateURLHash(searchParams);
@@ -120,23 +122,36 @@ class FacetFiltersForm extends HTMLElement {
     };
   }
 
-  static renderSectionFromFetch(url, event, updateEvent) {
-    // Only the latest request may render, so a slow response can't overwrite a newer one.
+  static beginRequest() {
     FacetFiltersForm.abortController?.abort();
     FacetFiltersForm.abortController = new AbortController();
-    fetch(url, { signal: FacetFiltersForm.abortController.signal })
+    return FacetFiltersForm.abortController;
+  }
+
+  static keepPendingQuery(searchParams) {
+    if (FacetFiltersForm.pendingSearchQuery === undefined) return searchParams;
+    const params = new URLSearchParams(searchParams);
+    params.set('q', FacetFiltersForm.pendingSearchQuery);
+    params.delete('page');
+    return params.toString();
+  }
+
+  static renderSectionFromFetch(url, event, updateEvent, controller) {
+    return fetch(url, { signal: controller.signal })
       .then((response) => {
         if (!response.ok) throw new Error(`Filter request failed: ${response.status}`);
         return response.text();
       })
       .then((html) => {
+        if (controller.signal.aborted) return;
         FacetFiltersForm.filterData = [...FacetFiltersForm.filterData, { html, url }];
         FacetFiltersForm.renderSection(html, event, updateEvent);
       })
       .catch((error) => {
-        if (error.name === 'AbortError') return;
+        if (controller.signal.aborted || error.name === 'AbortError') return;
         console.error(error);
         updateEvent?.reject(error);
+        window.location.assign(window.location.href);
       });
   }
 
@@ -146,11 +161,45 @@ class FacetFiltersForm extends HTMLElement {
   }
 
   static renderSection(html, event, updateEvent) {
+    const parsed = new DOMParser().parseFromString(html, 'text/html');
+    FacetFiltersForm.renderSEO(parsed);
     FacetFiltersForm.renderFilters(html, event);
     FacetFiltersForm.renderProductGridContainer(html);
     FacetFiltersForm.renderProductCount(html, updateEvent);
+    const searchRegion = document.querySelector('[data-search-results]');
+    if (searchRegion) {
+      const query = new URLSearchParams(FacetFiltersForm.searchParamsPrev).get('q') || '';
+      document.querySelectorAll('input[type="search"][name="q"]').forEach((input) => { input.value = query; });
+      ['[data-search-status]', '.template-search__header h1'].forEach((selector) => {
+        const current = document.querySelector(selector);
+        const next = parsed.querySelector(selector);
+        if (current && next) current.innerHTML = next.innerHTML;
+      });
+      FacetFiltersForm.pendingSearchQuery = undefined;
+    }
+    searchRegion?.removeAttribute('aria-busy');
+    searchRegion?.classList.remove('template-search__region--loading');
     if (typeof initializeScrollAnimationTrigger === 'function') initializeScrollAnimationTrigger(html.innerHTML);
     if (FacetFiltersForm.focusGridAfterRender) FacetFiltersForm.focusGrid();
+  }
+
+  static renderSEO(html) {
+    const metadata = html.querySelector('template[data-page-seo]')?.content;
+    if (!metadata?.querySelector('title') || !metadata.querySelector('link[rel="canonical"]')) return;
+
+    document.title = metadata.querySelector('title').textContent.trim();
+    ['link[rel="canonical"]', 'meta[name="description"]', 'meta[name="robots"]'].forEach((selector) => {
+      const source = metadata.querySelector(selector);
+      const current = document.head.querySelector(selector);
+      if (!source) {
+        current?.remove();
+        return;
+      }
+      const target = current || document.createElement(source.tagName.toLowerCase());
+      const attributes = source.tagName === 'LINK' ? ['rel', 'href'] : ['name', 'content'];
+      attributes.forEach((name) => target.setAttribute(name, source.getAttribute(name)));
+      if (!current) document.head.append(target);
+    });
   }
 
   /** After a page change: bring the top of the results into view and move focus there for keyboard users. */

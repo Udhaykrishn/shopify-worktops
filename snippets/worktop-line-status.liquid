@@ -24,7 +24,7 @@
 
   if is_worktop == 'true'
     assign status = 'ok'
-    assign unit_mm2 = settings.worktop_area_unit_mm2 | plus: 0 | round | at_least: 1
+    assign unit_mm2 = 10000
 
     capture worktop_limits
       render 'worktop-limits', product: item.product
@@ -59,12 +59,16 @@
       else
         assign expected_quantity = length_mm | times: width_mm | plus: unit_mm2 | minus: 1 | divided_by: unit_mm2
         assign quantity_remainder = item.quantity | modulo: expected_quantity
-        assign expected_area_hundredths = expected_quantity | times: unit_mm2 | plus: 5000 | divided_by: 10000
-        assign area_hundredths = area_raw | times: 100 | round
+        assign area_whole = expected_quantity | divided_by: 100
+        assign area_fraction = expected_quantity | modulo: 100
+        if area_fraction < 10
+          assign area_fraction = area_fraction | prepend: '0'
+        endif
+        assign expected_area = area_whole | append: '.' | append: area_fraction
 
         if item.quantity < expected_quantity or quantity_remainder != 0
           assign status = 'qty_mismatch'
-        elsif area_hundredths != expected_area_hundredths
+        elsif area_raw != expected_area
           assign status = 'area_mismatch'
         endif
       endif

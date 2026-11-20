@@ -21,6 +21,11 @@
   assign seo_description = page_description
 
   case request.page_type
+    when 'index'
+      if seo_description == blank
+        assign seo_description = 'general.meta.home_description' | t: shop: shop.name
+      endif
+
     when 'collection'
       assign is_filtered = false
       if collection.sort_by != blank or current_tags
@@ -57,19 +62,23 @@
 
     when 'search'
       assign seo_noindex = true
+    when 'index'
+      if template.suffix == 'assessment'
+        assign seo_noindex = true
+      endif
   endcase
 -%}
 <title>
-  {{ page_title }}
-  {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
-  {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
-  {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+  {{ page_title | escape }}
+  {%- if current_tags %} &ndash; {% assign seo_tags = current_tags | join: ', ' %}{{ 'general.meta.tagged' | t: tags: seo_tags | escape }}{% endif -%}
+  {%- if current_page > 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif -%}
+  {%- unless page_title contains shop.name %} &ndash; {{ shop.name | escape }}{% endunless -%}
 </title>
 
 {%- if seo_description != blank %}
   <meta name="description" content="{{ seo_description | strip_html | strip_newlines | truncate: 160 | escape }}">
 {%- endif %}
-<link rel="canonical" href="{{ seo_canonical }}">
+<link rel="canonical" href="{{ seo_canonical | escape }}">
 {%- if seo_noindex %}
   <meta name="robots" content="noindex, follow">
 {%- endif %}

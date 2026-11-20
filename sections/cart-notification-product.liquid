@@ -45,13 +45,7 @@
               <div class="product-option">
                 <dt>{{ property.first | escape }}:</dt>
                 <dd>
-                  {%- if property.last contains '/uploads/' -%}
-                    <a href="{{ property.last | escape }}" class="link" target="_blank">
-                      {{ property.last | split: '/' | last | escape }}
-                    </a>
-                  {%- else -%}
-                    {{ property.last | escape }}
-                  {%- endif -%}
+                  {%- render 'worktop-property-value', value: property.last -%}
                 </dd>
               </div>
             {%- endif -%}

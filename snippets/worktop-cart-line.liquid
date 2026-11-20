@@ -64,7 +64,7 @@
   </div>
 {%- else -%}
   {%- liquid
-    assign unit_mm2 = settings.worktop_area_unit_mm2 | plus: 0 | round | at_least: 1
+    assign unit_mm2 = 10000
     assign price_per_m2 = item.final_price | times: 1000000 | divided_by: unit_mm2 | money
   -%}
   <div class="worktop-line">

@@ -1453,28 +1453,6 @@
     ]
   },
   {
-    "name": "t:settings_schema.worktops.name",
-    "settings": [
-      {
-        "type": "select",
-        "id": "worktop_area_unit_mm2",
-        "options": [
-          {
-            "value": "10000",
-            "label": "t:settings_schema.worktops.settings.worktop_area_unit_mm2.options__1.label"
-          },
-          {
-            "value": "100000",
-            "label": "t:settings_schema.worktops.settings.worktop_area_unit_mm2.options__2.label"
-          }
-        ],
-        "default": "10000",
-        "label": "t:settings_schema.worktops.settings.worktop_area_unit_mm2.label",
-        "info": "t:settings_schema.worktops.settings.worktop_area_unit_mm2.info"
-      }
-    ]
-  },
-  {
     "name": "t:settings_schema.customer_accounts.name",
     "settings": [
       {

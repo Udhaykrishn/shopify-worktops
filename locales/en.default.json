@@ -58,7 +58,10 @@
     },
     "meta": {
       "collection_description": "Shop {{ title }} from {{ shop }}: cut to size in the UK, priced per square metre, with free samples.",
-      "product_description": "{{ title }} worktop from {{ shop }}, cut to your exact size and priced per square metre. Order online or request a free quote."
+      "product_description": "{{ title }} worktop from {{ shop }}, cut to your exact size and priced per square metre. Order online or request a free quote.",
+      "home_description": "Explore cut-to-size quartz, granite and marble worktops, compare finishes and request a project quote from {{ shop }}.",
+      "page": "Page {{ page }}",
+      "tagged": "Tagged \"{{ tags }}\""
     },
     "breadcrumbs": {
       "home": "Home",
@@ -617,5 +620,17 @@
       "send_on": "YYYY-MM-DD",
       "send_on_label": "Send on (optional)"
     }
+  },
+  "assessment": {
+    "demo_notice": "Assessment demo content",
+    "illustration": "Decorative stone illustration, not a product photograph",
+    "read_story": "Read demo article",
+    "review_notice": "These 48 fictional samples demonstrate the review layout. They are not customer feedback and carry no rating.",
+    "sample_number": "Demo sample {{ number }}",
+    "navigation": "Assessment catalogue navigation",
+    "browse": "Browse the demo catalogue",
+    "planning": "Project planning",
+    "stories": "Demo journal",
+    "reviews": "Demo review layouts"
   }
 }

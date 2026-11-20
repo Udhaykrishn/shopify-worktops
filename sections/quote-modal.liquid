@@ -11,6 +11,12 @@
 {{ 'quote-modal.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'quote-form.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'quote-modal.js' | asset_url }}" defer="defer"></script>
+<noscript>
+  <style>
+    .quote-modal__dialog:not([open]) { display: block; position: static; max-height: none; }
+    .quote-modal__close { display: none; }
+  </style>
+</noscript>
 
 {%- assign heading_id = 'QuoteModalHeading-' | append: section.id -%}
 <quote-modal class="quote-modal" id="quote">

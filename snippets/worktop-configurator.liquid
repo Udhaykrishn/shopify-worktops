@@ -4,8 +4,8 @@
   `custom.min_length_mm`, `custom.max_length_mm`, `custom.min_width_mm` and `custom.max_width_mm`
   (read through `worktop-limits`). Missing or misconfigured limits show a notice and block add to cart.
 
-  The quantity sent to the cart is the number of area units the size needs (theme setting
-  `worktop_area_unit_mm2`), so Shopify charges variant price × quantity. The size is stored as line item
+  The quantity sent to the cart is the number of 0.01 m² catalogue units the size needs,
+  so Shopify charges variant price × quantity. The size is stored as line item
   properties. These hidden inputs join Dawn's product form through the `form` attribute.
   The property keys must match `worktop-line-status.liquid`, which re-checks every line in the cart.
 
@@ -26,7 +26,7 @@
   assign max_length = limit_parts[2] | plus: 0
   assign min_width = limit_parts[3] | plus: 0
   assign max_width = limit_parts[4] | plus: 0
-  assign unit_mm2 = settings.worktop_area_unit_mm2 | plus: 0 | round | at_least: 1
+  assign unit_mm2 = 10000
 
   assign configured = false
   if limit_parts[0] == 'true'

@@ -53,8 +53,6 @@ customElements.define('main-search', MainSearch);
  * Filters and sort are applied by facets.js, which renders the same region; this only owns query changes.
  */
 class SearchResults {
-  static abortController = null;
-
   static get region() {
     return document.querySelector('[data-search-results]');
   }
@@ -91,17 +89,18 @@ class SearchResults {
       region.dataset.sectionId
     }`;
 
-    SearchResults.abortController?.abort();
-    SearchResults.abortController = new AbortController();
+    FacetFiltersForm.pendingSearchQuery = new URLSearchParams(searchParams).get('q') || '';
+    const controller = FacetFiltersForm.beginRequest();
     region.setAttribute('aria-busy', 'true');
     region.classList.add('template-search__region--loading');
 
-    fetch(sectionUrl, { signal: SearchResults.abortController.signal })
+    return fetch(sectionUrl, { signal: controller.signal })
       .then((response) => {
         if (!response.ok) throw new Error(`Search request failed: ${response.status}`);
         return response.text();
       })
       .then((responseText) => {
+        if (controller.signal.aborted) return;
         const html = new DOMParser().parseFromString(responseText, 'text/html');
         const newRegion = html.querySelector('[data-search-results]');
         if (!newRegion) throw new Error('Search section is missing its results region');
@@ -110,7 +109,7 @@ class SearchResults {
         if (updateURL) history.pushState({ searchParams }, '', pageUrl);
       })
       .catch((error) => {
-        if (error.name === 'AbortError') return;
+        if (controller.signal.aborted || error.name === 'AbortError') return;
         console.error(error);
         // The plain page still works: fall back to a normal navigation rather than leaving stale results.
         window.location.assign(pageUrl);
@@ -136,7 +135,7 @@ class SearchResults {
     const wrapper = document.querySelector('.template-search');
     const newWrapper = html.querySelector('.template-search');
     if (wrapper && newWrapper) wrapper.className = newWrapper.className;
-    document.title = newRegion.dataset.pageTitle;
+    FacetFiltersForm.renderSEO(html);
 
     // Every search box on the page shows the query that is now displayed.
     const query = new URLSearchParams(searchParams).get('q') || '';
@@ -153,6 +152,7 @@ class SearchResults {
     if (announcer && count) announcer.textContent = count.textContent.trim().replace(/\s+/g, ' ');
 
     if (typeof FacetFiltersForm !== 'undefined') FacetFiltersForm.searchParamsPrev = searchParams;
+    FacetFiltersForm.pendingSearchQuery = undefined;
   }
 }
 

@@ -5,10 +5,10 @@
   The chip is decorative: the filter label already names the colour.
 
   @param {string} label - The filter value label, for example "White".
-  @param {metaobject[]} colours - The `colour` metaobject entries (`shop.metaobjects.colour.values`).
+  @param {metaobject[]} colours - The `colour` metaobject entries (`metaobjects.colour.values`).
 
   @example
-  {% render 'facet-swatch', label: value.label, colours: shop.metaobjects.colour.values %}
+  {% render 'facet-swatch', label: value.label, colours: metaobjects.colour.values %}
 {%- enddoc -%}
 {%- liquid
   assign swatch_style = ''
