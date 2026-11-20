@@ -1,0 +1,174 @@
+{
+  "source": "Existing decorative SVG illustrations from Mi-Task, not product photographs",
+  "capturedAt": "2026-11-20",
+  "products": [
+    {
+      "id": "gid://shopify/Product/10451127697699",
+      "title": "Calacatta Classico Quartz",
+      "handle": "calacatta-classico-quartz",
+      "productType": "Quartz"
+    },
+    {
+      "id": "gid://shopify/Product/10451129565475",
+      "title": "Calacatta Portofino Quartz",
+      "handle": "calacatta-portofino-quartz",
+      "productType": "Quartz"
+    },
+    {
+      "id": "gid://shopify/Product/10451129598243",
+      "title": "Bianco Arizona Quartz",
+      "handle": "bianco-arizona-quartz",
+      "productType": "Quartz"
+    },
+    {
+      "id": "gid://shopify/Product/10451129663779",
+      "title": "Orkney White Quartz",
+      "handle": "orkney-white-quartz",
+      "productType": "Quartz"
+    },
+    {
+      "id": "gid://shopify/Product/10451129696547",
+      "title": "Crema Ice Quartz",
+      "handle": "crema-ice-quartz",
+      "productType": "Quartz"
+    },
+    {
+      "id": "gid://shopify/Product/10451129729315",
+      "title": "Kasha Quartz",
+      "handle": "kasha-quartz",
+      "productType": "Quartz"
+    },
+    {
+      "id": "gid://shopify/Product/10451129762083",
+      "title": "Nero Marquina Quartz",
+      "handle": "nero-marquina-quartz",
+      "productType": "Quartz"
+    },
+    {
+      "id": "gid://shopify/Product/10451129827619",
+      "title": "Iron Grey Quartz",
+      "handle": "iron-grey-quartz",
+      "productType": "Quartz"
+    },
+    {
+      "id": "gid://shopify/Product/10451131269411",
+      "title": "Grigio Sparkle Light Quartz",
+      "handle": "grigio-sparkle-light-quartz",
+      "productType": "Quartz"
+    },
+    {
+      "id": "gid://shopify/Product/10451131302179",
+      "title": "Grigio Sparkle Dark Quartz",
+      "handle": "grigio-sparkle-dark-quartz",
+      "productType": "Quartz"
+    },
+    {
+      "id": "gid://shopify/Product/10451131334947",
+      "title": "Stellar Blue Quartz",
+      "handle": "stellar-blue-quartz",
+      "productType": "Quartz"
+    },
+    {
+      "id": "gid://shopify/Product/10451131400483",
+      "title": "Concrete Taupe Quartz",
+      "handle": "concrete-taupe-quartz",
+      "productType": "Quartz"
+    },
+    {
+      "id": "gid://shopify/Product/10451131466019",
+      "title": "Black Fusion Granite",
+      "handle": "black-fusion-granite",
+      "productType": "Granite"
+    },
+    {
+      "id": "gid://shopify/Product/10451131498787",
+      "title": "Steel Grey Granite",
+      "handle": "steel-grey-granite",
+      "productType": "Granite"
+    },
+    {
+      "id": "gid://shopify/Product/10451131531555",
+      "title": "Blue Pearl Granite",
+      "handle": "blue-pearl-granite",
+      "productType": "Granite"
+    },
+    {
+      "id": "gid://shopify/Product/10451133825315",
+      "title": "Viscount White Granite",
+      "handle": "viscount-white-granite",
+      "productType": "Granite"
+    },
+    {
+      "id": "gid://shopify/Product/10451133890851",
+      "title": "Fantasy Brown Granite",
+      "handle": "fantasy-brown-granite",
+      "productType": "Granite"
+    },
+    {
+      "id": "gid://shopify/Product/10451133956387",
+      "title": "Carrara Campanili Marble",
+      "handle": "carrara-campanili-marble",
+      "productType": "Marble"
+    },
+    {
+      "id": "gid://shopify/Product/10451134054691",
+      "title": "Nero Marquina Marble",
+      "handle": "nero-marquina-marble",
+      "productType": "Marble"
+    },
+    {
+      "id": "gid://shopify/Product/10451134120227",
+      "title": "Verde Guatemala Marble",
+      "handle": "verde-guatemala-marble",
+      "productType": "Marble"
+    },
+    {
+      "id": "gid://shopify/Product/10451134185763",
+      "title": "Rosso Levanto Marble",
+      "handle": "rosso-levanto-marble",
+      "productType": "Marble"
+    },
+    {
+      "id": "gid://shopify/Product/10451134251299",
+      "title": "Taj Mahal Quartzite",
+      "handle": "taj-mahal-quartzite",
+      "productType": "Quartzite"
+    },
+    {
+      "id": "gid://shopify/Product/10451209978147",
+      "title": "Calacatta Gold Quartz",
+      "handle": "calacatta-gold-quartz",
+      "productType": "Quartz"
+    },
+    {
+      "id": "gid://shopify/Product/10451210010915",
+      "title": "Grigio Sparkle White Quartz",
+      "handle": "grigio-sparkle-white-quartz",
+      "productType": "Quartz"
+    },
+    {
+      "id": "gid://shopify/Product/10451210043683",
+      "title": "Stellar Black Quartz",
+      "handle": "stellar-black-quartz",
+      "productType": "Quartz"
+    },
+    {
+      "id": "gid://shopify/Product/10451210076451",
+      "title": "Stellar White Quartz",
+      "handle": "stellar-white-quartz",
+      "productType": "Quartz"
+    },
+    {
+      "id": "gid://shopify/Product/10451210109219",
+      "title": "Concrete Grey Quartz",
+      "handle": "concrete-grey-quartz",
+      "productType": "Quartz"
+    },
+    {
+      "id": "gid://shopify/Product/10451210141987",
+      "title": "Concrete White Quartz",
+      "handle": "concrete-white-quartz",
+      "productType": "Quartz"
+    }
+  ]
+}

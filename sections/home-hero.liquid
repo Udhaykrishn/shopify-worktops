@@ -81,7 +81,7 @@
         {%- assign slab_product = section.settings.slab_product | default: hero_collection.products.first -%}
         <div class="home-hero__media home-hero__media--stone">
           {%- assign slab_uid = section.id | append: '-slab' -%}
-          {% render 'worktop-stone-art', product: slab_product, uid: slab_uid %}
+          {% render 'worktop-stone-art', product: slab_product, uid: slab_uid, eager: true, sizes: '(min-width: 990px) 50vw, 100vw' %}
           <a class="home-hero__slab-label" href="{{ slab_product.url }}">
             <span class="home-hero__slab-name">{{ slab_product.title | escape }}</span>
             <span class="home-hero__slab-cta">{{ 'sections.home_hero.view_stone' | t }}</span>

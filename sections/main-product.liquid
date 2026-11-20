@@ -93,7 +93,7 @@
             {%- assign stone_uid = section.id | append: '-' | append: product.id -%}
             <figure class="worktop-stone-media{% if section.settings.constrain_to_viewport %} worktop-stone-media--constrained{% endif %}">
               <div class="worktop-stone-media__slab">
-                {% render 'worktop-stone-art', product: product, uid: stone_uid %}
+                {% render 'worktop-stone-art', product: product, uid: stone_uid, eager: true, sizes: '(min-width: 990px) 50vw, 100vw' %}
               </div>
               <figcaption class="worktop-stone-media__caption caption">
                 {{ 'products.worktop.texture_caption' | t }}

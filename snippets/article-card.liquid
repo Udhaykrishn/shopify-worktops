@@ -11,7 +11,6 @@
   @param {boolean} [show_excerpt] - Whether to show an article excerpt and comment metadata. Defaults to `false`.
   @param {boolean} [show_badge] - Whether to show the blog badge. Defaults to `false`.
   @param {boolean} [lazy_load] - Whether to lazy-load the article image. Defaults to `true`.
-  @param {object} [section] - The current section context, supplied implicitly when rendered from a section and used for adaptive media height.
 
   @example
   {% render 'article-card', article: article, blog: blog, media_aspect_ratio: article.image.aspect_ratio, show_image: true, show_date: true %}
@@ -45,7 +44,7 @@
           <div class="article-card__image-wrapper card__media">
             <div
               class="article-card__image media media--hover-effect"
-              {% if section.settings.media_height == 'adapt' %}
+              {% if media_height == 'adapt' %}
                 style="padding-bottom: {{ 1 | divided_by: article.image.aspect_ratio | times: 100 }}%;"
               {% endif %}
             >

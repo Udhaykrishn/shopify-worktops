@@ -6,8 +6,8 @@
   worktops each Offer gives the price per m², the price shown on the page, with a UnitPriceSpecification
   whose reference quantity is 1 m² (UN/CEFACT unit code MTK).
 
-  Images come from the product media, then the shop logo, so the markup still has an image when a product
-  has no photos yet.
+  Images come from product media or the same decorative stone illustration shown on the product page.
+  Shop logos are not substituted for product images.
 
   @param {product} product - The product to describe.
 
@@ -18,13 +18,19 @@
   capture is_worktop
     render 'worktop-is-worktop', product: product
   endcapture
-  assign unit_mm2 = settings.worktop_area_unit_mm2 | plus: 0 | round | at_least: 1
-  assign currency = cart.currency.iso_code
+  assign unit_mm2 = 10000
+  assign currency = cart.currency.iso_code | default: shop.currency
   assign product_url = request.origin | append: product.url
   assign brand_name = product.vendor | default: shop.name
   assign description = product.description | strip_html | strip_newlines | strip | truncate: 500
   if description == blank
     assign description = 'general.meta.product_description' | t: title: product.title, shop: shop.name
+  endif
+  assign raster_handles = '|calacatta-classico-quartz|calacatta-portofino-quartz|bianco-arizona-quartz|orkney-white-quartz|crema-ice-quartz|kasha-quartz|nero-marquina-quartz|iron-grey-quartz|grigio-sparkle-light-quartz|grigio-sparkle-dark-quartz|stellar-blue-quartz|concrete-taupe-quartz|black-fusion-granite|steel-grey-granite|blue-pearl-granite|viscount-white-granite|fantasy-brown-granite|carrara-campanili-marble|nero-marquina-marble|verde-guatemala-marble|rosso-levanto-marble|taj-mahal-quartzite|calacatta-gold-quartz|grigio-sparkle-white-quartz|stellar-black-quartz|stellar-white-quartz|concrete-grey-quartz|concrete-white-quartz|'
+  assign raster_handle = '|' | append: product.handle | append: '|'
+  assign illustration_url = blank
+  if is_worktop == 'true' and raster_handles contains raster_handle
+    assign illustration_url = 'worktop-art-' | append: product.handle | append: '-1200.webp' | asset_url
   endif
 -%}
 <script type="application/ld+json">
@@ -35,14 +41,14 @@
     "name": {{ product.title | json }},
     "url": {{ product_url | json }},
     "description": {{ description | json }},
-    {%- if product.media.size > 0 or settings.logo != blank %}
+    {%- if product.media.size > 0 or illustration_url != blank %}
       "image": [
         {%- if product.media.size > 0 -%}
           {%- for media in product.media limit: 4 -%}
             {{ media.preview_image | image_url: width: 1200 | prepend: 'https:' | json }}{% unless forloop.last %},{% endunless %}
           {%- endfor -%}
         {%- else -%}
-          {{ settings.logo | image_url: width: 1200 | prepend: 'https:' | json }}
+          {{ illustration_url | prepend: 'https:' | json }}
         {%- endif -%}
       ],
     {%- endif %}

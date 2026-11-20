@@ -2,7 +2,6 @@
 <script src="{{ 'worktop-card-colours.js' | asset_url }}" defer="defer"></script>
 {{ 'component-price.css' | asset_url | stylesheet_tag }}
 
-{{ 'component-slider.css' | asset_url | stylesheet_tag }}
 {{ 'template-collection.css' | asset_url | stylesheet_tag }}
 
 {% if section.settings.image_shape == 'blob' %}
@@ -65,6 +64,10 @@
   endif
 -%}
 
+{%- if show_mobile_slider or show_desktop_slider -%}
+  {{ 'component-slider.css' | asset_url | stylesheet_tag }}
+{%- endif -%}
+
 <div
   class="color-{{ section.settings.color_scheme }} isolate gradient"
 >
@@ -105,6 +108,7 @@
 
         {%- if section.settings.collection.products.size > 0 -%}
           {% assign lazy_load = false %}
+          {% if section.index > 2 %}{% assign lazy_load = true %}{% endif %}
           {% paginate section.settings.collection.products by section.settings.products_to_show %}
             {%- for product in section.settings.collection.products limit: section.settings.products_to_show -%}
               {% if lazy_load == false and forloop.index > max_columns_to_show %}

@@ -24,12 +24,15 @@
   {% render 'card-product', card_product: product, media_aspect_ratio: 'adapt', show_secondary_image: true, section_id: section.id, quick_add: 'standard', product_view_context: 'collection' %}
 {% enddoc %}
 {%- unless skip_styles -%}
-  {{ 'component-rating.css' | asset_url | stylesheet_tag }}
-  {{ 'component-volume-pricing.css' | asset_url | stylesheet_tag }}
-
+  {%- if show_rating -%}
+    {{ 'component-rating.css' | asset_url | stylesheet_tag }}
+  {%- endif -%}
   {{ 'component-price.css' | asset_url | stylesheet_tag }}
-  {{ 'quick-order-list.css' | asset_url | stylesheet_tag }}
-  {{ 'quantity-popover.css' | asset_url | stylesheet_tag }}
+  {%- if quick_add == 'bulk' -%}
+    {{ 'component-volume-pricing.css' | asset_url | stylesheet_tag }}
+    {{ 'quick-order-list.css' | asset_url | stylesheet_tag }}
+    {{ 'quantity-popover.css' | asset_url | stylesheet_tag }}
+  {%- endif -%}
 {%- endunless -%}
 {%- if card_product and card_product != empty -%}
   {%- capture card_is_worktop -%}{%- render 'worktop-is-worktop', product: card_product -%}{%- endcapture -%}
@@ -126,7 +129,9 @@
             <div class="card__media">
               <div class="media media--transparent media--hover-effect">
                 {%- assign stone_uid = section_id | append: '-' | append: card_product.id -%}
-                {% render 'worktop-stone-art', product: card_product, uid: stone_uid %}
+                {%- assign stone_eager = false -%}
+                {%- if lazy_load == false -%}{%- assign stone_eager = true -%}{%- endif -%}
+                {% render 'worktop-stone-art', product: card_product, uid: stone_uid, eager: stone_eager %}
               </div>
             </div>
           {%- endif -%}
