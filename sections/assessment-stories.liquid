@@ -1,0 +1,32 @@
+{{ 'assessment-content.css' | asset_url | stylesheet_tag }}
+{{ 'component-slider.css' | asset_url | stylesheet_tag }}
+<section class="assessment-content page-width" id="assessment-stories">
+  <p class="brand-eyebrow">{{ 'assessment.demo_notice' | t }}</p>
+  <h2>{{ section.settings.heading | escape }}</h2>
+  <slider-component class="slider-mobile-gutter">
+    <ul id="Slider-{{ section.id }}" class="assessment-content__list slider slider--everywhere grid" role="list" aria-label="{{ section.settings.heading | escape }}">
+      {% for block in section.blocks %}
+        <li id="Slide-{{ section.id }}-{{ forloop.index }}" class="assessment-content__card slider__slide grid__item" {{ block.shopify_attributes }}>
+          {% assign art = 'worktop-art-' | append: block.settings.stone | append: '-800.webp' %}
+          <img src="{{ art | asset_url }}" width="800" height="800" loading="lazy" decoding="async" sizes="(min-width: 990px) 33vw, 85vw"
+            srcset="{{ 'worktop-art-' | append: block.settings.stone | append: '-400.webp' | asset_url }} 400w, {{ art | asset_url }} 800w"
+            alt="{{ 'assessment.illustration' | t | escape }}">
+          <div class="assessment-content__body">
+            <h3>{{ block.settings.title | escape }}</h3>
+            <p>{{ block.settings.excerpt | escape }}</p>
+            <details id="Details-Story-{{ section.id }}-{{ block.id }}"><summary>{{ 'assessment.read_story' | t }}</summary><div class="rte">{{ block.settings.body }}</div></details>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+    <div class="slider-buttons">
+      <button type="button" class="slider-button slider-button--prev" name="previous" aria-label="{{ 'general.slider.previous_slide' | t }}" aria-controls="Slider-{{ section.id }}"><span class="svg-wrapper">{{ 'icon-caret.svg' | inline_asset_content }}</span></button>
+      <div class="slider-counter caption"><span class="slider-counter--current">1</span><span aria-hidden="true"> / </span><span class="visually-hidden">{{ 'general.slider.of' | t }}</span><span class="slider-counter--total">{{ section.blocks.size }}</span></div>
+      <button type="button" class="slider-button slider-button--next" name="next" aria-label="{{ 'general.slider.next_slide' | t }}" aria-controls="Slider-{{ section.id }}"><span class="svg-wrapper">{{ 'icon-caret.svg' | inline_asset_content }}</span></button>
+    </div>
+  </slider-component>
+</section>
+{% schema %}
+{"name":"Assessment demo stories","max_blocks":12,"settings":[{"type":"text","id":"heading","label":"Heading","default":"Stone planning journal"}],"blocks":[{"type":"story","name":"Demo story","settings":[{"type":"text","id":"title","label":"Title"},{"type":"text","id":"stone","label":"Illustration catalogue handle","default":"concrete-white-quartz"},{"type":"textarea","id":"excerpt","label":"Excerpt"},{"type":"richtext","id":"body","label":"Story"}]}],"presets":[{"name":"Assessment demo stories"}]}
+{% endschema %}
+

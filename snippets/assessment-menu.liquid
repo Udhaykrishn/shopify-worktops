@@ -1,0 +1,37 @@
+{% doc %}
+  Renders nested assessment-only navigation using Dawn's disclosure behaviour.
+  @param {string} color_scheme - Dawn colour scheme for the navigation panel.
+{% enddoc %}
+<nav class="assessment-menu" aria-label="{{ 'assessment.navigation' | t | escape }}">
+  <header-menu>
+    <details class="mega-menu" id="Details-AssessmentMenu">
+      <summary class="header__menu-item list-menu__item link focus-inset" aria-controls="AssessmentMenuContent">
+        {{ 'assessment.browse' | t }} {{ 'icon-caret.svg' | inline_asset_content }}
+      </summary>
+      <div id="AssessmentMenuContent" class="assessment-menu__panel color-{{ color_scheme }} gradient" tabindex="-1">
+        <ul class="assessment-menu__columns list-unstyled" role="list">
+          {% assign material_handles = 'quartz-worktops,granite-worktops,marble-worktops' | split: ',' %}
+          {% for material_handle in material_handles %}
+            {% assign material = collections[material_handle] %}
+            {% if material != blank %}
+              <li><a class="mega-menu__link mega-menu__link--level-2" href="{{ material.url }}">{{ material.title | escape }}</a>
+                <ul class="list-unstyled" role="list">
+                  {% for stone in material.products limit:4 %}
+                    <li><a class="mega-menu__link" href="{{ stone.url }}">{{ stone.title | escape }}</a></li>
+                  {% endfor %}
+                </ul>
+              </li>
+            {% endif %}
+          {% endfor %}
+          <li><span class="mega-menu__link mega-menu__link--level-2">{{ 'assessment.planning' | t }}</span>
+            <ul class="list-unstyled" role="list">
+              <li><a class="mega-menu__link" href="#assessment-stories">{{ 'assessment.stories' | t }}</a></li>
+              <li><a class="mega-menu__link" href="#assessment-reviews">{{ 'assessment.reviews' | t }}</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </details>
+  </header-menu>
+</nav>
+

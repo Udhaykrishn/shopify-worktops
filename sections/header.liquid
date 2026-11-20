@@ -1,3 +1,4 @@
+{% if template.suffix == 'assessment' %}{{ 'assessment-content.css' | asset_url | stylesheet_tag }}{{ 'component-mega-menu.css' | asset_url | stylesheet_tag }}{% endif %}
 <link rel="stylesheet" href="{{ 'component-list-menu.css' | asset_url }}" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="{{ 'component-search.css' | asset_url }}" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="{{ 'component-menu-drawer.css' | asset_url }}" media="print" onload="this.media='all'">
@@ -171,7 +172,7 @@
         assign render_search_left = true
       endif
 
-      if section.settings.menu != blank
+      if section.settings.menu != blank and template.suffix != 'assessment'
         render 'header-drawer', show_country_selector: country_selector, show_language_selector: language_selector, show_social_links: social_links
       endif
 
@@ -215,7 +216,9 @@
     {%- endif -%}
 
     {%- liquid
-      if section.settings.menu != blank
+      if template.suffix == 'assessment'
+        render 'assessment-menu', color_scheme: section.settings.menu_color_scheme
+      elsif section.settings.menu != blank
         if section.settings.menu_type_desktop == 'dropdown'
           render 'header-dropdown-menu'
         elsif section.settings.menu_type_desktop != 'drawer'
