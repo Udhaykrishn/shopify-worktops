@@ -19,6 +19,9 @@
   assign sort_by = results.sort_by | default: results.default_sort_by
   assign total_active_values = 0
   assign default_presentation = 'text'
+  # The Colour filter (a `colour` metaobject reference) shows each value's swatch next to its name.
+  assign colour_filter_param = 'filter.p.m.custom.colour'
+  assign colour_swatches = shop.metaobjects.colour.values
   if results.url
     assign results_url = results.url
   else
@@ -210,6 +213,9 @@
 
                             {%- capture text_value -%}
                               <span class="facet-checkbox__text" aria-hidden="true">
+                                {%- if filter.param_name == colour_filter_param -%}
+                                  {%- render 'facet-swatch', label: value.label, colours: colour_swatches -%}
+                                {%- endif -%}
                                 <span class="facet-checkbox__text-label">{{- value.label | escape }}</span> ({{- value.count -}})
                               </span>
                               <span class="visually-hidden">
@@ -579,6 +585,9 @@
 
                               {%- capture text_value -%}
                                 <span class="facet-checkbox__text" aria-hidden="true">
+                                  {%- if filter.param_name == colour_filter_param -%}
+                                    {%- render 'facet-swatch', label: value.label, colours: colour_swatches -%}
+                                  {%- endif -%}
                                   <span class="facet-checkbox__text-label">{{- value.label | escape }}</span> ({{- value.count -}})
                                 </span>
                                 <span class="visually-hidden">

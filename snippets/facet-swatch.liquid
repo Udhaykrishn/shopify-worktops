@@ -1,0 +1,30 @@
+{%- doc -%}
+  Renders the colour chip for one value of the Colour filter. Storefront filters on a metaobject reference
+  give the value's label (the metaobject's display name) but not the metaobject, so the matching `colour`
+  entry is found by name. Its swatch image wins over its hex colour; a value with neither renders nothing.
+  The chip is decorative: the filter label already names the colour.
+
+  @param {string} label - The filter value label, for example "White".
+  @param {metaobject[]} colours - The `colour` metaobject entries (`shop.metaobjects.colour.values`).
+
+  @example
+  {% render 'facet-swatch', label: value.label, colours: shop.metaobjects.colour.values %}
+{%- enddoc -%}
+{%- liquid
+  assign swatch_style = ''
+  for colour in colours
+    assign colour_name = colour.name.value | strip
+    if colour_name == label
+      if colour.swatch.value != blank
+        assign swatch_url = colour.swatch.value | image_url: width: 48
+        assign swatch_style = 'background-image: url(' | append: swatch_url | append: ');'
+      elsif colour.hex.value != blank
+        assign swatch_style = 'background-color: ' | append: colour.hex.value | append: ';'
+      endif
+      break
+    endif
+  endfor
+-%}
+{%- if swatch_style != blank -%}
+  <span class="facet-swatch" style="{{ swatch_style | escape }}" aria-hidden="true"></span>
+{%- endif -%}
